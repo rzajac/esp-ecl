@@ -37,7 +37,7 @@ change requires changing `ESP_CFG_START_SECTOR`).
 
 Adoption of https://github.com/kokke/tiny-AES-c for ESP8266.
 
-Comes with [gen_aes.sh](gen_aes.sh) to generate keys using `openssl rand`.
+Comes with [gen_aes.sh](../bin/gen_aes.sh) to generate keys using `openssl rand`.
 
 ## esp_tim
 

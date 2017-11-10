@@ -16,7 +16,7 @@
 add_subdirectory(aes)
 add_subdirectory(blink)
 add_subdirectory(blink_cond)
-add_subdirectory(bus)
+add_subdirectory(events)
 add_subdirectory(cfg)
 add_subdirectory(json)
 add_subdirectory(timer)

@@ -5,7 +5,7 @@ many projects gathered in one place:
 
 - [esp_gpio](src) - fast pin manipulation library.
 - [esp_sdo](src) - use RX pin as the GPIO3.
-- [esp_json](src) - makes JSON manipulation easier.
+- [esp_json](src) - easier JSON manipulation.
 - [esp_cfg](src) - read / write custom configuration structures from / to flash.
 - [esp_aes](src) - AES CBC encryption / decryption.
 - [esp_tim](src) - Collection of helpers to deal with timers.
@@ -25,6 +25,7 @@ as described at https://github.com/rzajac/esp-dev-env.
 - [Custom config](examples/cfg)
 - [Encrypt/Decrypt](examples/aes)
 - [Timer](examples/timer)
+- [Evens](examples/bus)
 
 ## Integration.
 

@@ -5,7 +5,6 @@ Demonstrates how to:
 - Un-subscribe events.
 - Trigger delayed events.
 
-
 ## Flashing
 
 ```

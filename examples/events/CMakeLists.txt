@@ -13,7 +13,7 @@
 # under the License.
 
 
-add_executable(bus main.c ${ESP_USER_CONFIG})
-target_include_directories(bus PUBLIC ${ESP_USER_CONFIG_DIR})
-target_link_libraries(bus esp_sdo esp_gpio esp_eb esp_tim)
-esp_gen_exec_targets(bus)
+add_executable(events main.c ${ESP_USER_CONFIG})
+target_include_directories(events PUBLIC ${ESP_USER_CONFIG_DIR})
+target_link_libraries(events esp_sdo esp_gpio esp_eb esp_tim)
+esp_gen_exec_targets(events)
