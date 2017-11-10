@@ -1,7 +1,7 @@
 ## ESP8266 Common Libraries (ECL)
 
-The repository is a collection of small libraries I used in many projects 
-gathered in one place: 
+The repository is a collection of small but useful libraries I use in 
+many projects gathered in one place: 
 
 - [esp_gpio](src) - fast pin manipulation library.
 - [esp_sdo](src) - use RX pin as the GPIO3.
