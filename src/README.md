@@ -53,3 +53,4 @@ This library will allow you to:
  
 All event callbacks are scheduled with timers not to block the CPU when there are many listeners.
 
+![EventBus](../doc/EventBus.png)
