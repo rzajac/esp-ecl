@@ -19,10 +19,11 @@
 void esp_delay_us(uint32_t us)
 {
   uint32_t idx;
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+  #pragma GCC diagnostic push
+  #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
   uint32_t reg;
-#pragma GCC diagnostic pop
+  #pragma GCC diagnostic pop
+
   us *= ESP_DELAY_MULTIPLIER;
   for (idx = 0; idx < us; idx++) reg = *((volatile uint32_t *) (ESP_DELAY_REG_READ));
 }
