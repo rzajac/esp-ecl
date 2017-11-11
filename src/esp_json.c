@@ -22,15 +22,14 @@
 
 /* cJSON */
 /* JSON parser in C. */
-#include <c_types.h>
+#include <esp_json.h>
 #include <mem.h>
 #include <osapi.h>
 
-#include <esp_json.h>
-
 static const char *ep;
 
-const char *ICACHE_FLASH_ATTR cJSON_GetErrorPtr(void)
+const char *ICACHE_FLASH_ATTR
+cJSON_GetErrorPtr(void)
 { return ep; }
 
 static int cJSON_tolower(int chr) //touches only one character per call
@@ -38,7 +37,8 @@ static int cJSON_tolower(int chr) //touches only one character per call
   return (chr >= 'A' && chr <= 'Z') ? (chr + 32) : (chr);
 }
 
-static int ICACHE_FLASH_ATTR cJSON_strcasecmp(const char *s1, const char *s2)
+static int ICACHE_FLASH_ATTR
+cJSON_strcasecmp(const char *s1, const char *s2)
 {
   if (!s1) return (s1 == s2) ? 0 : 1;
   if (!s2) return 1;
@@ -46,7 +46,8 @@ static int ICACHE_FLASH_ATTR cJSON_strcasecmp(const char *s1, const char *s2)
   return cJSON_tolower(*(const unsigned char *) s1) - cJSON_tolower(*(const unsigned char *) s2);
 }
 
-static char *ICACHE_FLASH_ATTR cJSON_strdup(const char *str)
+static char *ICACHE_FLASH_ATTR
+cJSON_strdup(const char *str)
 {
   size_t len;
   char *copy;
@@ -58,7 +59,8 @@ static char *ICACHE_FLASH_ATTR cJSON_strdup(const char *str)
 }
 
 /* Internal constructor. */
-static cJSON *ICACHE_FLASH_ATTR  cJSON_New_Item(void)
+static cJSON *ICACHE_FLASH_ATTR
+cJSON_New_Item(void)
 {
   cJSON *node = (cJSON *) os_malloc(sizeof(struct cJSON));
   if (node) {
@@ -82,7 +84,8 @@ void ICACHE_FLASH_ATTR cJSON_Delete(cJSON *c)
 }
 
 /* Parse the input text to generate a number, and populate the result into item. */
-static const char *ICACHE_FLASH_ATTR parse_number(cJSON *item, const char *num)
+static const char *ICACHE_FLASH_ATTR
+parse_number(cJSON *item, const char *num)
 {
   double n = 0, sign = 1, scale = 0;
   int subscale = 0, signsubscale = 1;
@@ -112,7 +115,8 @@ static const char *ICACHE_FLASH_ATTR parse_number(cJSON *item, const char *num)
 }
 
 /* Render the number nicely from the given item into a string. */
-static char *ICACHE_FLASH_ATTR print_number(cJSON *item)
+static char *ICACHE_FLASH_ATTR
+print_number(cJSON *item)
 {
   char *str;
   double d = item->valuedouble;
@@ -131,7 +135,8 @@ static char *ICACHE_FLASH_ATTR print_number(cJSON *item)
   return str;
 }
 
-static unsigned ICACHE_FLASH_ATTR parse_hex4(const char *str)
+static unsigned ICACHE_FLASH_ATTR
+parse_hex4(const char *str)
 {
   unsigned h = 0;
   if (*str >= '0' && *str <= '9') h += (*str) - '0';
@@ -166,7 +171,8 @@ static unsigned ICACHE_FLASH_ATTR parse_hex4(const char *str)
 /* Parse the input text into an unescaped cstring, and populate item. */
 static const unsigned char firstByteMark[7] = {0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC};
 
-static const char *ICACHE_FLASH_ATTR parse_string(cJSON *item, const char *str)
+static const char *ICACHE_FLASH_ATTR
+parse_string(cJSON *item, const char *str)
 {
   const char *ptr = str + 1;
   char *ptr2;
@@ -256,7 +262,8 @@ static const char *ICACHE_FLASH_ATTR parse_string(cJSON *item, const char *str)
 }
 
 /* Render the cstring provided to an escaped version that can be printed. */
-static char *ICACHE_FLASH_ATTR print_string_ptr(const char *str)
+static char *ICACHE_FLASH_ATTR
+print_string_ptr(const char *str)
 {
   const char *ptr;
   char *ptr2, *out;
@@ -315,7 +322,8 @@ static char *ICACHE_FLASH_ATTR print_string_ptr(const char *str)
 }
 
 /* Invote print_string_ptr (which is useful) on an item. */
-static char *ICACHE_FLASH_ATTR print_string(cJSON *item)
+static char *ICACHE_FLASH_ATTR
+print_string(cJSON *item)
 { return print_string_ptr(item->valuestring); }
 
 /* Predeclare these prototypes. */
@@ -332,15 +340,16 @@ static const char *parse_object(cJSON *item, const char *value);
 static char *print_object(cJSON *item, int depth, int fmt);
 
 /* Utility to jump whitespace and cr/lf */
-static const char *ICACHE_FLASH_ATTR skip(const char *in)
+static const char *ICACHE_FLASH_ATTR
+skip(const char *in)
 {
   while (in && *in && (unsigned char) *in <= 32) in++;
   return in;
 }
 
 /* Parse an object - create a new root, and populate. */
-cJSON *
-ICACHE_FLASH_ATTR cJSON_ParseWithOpts(const char *value, const char **return_parse_end, int require_null_terminated)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_ParseWithOpts(const char *value, const char **return_parse_end, int require_null_terminated)
 {
   const char *end = 0;
   cJSON *c = cJSON_New_Item();
@@ -367,18 +376,22 @@ ICACHE_FLASH_ATTR cJSON_ParseWithOpts(const char *value, const char **return_par
 }
 
 /* Default options for cJSON_Parse */
-cJSON *ICACHE_FLASH_ATTR cJSON_Parse(const char *value)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_Parse(const char *value)
 { return cJSON_ParseWithOpts(value, 0, 0); }
 
 /* Render a cJSON item/entity/structure to text. */
-char *ICACHE_FLASH_ATTR cJSON_Print(cJSON *item)
+char *ICACHE_FLASH_ATTR
+cJSON_Print(cJSON *item)
 { return print_value(item, 0, 1); }
 
-char *ICACHE_FLASH_ATTR cJSON_PrintUnformatted(cJSON *item)
+char *ICACHE_FLASH_ATTR
+cJSON_PrintUnformatted(cJSON *item)
 { return print_value(item, 0, 0); }
 
 /* Parser core - when encountering text, process appropriately. */
-static const char *ICACHE_FLASH_ATTR parse_value(cJSON *item, const char *value)
+static const char *ICACHE_FLASH_ATTR
+parse_value(cJSON *item, const char *value)
 {
   if (!value) return 0;    /* Fail on null. */
   if (!strncmp(value, "null", 4)) {
@@ -404,7 +417,8 @@ static const char *ICACHE_FLASH_ATTR parse_value(cJSON *item, const char *value)
 }
 
 /* Render a value to text. */
-static char *ICACHE_FLASH_ATTR print_value(cJSON *item, int depth, int fmt)
+static char *ICACHE_FLASH_ATTR
+print_value(cJSON *item, int depth, int fmt)
 {
   char *out = 0;
   if (!item) return 0;
@@ -437,7 +451,8 @@ static char *ICACHE_FLASH_ATTR print_value(cJSON *item, int depth, int fmt)
 }
 
 /* Build an array from input text. */
-static const char *ICACHE_FLASH_ATTR parse_array(cJSON *item, const char *value)
+static const char *ICACHE_FLASH_ATTR
+parse_array(cJSON *item, const char *value)
 {
   cJSON *child;
   if (*value != '[') {
@@ -470,7 +485,8 @@ static const char *ICACHE_FLASH_ATTR parse_array(cJSON *item, const char *value)
 }
 
 /* Render an array to text */
-static char *ICACHE_FLASH_ATTR print_array(cJSON *item, int depth, int fmt)
+static char *ICACHE_FLASH_ATTR
+print_array(cJSON *item, int depth, int fmt)
 {
   char **entries;
   char *out = 0, *ptr, *ret;
@@ -532,7 +548,8 @@ static char *ICACHE_FLASH_ATTR print_array(cJSON *item, int depth, int fmt)
 }
 
 /* Build an object from the text. */
-static const char *ICACHE_FLASH_ATTR parse_object(cJSON *item, const char *value)
+static const char *ICACHE_FLASH_ATTR
+parse_object(cJSON *item, const char *value)
 {
   cJSON *child;
   if (*value != '{') {
@@ -581,7 +598,8 @@ static const char *ICACHE_FLASH_ATTR parse_object(cJSON *item, const char *value
 }
 
 /* Render an object to text. */
-static char *ICACHE_FLASH_ATTR print_object(cJSON *item, int depth, int fmt)
+static char *ICACHE_FLASH_ATTR
+print_object(cJSON *item, int depth, int fmt)
 {
   char **entries = 0, **names = 0;
   char *out = 0, *ptr, *ret, *str;
@@ -670,7 +688,8 @@ static char *ICACHE_FLASH_ATTR print_object(cJSON *item, int depth, int fmt)
 }
 
 /* Get Array size/item / object item. */
-int   ICACHE_FLASH_ATTR cJSON_GetArraySize(cJSON *array)
+int ICACHE_FLASH_ATTR
+cJSON_GetArraySize(cJSON *array)
 {
   cJSON *c = array->child;
   int i = 0;
@@ -678,14 +697,16 @@ int   ICACHE_FLASH_ATTR cJSON_GetArraySize(cJSON *array)
   return i;
 }
 
-cJSON *ICACHE_FLASH_ATTR cJSON_GetArrayItem(cJSON *array, int item)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_GetArrayItem(cJSON *array, int item)
 {
   cJSON *c = array->child;
   while (c && item > 0) item--, c = c->next;
   return c;
 }
 
-cJSON *ICACHE_FLASH_ATTR cJSON_GetObjectItem(cJSON *object, const char *string)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_GetObjectItem(cJSON *object, const char *string)
 {
   cJSON *c = object->child;
   while (c && cJSON_strcasecmp(c->string, string)) c = c->next;
@@ -693,14 +714,16 @@ cJSON *ICACHE_FLASH_ATTR cJSON_GetObjectItem(cJSON *object, const char *string)
 }
 
 /* Utility for array list handling. */
-static void ICACHE_FLASH_ATTR suffix_object(cJSON *prev, cJSON *item)
+static void ICACHE_FLASH_ATTR
+suffix_object(cJSON *prev, cJSON *item)
 {
   prev->next = item;
   item->prev = prev;
 }
 
 /* Utility for handling references. */
-static cJSON *ICACHE_FLASH_ATTR create_reference(cJSON *item)
+static cJSON *ICACHE_FLASH_ATTR
+create_reference(cJSON *item)
 {
   cJSON *ref = cJSON_New_Item();
   if (!ref) return 0;
@@ -712,7 +735,8 @@ static cJSON *ICACHE_FLASH_ATTR create_reference(cJSON *item)
 }
 
 /* Add item to array/object. */
-void ICACHE_FLASH_ATTR cJSON_AddItemToArray(cJSON *array, cJSON *item)
+void ICACHE_FLASH_ATTR
+cJSON_AddItemToArray(cJSON *array, cJSON *item)
 {
   cJSON *c = array->child;
   if (!item) return;
@@ -723,7 +747,8 @@ void ICACHE_FLASH_ATTR cJSON_AddItemToArray(cJSON *array, cJSON *item)
   }
 }
 
-void ICACHE_FLASH_ATTR cJSON_AddItemToObject(cJSON *object, const char *string, cJSON *item)
+void ICACHE_FLASH_ATTR
+cJSON_AddItemToObject(cJSON *object, const char *string, cJSON *item)
 {
   if (!item) return;
   if (item->string) os_free(item->string);
@@ -731,17 +756,20 @@ void ICACHE_FLASH_ATTR cJSON_AddItemToObject(cJSON *object, const char *string, 
   cJSON_AddItemToArray(object, item);
 }
 
-void ICACHE_FLASH_ATTR cJSON_AddItemReferenceToArray(cJSON *array, cJSON *item)
+void ICACHE_FLASH_ATTR
+cJSON_AddItemReferenceToArray(cJSON *array, cJSON *item)
 { cJSON_AddItemToArray(array, create_reference(item)); }
 
-void ICACHE_FLASH_ATTR cJSON_AddItemReferenceToObject(cJSON *object, const char *string, cJSON *item)
+void ICACHE_FLASH_ATTR
+cJSON_AddItemReferenceToObject(cJSON *object, const char *string, cJSON *item)
 {
   cJSON_AddItemToObject(object,
                         string,
                         create_reference(item));
 }
 
-cJSON *ICACHE_FLASH_ATTR cJSON_DetachItemFromArray(cJSON *array, int which)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_DetachItemFromArray(cJSON *array, int which)
 {
   cJSON *c = array->child;
   while (c && which > 0) c = c->next, which--;
@@ -753,10 +781,12 @@ cJSON *ICACHE_FLASH_ATTR cJSON_DetachItemFromArray(cJSON *array, int which)
   return c;
 }
 
-void ICACHE_FLASH_ATTR cJSON_DeleteItemFromArray(cJSON *array, int which)
+void ICACHE_FLASH_ATTR
+cJSON_DeleteItemFromArray(cJSON *array, int which)
 { cJSON_Delete(cJSON_DetachItemFromArray(array, which)); }
 
-cJSON *ICACHE_FLASH_ATTR cJSON_DetachItemFromObject(cJSON *object, const char *string)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_DetachItemFromObject(cJSON *object, const char *string)
 {
   int i = 0;
   cJSON *c = object->child;
@@ -765,11 +795,13 @@ cJSON *ICACHE_FLASH_ATTR cJSON_DetachItemFromObject(cJSON *object, const char *s
   return 0;
 }
 
-void ICACHE_FLASH_ATTR cJSON_DeleteItemFromObject(cJSON *object, const char *string)
+void ICACHE_FLASH_ATTR
+cJSON_DeleteItemFromObject(cJSON *object, const char *string)
 { cJSON_Delete(cJSON_DetachItemFromObject(object, string)); }
 
 /* Replace array/object items with new ones. */
-void ICACHE_FLASH_ATTR cJSON_ReplaceItemInArray(cJSON *array, int which, cJSON *newitem)
+void ICACHE_FLASH_ATTR
+cJSON_ReplaceItemInArray(cJSON *array, int which, cJSON *newitem)
 {
   cJSON *c = array->child;
   while (c && which > 0) c = c->next, which--;
@@ -782,7 +814,8 @@ void ICACHE_FLASH_ATTR cJSON_ReplaceItemInArray(cJSON *array, int which, cJSON *
   cJSON_Delete(c);
 }
 
-void ICACHE_FLASH_ATTR cJSON_ReplaceItemInObject(cJSON *object, const char *string, cJSON *newitem)
+void ICACHE_FLASH_ATTR
+cJSON_ReplaceItemInObject(cJSON *object, const char *string, cJSON *newitem)
 {
   int i = 0;
   cJSON *c = object->child;
@@ -794,35 +827,40 @@ void ICACHE_FLASH_ATTR cJSON_ReplaceItemInObject(cJSON *object, const char *stri
 }
 
 /* Create basic types: */
-cJSON *ICACHE_FLASH_ATTR cJSON_CreateNull(void)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_CreateNull(void)
 {
   cJSON *item = cJSON_New_Item();
   if (item)item->type = cJSON_NULL;
   return item;
 }
 
-cJSON *ICACHE_FLASH_ATTR cJSON_CreateTrue(void)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_CreateTrue(void)
 {
   cJSON *item = cJSON_New_Item();
   if (item)item->type = cJSON_True;
   return item;
 }
 
-cJSON *ICACHE_FLASH_ATTR cJSON_CreateFalse(void)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_CreateFalse(void)
 {
   cJSON *item = cJSON_New_Item();
   if (item)item->type = cJSON_False;
   return item;
 }
 
-cJSON *ICACHE_FLASH_ATTR cJSON_CreateBool(int b)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_CreateBool(int b)
 {
   cJSON *item = cJSON_New_Item();
   if (item)item->type = b ? cJSON_True : cJSON_False;
   return item;
 }
 
-cJSON *ICACHE_FLASH_ATTR cJSON_CreateNumber(double num)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_CreateNumber(double num)
 {
   cJSON *item = cJSON_New_Item();
   if (item) {
@@ -833,7 +871,8 @@ cJSON *ICACHE_FLASH_ATTR cJSON_CreateNumber(double num)
   return item;
 }
 
-cJSON *ICACHE_FLASH_ATTR cJSON_CreateString(const char *string)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_CreateString(const char *string)
 {
   cJSON *item = cJSON_New_Item();
   if (item) {
@@ -843,14 +882,16 @@ cJSON *ICACHE_FLASH_ATTR cJSON_CreateString(const char *string)
   return item;
 }
 
-cJSON *ICACHE_FLASH_ATTR cJSON_CreateArray(void)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_CreateArray(void)
 {
   cJSON *item = cJSON_New_Item();
   if (item)item->type = cJSON_Array;
   return item;
 }
 
-cJSON *ICACHE_FLASH_ATTR cJSON_CreateObject(void)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_CreateObject(void)
 {
   cJSON *item = cJSON_New_Item();
   if (item)item->type = cJSON_Object;
@@ -858,7 +899,8 @@ cJSON *ICACHE_FLASH_ATTR cJSON_CreateObject(void)
 }
 
 /* Create Arrays: */
-cJSON *ICACHE_FLASH_ATTR cJSON_CreateIntArray(const int *numbers, int count)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_CreateIntArray(const int *numbers, int count)
 {
   int i;
   cJSON *n = 0, *p = 0, *a = cJSON_CreateArray();
@@ -870,7 +912,8 @@ cJSON *ICACHE_FLASH_ATTR cJSON_CreateIntArray(const int *numbers, int count)
   return a;
 }
 
-cJSON *ICACHE_FLASH_ATTR cJSON_CreateFloatArray(const float *numbers, int count)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_CreateFloatArray(const float *numbers, int count)
 {
   int i;
   cJSON *n = 0, *p = 0, *a = cJSON_CreateArray();
@@ -882,7 +925,8 @@ cJSON *ICACHE_FLASH_ATTR cJSON_CreateFloatArray(const float *numbers, int count)
   return a;
 }
 
-cJSON *ICACHE_FLASH_ATTR cJSON_CreateDoubleArray(const double *numbers, int count)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_CreateDoubleArray(const double *numbers, int count)
 {
   int i;
   cJSON *n = 0, *p = 0, *a = cJSON_CreateArray();
@@ -894,7 +938,8 @@ cJSON *ICACHE_FLASH_ATTR cJSON_CreateDoubleArray(const double *numbers, int coun
   return a;
 }
 
-cJSON *ICACHE_FLASH_ATTR cJSON_CreateStringArray(const char **strings, int count)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_CreateStringArray(const char **strings, int count)
 {
   int i;
   cJSON *n = 0, *p = 0, *a = cJSON_CreateArray();
@@ -907,7 +952,8 @@ cJSON *ICACHE_FLASH_ATTR cJSON_CreateStringArray(const char **strings, int count
 }
 
 /* Duplication */
-cJSON *ICACHE_FLASH_ATTR cJSON_Duplicate(cJSON *item, int recurse)
+cJSON *ICACHE_FLASH_ATTR
+cJSON_Duplicate(cJSON *item, int recurse)
 {
   cJSON *newitem, *cptr, *nptr = 0, *newchild;
   /* Bail on bad ptr */
@@ -955,7 +1001,8 @@ cJSON *ICACHE_FLASH_ATTR cJSON_Duplicate(cJSON *item, int recurse)
   return newitem;
 }
 
-void ICACHE_FLASH_ATTR cJSON_Minify(char *json)
+void ICACHE_FLASH_ATTR
+cJSON_Minify(char *json)
 {
   char *into = json;
   while (*json) {
@@ -983,12 +1030,14 @@ void ICACHE_FLASH_ATTR cJSON_Minify(char *json)
   *into = 0;    // and null-terminate.
 }
 
-double ICACHE_FLASH_ATTR floor(double x)
+double ICACHE_FLASH_ATTR
+floor(double x)
 {
   return (double) (x < 0.f ? (((int) x) - 1) : ((int) x));
 }
 
-double ICACHE_FLASH_ATTR pow(double x, double y)
+double ICACHE_FLASH_ATTR
+pow(double x, double y)
 {
   double ret = 1;
   int i;
@@ -999,7 +1048,8 @@ double ICACHE_FLASH_ATTR pow(double x, double y)
   return ret;
 }
 
-double ICACHE_FLASH_ATTR fabs(double x)
+double ICACHE_FLASH_ATTR
+fabs(double x)
 {
   if (x < 0) {
     return (-1 * x);

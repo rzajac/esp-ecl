@@ -1,31 +1,38 @@
 ## ESP8266 Common Libraries (ECL)
 
-The repository is a collection of small but useful libraries I use in 
-many projects gathered in one place: 
-
-- [esp_gpio](src) - fast pin manipulation library.
-- [esp_sdo](src) - use RX pin as the GPIO3.
-- [esp_json](src) - easier JSON manipulation.
-- [esp_cfg](src) - read / write custom configuration structures from / to flash.
-- [esp_aes](src) - AES CBC encryption / decryption.
-- [esp_tim](src) - Collection of helpers to deal with timers.
-- [esp_eb](src) - Simple event bus.
+Repository is a collection of small but useful libraries I use in many of my 
+projects gathered in one place. Each of the libraries has very well documented 
+header file. Below is the list of available libraries:
+ 
+Library name                                   | Description
+-----------------------------------------------|-------------
+[esp_aes](src/include/esp_aes.h)               | AES CBC encryption / decryption.
+[esp_cfg](src/include/esp_cfg.h)               | Read / write custom configuration structures from / to flash.
+[esp_eb](src/include/esp_eb.h)                 | Simple event bus.
+[esp_gpio](src/include/esp_gpio.h)             | Fast GPIO manipulation library.
+[esp_gpio_debug](src/include/esp_gpio_debug.h) | GPIO debugging library.
+[esp_json](src/include/esp_json.h)             | Easier JSON manipulation.
+[esp_sdo](src/include/esp_sdo.h)               | Use RX pin as the GPIO3.
+[esp_tim](src/include/esp_tim.h)               | Collection of helpers to deal with timers and delays.
+[esp_util](src/include/esp_util.h)             | Utility functions.
 
 ## Build environment.
 
 This library is part of my build system for ESP8266 based on CMake.
-To run examples you will have to have the ESP development environment setup 
-as described at https://github.com/rzajac/esp-dev-env.
+To compile / flash examples you will have to have the ESP development 
+environment setup as described at https://github.com/rzajac/esp-dev-env.
 
 ## Examples.
 
+Libraries come with few examples to show how to use them.
+
+- [AES Encrypt/Decrypt](examples/aes)
 - [Blink LED](examples/blink)
 - [Conditional LED blink](examples/blink_cond)
-- [JSON](examples/json)
 - [Custom config](examples/cfg)
-- [Encrypt/Decrypt](examples/aes)
+- [Evens](examples/events)
+- [JSON](examples/json)
 - [Timer](examples/timer)
-- [Evens](examples/bus)
 
 ## Integration.
 
@@ -44,7 +51,8 @@ $ make
 $ make install
 ```
 
-which will install the library and headers in `$ESPROOT`.
+which will install the library, headers and scripts in appropriate places 
+in `$ESPROOT`.
 
 ## License.
 

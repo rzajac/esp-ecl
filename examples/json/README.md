@@ -1,8 +1,8 @@
-## JSON example.
+## Work with JSON.
 
 Demonstrates how to:
-- Parse JSON string. 
-- Create JSON object and serialize it.
+- parse JSON string, 
+- create JSON object and serialize it.
 
 ## Flashing
 

@@ -1,10 +1,11 @@
 ## Timers example.
 
-Example program which is calling a callback but each time the call period is doubled.
+Example program which is calling a callback using timer but each time the 
+call period is doubled.
 
 Demonstrates how to:
-- Use timer helpers. 
-- Pass data to callbacks called by timers.
+- use timer helpers, 
+- pass data to callbacks called by timers.
 
 ## Flashing
 

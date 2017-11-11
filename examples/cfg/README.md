@@ -1,8 +1,8 @@
 ## Save configuration between reboots.
 
 Demonstrates how to:
-- Read custom configuration structure from the flash.
-- Write custom configuration structure to flash. 
+- read custom configuration structure from the flash,
+- write custom configuration structure to flash.
 
 ## Flashing
 

@@ -18,14 +18,7 @@
 #define ESP_GPIO_DEBUG_H
 
 #include <c_types.h>
-
-/**
- * Dump binary representation of the value.
- *
- * @param value
- */
-void ICACHE_FLASH_ATTR
-esp_gpiod_dump_binary(uint32_t value);
+#include <esp_util.h>
 
 /**
  * Dump MUX register address for given GPIO number.

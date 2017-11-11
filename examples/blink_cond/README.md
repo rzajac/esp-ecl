@@ -1,12 +1,12 @@
-## Conditional Blink Example
+## Conditional blink example
 
 Blink LED connected to GPIO2 only if GPIO3 is HIGH.
 
 Demonstrates how to:
-- Set pin state to LOW or HIGH. 
-- Read pin state.
-- Use RX pin as GPIO3.
-- Use timers.
+- set pin state to LOW or HIGH, 
+- read pin state,
+- use RX pin as GPIO3,
+- use timers.
 
 ## Flashing
 

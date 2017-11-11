@@ -1,7 +1,6 @@
 ## AES CBC encrypt / decrypt.
 
-Demonstrates how to:
-- Encrypt / decrypt buffer of data with AES CBC.
+Demonstrates how to encrypt/decrypt buffer of data with AES CBC.
 
 ## Flashing
 

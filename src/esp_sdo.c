@@ -11,9 +11,10 @@
  * The source was modified to use esp_gpio library.
  */
 
-#include "include/esp_sdo.h"
+#include <esp_sdo.h>
 #include <user_interface.h>
 #include <osapi.h>
+
 
 static void ICACHE_FLASH_ATTR
 stdout_uart_txd(char c)

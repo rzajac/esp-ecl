@@ -19,9 +19,7 @@ project(esp_ecl C)
 
 add_library(esp_gpio STATIC
     esp_gpio.c
-    esp_gpio_debug.c
-    include/esp_gpio.h
-    include/esp_gpio_debug.h)
+    include/esp_gpio.h)
 
 target_include_directories(esp_gpio PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -29,6 +27,19 @@ target_include_directories(esp_gpio PUBLIC
     ${ESP_USER_CONFIG_DIR})
 
 esp_gen_lib(esp_gpio ${ESP_CMAKE_FIND_DIR})
+
+################################## esp_gpio_debug #############################
+
+add_library(esp_gpio_debug STATIC
+    esp_gpio_debug.c
+    include/esp_gpio_debug.h)
+
+target_include_directories(esp_gpio_debug PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    ${ESP_USER_CONFIG_DIR})
+
+esp_gen_lib(esp_gpio_debug ${ESP_CMAKE_FIND_DIR})
 
 ################################## esp_sdo ####################################
 
@@ -87,9 +98,9 @@ install(FILES "${ESP_LIB_BIN_DIR}/gen_aes.sh" DESTINATION "${CMAKE_INSTALL_BINDI
 
 add_library(esp_tim STATIC
     esp_tim.c
-    esp_delay.c
+    esp_util.c
     include/esp_tim.h
-    include/esp_delay.h)
+    include/esp_util.h)
 
 target_include_directories(esp_tim PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -97,6 +108,19 @@ target_include_directories(esp_tim PUBLIC
     ${ESP_USER_CONFIG_DIR})
 
 esp_gen_lib(esp_tim ${ESP_CMAKE_FIND_DIR})
+
+################################## esp_util ###################################
+
+add_library(esp_util STATIC
+    esp_util.c
+    include/esp_util.h)
+
+target_include_directories(esp_util PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    ${ESP_USER_CONFIG_DIR})
+
+esp_gen_lib(esp_util ${ESP_CMAKE_FIND_DIR})
 
 ################################## esp_eb ###################################
 

@@ -1,15 +1,15 @@
-## Save configuration between reboots.
+## Trigger events and react to them.
 
 Demonstrates how to:
-- Subscribe/trigger to events.
-- Un-subscribe events.
-- Trigger delayed events.
+- subscribe/trigger to events,
+- un-subscribe events,
+- trigger delayed events.
 
 ## Flashing
 
 ```
 $ cd build
 $ cmake ..
-$ make bus_flash
+$ make events_flash
 $ miniterm.py /dev/ttyUSB0 74880
 ```
