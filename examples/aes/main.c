@@ -15,11 +15,11 @@
  */
 
 #include <esp_aes.h>
+#include <esp_util.h>
+#include <esp_sdo.h>
 #include <user_interface.h>
 #include <osapi.h>
 #include <mem.h>
-#include <esp_sdo.h>
-#include <esp_util.h>
 
 // AES key and initialization vector.
 #define AES_KEY_INIT { 0x2b, 0x7e, 0x15, 0x16, 0x28, 0xae, 0xd2, 0xa6, 0xab, 0xf7, 0x15, 0x88, 0x09, 0xcf, 0x4f, 0x3c }

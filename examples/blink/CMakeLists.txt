@@ -12,6 +12,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+# The example does nmot use cmake find_package() function because we want
+# local libraries not the ones installed in $ESPROOT.
 
 add_executable(blink main.c ${ESP_USER_CONFIG})
 target_include_directories(blink PUBLIC ${ESP_USER_CONFIG_DIR})

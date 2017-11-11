@@ -16,6 +16,9 @@ Library name                                   | Description
 [esp_tim](src/include/esp_tim.h)               | Collection of helpers to deal with timers and delays.
 [esp_util](src/include/esp_util.h)             | Utility functions.
 
+For more details about the libraries check [README.md](src/README.md) file
+or library header file where you will find documentation for all the APIs.
+
 ## Build environment.
 
 This library is part of my build system for ESP8266 based on CMake.
