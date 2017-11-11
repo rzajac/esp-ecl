@@ -21,7 +21,7 @@
 # - The esp-open-sdk is installed and compiled at ESPROOT/esp-open-sdk.
 
 # The full GitHub URL to the library.
-LIB_FULL_NAME="rzajac/esp-pin"
+LIB_FULL_NAME="rzajac/esp-ecl"
 
 # No modifications below this comment unless you know what you're doing.
 
