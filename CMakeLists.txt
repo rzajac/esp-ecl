@@ -17,7 +17,7 @@
 include("$ENV{ESPROOT}/esp-cmake/ESP8266.bootstrap.cmake")
 cmake_minimum_required(VERSION 3.5)
 
-project(esp_pin C)
+project(esp_ecl C)
 set(CMAKE_C_STANDARD 99)
 
 # The directory containing global user_congih.h header file.
