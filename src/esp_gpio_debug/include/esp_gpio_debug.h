@@ -14,11 +14,11 @@
  * under the License.
  */
 
-
 #ifndef ESP_GPIO_DEBUG_H
 #define ESP_GPIO_DEBUG_H
 
 #include <c_types.h>
+
 
 /**
  * Dump MUX register address for given GPIO number.

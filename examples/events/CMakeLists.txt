@@ -13,10 +13,10 @@
 # under the License.
 
 
-# The example does nmot use cmake find_package() function because we want
+# The example doesn't use cmake find_package() function because we want
 # local libraries not the ones installed in $ESPROOT.
 
 add_executable(events main.c ${ESP_USER_CONFIG})
 target_include_directories(events PUBLIC ${ESP_USER_CONFIG_DIR})
-target_link_libraries(events esp_sdo esp_gpio esp_eb esp_tim)
+target_link_libraries(events esp_sdo esp_eb esp_tim)
 esp_gen_exec_targets(events)

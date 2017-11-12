@@ -1,10 +1,10 @@
-## Save configuration between reboots.
+## Save custom configuration to flash.
 
 Demonstrates how to:
 - read custom configuration structure from the flash,
 - write custom configuration structure to flash.
 
-## Flashing
+## Flashing.
 
 ```
 $ cd build

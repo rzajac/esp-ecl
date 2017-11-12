@@ -14,13 +14,15 @@
  * under the License.
  */
 
+
+#include <esp_sdo.h>
+#include <esp_json.h>
 #include <user_interface.h>
 #include <osapi.h>
-#include <esp_json.h>
 #include <mem.h>
-#include <esp_sdo.h>
 
 #define EXAMPLE_JSON "{\"cmd\": \"test\", \"code\": 23, \"fast\": true}"
+
 
 void ICACHE_FLASH_ATTR
 print_success_json()

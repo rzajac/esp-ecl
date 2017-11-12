@@ -1,11 +1,12 @@
 ## Trigger events and react to them.
 
 Demonstrates how to:
-- subscribe/trigger to events,
-- un-subscribe events,
+- subscribe to events,
+- trigger events,
+- un-subscribe from events,
 - trigger delayed events.
 
-## Flashing
+## Flashing.
 
 ```
 $ cd build

@@ -1,8 +1,9 @@
 ## AES CBC encrypt / decrypt.
 
-Demonstrates how to encrypt/decrypt buffer of data with AES CBC.
+Demonstrates how to encrypt/decrypt buffer of data using AES CBC.
+Use [gen_aes.sh](../../bin/gen_aes.sh) script to generate your own keys.
 
-## Flashing
+## Flashing.
 
 ```
 $ cd build

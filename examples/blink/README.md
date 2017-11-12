@@ -1,13 +1,13 @@
-## ESP8266 blink example
+## ESP8266 blink example.
 
 Blink LED connected to GPIO2.
 
 Demonstrates how to:
 - set pin state to LOW or HIGH, 
 - read pin state,
-- use timers. 
+- use of SDK timers. 
 
-## Flashing
+## Flashing.
 
 ```
 $ cd build

@@ -14,7 +14,6 @@
  * under the License.
  */
 
-
 #include <osapi.h>
 #include <esp_gpio_debug.h>
 #include <esp_gpio.h>

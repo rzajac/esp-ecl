@@ -14,11 +14,11 @@
  * under the License.
  */
 
-#include <c_types.h>
-#include <osapi.h>
-
 #ifndef ESP_GPIO_H
 #define ESP_GPIO_H
+
+#include <c_types.h>
+#include <osapi.h>
 
 #define ESP_REG(addr) *((volatile uint32_t *)(0x60000000+(addr)))
 

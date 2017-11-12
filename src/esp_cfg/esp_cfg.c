@@ -15,9 +15,9 @@
  */
 
 #include <esp_cfg.h>
-
 #include <ets_sys.h>
 #include <mem.h>
+
 
 // Type defining user configuration structure.
 typedef struct {

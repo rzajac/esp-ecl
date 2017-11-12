@@ -4,7 +4,7 @@ Demonstrates how to:
 - parse JSON string, 
 - create JSON object and serialize it.
 
-## Flashing
+## Flashing.
 
 ```
 $ cd build

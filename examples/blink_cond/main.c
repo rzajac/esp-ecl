@@ -15,10 +15,9 @@
  */
 
 
-#include <user_interface.h>
-#include <osapi.h>
 #include <esp_sdo.h>
 #include <esp_gpio.h>
+#include <user_interface.h>
 
 static os_timer_t timer;
 

@@ -1,23 +1,20 @@
-## ESP8266 Common Libraries (ECL)
+## ESP8266 Common Libraries (ECL).
 
 Repository is a collection of small but useful libraries I use in many of my 
 projects gathered in one place. Each of the libraries has very well documented 
 header file. Below is the list of available libraries:
  
-Library name                                   | Description
------------------------------------------------|-------------
-[esp_aes](src/include/esp_aes.h)               | AES CBC encryption / decryption.
-[esp_cfg](src/include/esp_cfg.h)               | Read / write custom configuration structures from / to flash.
-[esp_eb](src/include/esp_eb.h)                 | Simple event bus.
-[esp_gpio](src/include/esp_gpio.h)             | Fast GPIO manipulation library.
-[esp_gpio_debug](src/include/esp_gpio_debug.h) | GPIO debugging library.
-[esp_json](src/include/esp_json.h)             | Easier JSON manipulation.
-[esp_sdo](src/include/esp_sdo.h)               | Use RX pin as the GPIO3.
-[esp_tim](src/include/esp_tim.h)               | Collection of helpers to deal with timers and delays.
-[esp_util](src/include/esp_util.h)             | Utility functions.
-
-For more details about the libraries check [README.md](src) file
-or library header file where you will find documentation for all the APIs.
+Library name                                | Description
+--------------------------------------------|-------------
+[esp_aes](src/esp_aes)               | AES CBC encryption / decryption.
+[esp_cfg](src/esp_cfg)               | Read / write custom configuration structures from / to flash.
+[esp_eb](src/esp_eb)                 | Simple event bus.
+[esp_gpio](src/esp_gpio)             | Fast GPIO manipulation library.
+[esp_gpio_debug](src/esp_gpio_debug) | GPIO debugging library.
+[esp_json](src/esp_jsonh)            | Easier JSON manipulation.
+[esp_sdo](src/esp_sdo)               | Use RX pin as the GPIO3.
+[esp_tim](src/esp_tim)               | Collection of helpers to deal with timers and delays.
+[esp_util](src/esp_utilh)            | Utility functions.
 
 ## Build environment.
 

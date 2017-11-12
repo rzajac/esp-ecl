@@ -20,6 +20,7 @@
 #include <c_types.h>
 #include <spi_flash.h>
 
+
 // The start address for configuration sectors.
 #ifndef ESP_CFG_START_SECTOR
   #define ESP_CFG_START_SECTOR 0xC

@@ -13,10 +13,18 @@
 # under the License.
 
 
-# The example doesn't use cmake find_package() function because we want
-# local libraries not the ones installed in $ESPROOT.
+project(esp_aes C)
 
-add_executable(cfg main.c ${ESP_USER_CONFIG})
-target_include_directories(cfg PUBLIC ${ESP_USER_CONFIG_DIR})
-target_link_libraries(cfg esp_sdo esp_cfg)
-esp_gen_exec_targets(cfg)
+add_library(esp_aes STATIC
+    esp_aes.c
+    include/esp_aes.h)
+
+target_include_directories(esp_aes PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    ${ESP_USER_CONFIG_DIR})
+
+esp_gen_lib(esp_aes ${ESP_CMAKE_FIND_DIR})
+
+install(FILES "${ESP_LIB_BIN_DIR}/gen_aes.sh"
+    DESTINATION "${CMAKE_INSTALL_BINDIR}")

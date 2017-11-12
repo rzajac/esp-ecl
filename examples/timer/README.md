@@ -7,7 +7,7 @@ Demonstrates how to:
 - use timer helpers, 
 - pass data to callbacks called by timers.
 
-## Flashing
+## Flashing.
 
 ```
 $ cd build

@@ -14,7 +14,6 @@
  * under the License.
  */
 
-
 #include <esp_util.h>
 #include <osapi.h>
 

@@ -14,11 +14,13 @@
  * under the License.
  */
 
+
+#include <esp_sdo.h>
 #include <esp_tim.h>
 #include <user_interface.h>
 #include <osapi.h>
 #include <mem.h>
-#include <esp_sdo.h>
+
 
 typedef struct {
   uint8_t val1;
