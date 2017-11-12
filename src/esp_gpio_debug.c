@@ -14,15 +14,18 @@
  * under the License.
  */
 
-#include <esp_gpio_debug.h>
+
 #include <osapi.h>
+#include <esp_gpio_debug.h>
 #include <esp_gpio.h>
+#include <esp_util.h>
 
 
 void ICACHE_FLASH_ATTR
 esp_gpiod_dump_mux_addr(uint8_t gpio_num)
 {
-  os_printf("GPIO%d MUX 0x%X: ", gpio_num, (0x60000000 + GPIO_MUX_ADR(gpio_num)));
+  os_printf("GPIO%d MUX 0x%X: ", gpio_num,
+            (0x60000000 + GPIO_MUX_ADR(gpio_num)));
 }
 
 void ICACHE_FLASH_ATTR
@@ -35,7 +38,8 @@ esp_gpiod_dump_mux_reg(uint8_t gpio_num)
 void ICACHE_FLASH_ATTR
 esp_gpiod_dump_reg(uint32_t gpio_num)
 {
-  os_printf("GPIO%d REG 0x%X: ", gpio_num, (0x60000000 + GPIO_CFG_ADR(gpio_num)));
+  os_printf("GPIO%d REG 0x%X: ", gpio_num,
+            (0x60000000 + GPIO_CFG_ADR(gpio_num)));
   esp_util_dump_binary32(GPIO_CFG(gpio_num));
 }
 

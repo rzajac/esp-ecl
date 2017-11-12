@@ -30,7 +30,10 @@ find_path(esp_tim_INCLUDE_DIR esp_tim.h)
 find_library(esp_tim_LIBRARY NAMES esp_tim)
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_tim DEFAULT_MSG esp_tim_LIBRARY esp_tim_INCLUDE_DIR)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_tim
+    DEFAULT_MSG
+    esp_tim_LIBRARY
+    esp_tim_INCLUDE_DIR)
 
 set(esp_tim_INCLUDE_DIRS ${esp_tim_INCLUDE_DIR})
 set(esp_tim_LIBRARIES ${esp_tim_LIBRARY})

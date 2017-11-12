@@ -29,8 +29,13 @@
 find_path(esp_eb_INCLUDE_DIR esp_eb.h)
 find_library(esp_eb_LIBRARY NAMES esp_eb)
 
-include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_eb DEFAULT_MSG esp_eb_LIBRARY esp_eb_INCLUDE_DIR)
+find_package(esp_tim REQUIRED)
 
-set(esp_eb_INCLUDE_DIRS ${esp_eb_INCLUDE_DIR})
-set(esp_eb_LIBRARIES ${esp_eb_LIBRARY})
+include(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_eb
+    DEFAULT_MSG
+    esp_eb_LIBRARY
+    esp_eb_INCLUDE_DIR)
+
+set(esp_eb_INCLUDE_DIRS ${esp_eb_INCLUDE_DIR} ${esp_tim_INCLUDE_DIRS})
+set(esp_eb_LIBRARIES ${esp_eb_LIBRARY} ${esp_tim_LIBRARIES})

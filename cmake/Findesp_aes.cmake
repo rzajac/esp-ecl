@@ -30,7 +30,10 @@ find_path(esp_aes_INCLUDE_DIR esp_aes.h)
 find_library(esp_aes_LIBRARY NAMES esp_aes)
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_aes DEFAULT_MSG esp_aes_LIBRARY esp_aes_INCLUDE_DIR)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_aes
+    DEFAULT_MSG
+    esp_aes_LIBRARY
+    esp_aes_INCLUDE_DIR)
 
 set(esp_aes_INCLUDE_DIRS ${esp_aes_INCLUDE_DIR})
 set(esp_aes_LIBRARIES ${esp_aes_LIBRARY})

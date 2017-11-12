@@ -30,7 +30,10 @@ find_path(esp_gpio_INCLUDE_DIR esp_gpio.h)
 find_library(esp_gpio_LIBRARY NAMES esp_gpio)
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_gpio DEFAULT_MSG esp_gpio_LIBRARY esp_gpio_INCLUDE_DIR)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_gpio
+    DEFAULT_MSG
+    esp_gpio_LIBRARY
+    esp_gpio_INCLUDE_DIR)
 
 set(esp_gpio_INCLUDE_DIRS ${esp_gpio_INCLUDE_DIR})
 set(esp_gpio_LIBRARIES ${esp_gpio_LIBRARY})

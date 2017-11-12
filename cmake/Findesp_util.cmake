@@ -30,7 +30,10 @@ find_path(esp_util_INCLUDE_DIR esp_util.h)
 find_library(esp_util_LIBRARY NAMES esp_util)
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_util DEFAULT_MSG esp_util_LIBRARY esp_util_INCLUDE_DIR)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_util
+    DEFAULT_MSG
+    esp_util_LIBRARY
+    esp_util_INCLUDE_DIR)
 
 set(esp_util_INCLUDE_DIRS ${esp_util_INCLUDE_DIR})
 set(esp_util_LIBRARIES ${esp_util_LIBRARY})

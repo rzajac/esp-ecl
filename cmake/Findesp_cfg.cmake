@@ -30,7 +30,10 @@ find_path(esp_cfg_INCLUDE_DIR esp_cfg.h)
 find_library(esp_cfg_LIBRARY NAMES esp_cfg)
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_cfg DEFAULT_MSG esp_cfg_LIBRARY esp_cfg_INCLUDE_DIR)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_cfg
+    DEFAULT_MSG
+    esp_cfg_LIBRARY
+    esp_cfg_INCLUDE_DIR)
 
 set(esp_cfg_INCLUDE_DIRS ${esp_cfg_INCLUDE_DIR})
 set(esp_cfg_LIBRARIES ${esp_cfg_LIBRARY})

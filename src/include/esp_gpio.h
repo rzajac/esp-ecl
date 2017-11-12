@@ -16,7 +16,6 @@
 
 #include <c_types.h>
 #include <osapi.h>
-#include <esp_util.h>
 
 #ifndef ESP_GPIO_H
 #define ESP_GPIO_H

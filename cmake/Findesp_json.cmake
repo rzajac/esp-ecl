@@ -30,7 +30,10 @@ find_path(esp_json_INCLUDE_DIR esp_json.h)
 find_library(esp_json_LIBRARY NAMES esp_json)
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_json DEFAULT_MSG esp_json_LIBRARY esp_json_INCLUDE_DIR)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_json
+    DEFAULT_MSG
+    esp_json_LIBRARY
+    esp_json_INCLUDE_DIR)
 
 set(esp_json_INCLUDE_DIRS ${esp_json_INCLUDE_DIR})
 set(esp_json_LIBRARIES ${esp_json_LIBRARY})

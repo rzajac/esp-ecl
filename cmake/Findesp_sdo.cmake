@@ -32,7 +32,10 @@ find_library(esp_sdo_LIBRARY NAMES esp_sdo)
 find_package(esp_gpio REQUIRED)
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_sdo DEFAULT_MSG esp_sdo_LIBRARY esp_sdo_INCLUDE_DIR)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_sdo
+    DEFAULT_MSG
+    esp_sdo_LIBRARY
+    esp_sdo_INCLUDE_DIR)
 
 set(esp_sdo_INCLUDE_DIRS ${esp_sdo_INCLUDE_DIR} ${esp_gpio_INCLUDE_DIRS})
 set(esp_sdo_LIBRARIES ${esp_sdo_LIBRARY} ${esp_gpio_LIBRARIES})
