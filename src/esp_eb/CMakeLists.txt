@@ -26,4 +26,6 @@ target_include_directories(esp_eb PUBLIC
     ${ESP_USER_CONFIG_DIR}
     ../esp_tim/include)
 
-esp_gen_lib(esp_eb ${ESP_CMAKE_FIND_DIR} esp_tim)
+target_link_libraries(esp_eb esp_tim)
+
+esp_gen_lib(esp_eb)

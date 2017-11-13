@@ -14,6 +14,7 @@
  * under the License.
  */
 
+
 #ifndef ESP_CFG_H
 #define ESP_CFG_H
 
@@ -28,7 +29,7 @@
 
 // Defines the number of configuration sectors available.
 #ifndef ESP_CFG_NUMBER
-  #define ESP_CFG_NUMBER 2
+  #define ESP_CFG_NUMBER 4
 #endif
 
 #define ESP_CFG_MAX_INDEX (ESP_CFG_NUMBER - 1)

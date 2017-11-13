@@ -9,6 +9,6 @@ Demonstrates how to:
 ```
 $ cd build
 $ cmake ..
-$ make cfg_flash
+$ make cfg_ex_flash
 $ miniterm.py /dev/ttyUSB0 74880
 ```

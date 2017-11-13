@@ -28,4 +28,4 @@ target_include_directories(esp_gpio_debug PUBLIC
     ../esp_gpio/include
     ../esp_util/include)
 
-esp_gen_lib(esp_gpio_debug ${ESP_CMAKE_FIND_DIR})
+esp_gen_lib(esp_gpio_debug)

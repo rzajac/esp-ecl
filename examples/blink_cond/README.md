@@ -13,6 +13,6 @@ Demonstrates how to:
 ```
 $ cd build
 $ cmake ..
-$ make blink_cond_flash
+$ make blink_cond_ex_flash
 $ miniterm.py /dev/ttyUSB0 74880
 ```

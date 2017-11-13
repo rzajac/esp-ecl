@@ -24,4 +24,4 @@ target_include_directories(esp_tim PUBLIC
     $<INSTALL_INTERFACE:include>
     ${ESP_USER_CONFIG_DIR})
 
-esp_gen_lib(esp_tim ${ESP_CMAKE_FIND_DIR})
+esp_gen_lib(esp_tim)

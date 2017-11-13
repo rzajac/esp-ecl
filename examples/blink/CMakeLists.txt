@@ -16,7 +16,7 @@
 # The example doesn't use cmake find_package() function because we want
 # local libraries not the ones installed in $ESPROOT.
 
-add_executable(blink main.c ${ESP_USER_CONFIG})
-target_include_directories(blink PUBLIC ${ESP_USER_CONFIG_DIR})
-target_link_libraries(blink esp_sdo esp_gpio)
-esp_gen_exec_targets(blink)
+add_executable(blink_ex main.c ${ESP_USER_CONFIG})
+target_include_directories(blink_ex PUBLIC ${ESP_USER_CONFIG_DIR})
+target_link_libraries(blink_ex esp_sdo esp_gpio)
+esp_gen_exec_targets(blink_ex)

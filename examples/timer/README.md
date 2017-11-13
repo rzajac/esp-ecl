@@ -12,6 +12,6 @@ Demonstrates how to:
 ```
 $ cd build
 $ cmake ..
-$ make timer_flash
+$ make timer_ex_flash
 $ miniterm.py /dev/ttyUSB0 74880
 ```

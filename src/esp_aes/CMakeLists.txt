@@ -24,7 +24,10 @@ target_include_directories(esp_aes PUBLIC
     $<INSTALL_INTERFACE:include>
     ${ESP_USER_CONFIG_DIR})
 
-esp_gen_lib(esp_aes ${ESP_CMAKE_FIND_DIR})
+esp_gen_lib(esp_aes)
 
-install(FILES "${ESP_LIB_BIN_DIR}/gen_aes.sh"
-    DESTINATION "${CMAKE_INSTALL_BINDIR}")
+install(
+    FILES
+      ${ESP_LIB_BIN_DIR}/gen_aes.sh
+    DESTINATION
+      ${CMAKE_INSTALL_BINDIR})

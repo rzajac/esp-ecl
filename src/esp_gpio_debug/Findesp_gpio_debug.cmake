@@ -36,6 +36,7 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_gpio_debug
     DEFAULT_MSG
     esp_gpio_debug_LIBRARY
     esp_gpio_debug_INCLUDE_DIR
+    esp_util_LIBRARIES
     esp_util_INCLUDE_DIRS)
 
 set(esp_gpio_debug_INCLUDE_DIRS

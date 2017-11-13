@@ -16,7 +16,7 @@
 # The example doesn't use cmake find_package() function because we want
 # local libraries not the ones installed in $ESPROOT.
 
-add_executable(aes main.c ${ESP_USER_CONFIG})
-target_include_directories(aes PUBLIC ${ESP_USER_CONFIG_DIR})
-target_link_libraries(aes esp_sdo esp_aes esp_util)
-esp_gen_exec_targets(aes)
+add_executable(aes_ex main.c ${ESP_USER_CONFIG})
+target_include_directories(aes_ex PUBLIC ${ESP_USER_CONFIG_DIR})
+target_link_libraries(aes_ex esp_sdo esp_aes esp_util)
+esp_gen_exec_targets(aes_ex)

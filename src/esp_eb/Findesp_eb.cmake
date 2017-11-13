@@ -35,7 +35,9 @@ include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_eb
     DEFAULT_MSG
     esp_eb_LIBRARY
-    esp_eb_INCLUDE_DIR)
+    esp_eb_INCLUDE_DIR
+    esp_tim_LIBRARIES
+    esp_tim_INCLUDE_DIRS)
 
 set(esp_eb_INCLUDE_DIRS ${esp_eb_INCLUDE_DIR} ${esp_tim_INCLUDE_DIRS})
 set(esp_eb_LIBRARIES ${esp_eb_LIBRARY} ${esp_tim_LIBRARIES})

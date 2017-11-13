@@ -16,7 +16,7 @@
 # The example doesn't use cmake find_package() function because we want
 # local libraries not the ones installed in $ESPROOT.
 
-add_executable(events main.c ${ESP_USER_CONFIG})
-target_include_directories(events PUBLIC ${ESP_USER_CONFIG_DIR})
-target_link_libraries(events esp_sdo esp_eb esp_tim)
-esp_gen_exec_targets(events)
+add_executable(events_ex main.c ${ESP_USER_CONFIG})
+target_include_directories(events_ex PUBLIC ${ESP_USER_CONFIG_DIR})
+target_link_libraries(events_ex esp_sdo esp_eb)
+esp_gen_exec_targets(events_ex)
