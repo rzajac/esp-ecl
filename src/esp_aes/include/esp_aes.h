@@ -20,7 +20,7 @@
 // reduces code size considerably with the Keil ARM compiler.
 // See this link for more information: https://github.com/kokke/tiny-AES128-C/pull/3
 #ifndef MULTIPLY_AS_A_FUNCTION
-  #define MULTIPLY_AS_A_FUNCTION 0
+#define MULTIPLY_AS_A_FUNCTION 0
 #endif
 
 /*****************************************************************************/
@@ -30,7 +30,30 @@
 // Array holding the intermediate results during decryption.
 typedef uint8_t state_t[4][4];
 
+/**
+ * AES encrypt.
+ *
+ * @param output Output buffer.
+ * @param input  Input buffer.
+ * @param length Input buffer length.
+ * @param key    The AES key.
+ * @param iv     The AES vector.
+ *
+ * @return The encrypted data length in bytes.
+ */
 uint32_t esp_aes_encrypt(uint8_t *output, uint8_t *input, uint32_t length, const uint8_t *key, const uint8_t *iv);
+
+/**
+ * AES decrypt.
+ *
+ * @param output Output buffer.
+ * @param input  Input buffer.
+ * @param length Input buffer length.
+ * @param key    The AES key.
+ * @param iv     The AES vector.
+ *
+ * @return The decrypted data length in bytes.
+ */
 uint32_t esp_aes_decrypt(uint8_t *output, uint8_t *input, uint32_t length, const uint8_t *key, const uint8_t *iv);
 
 #endif //ESP_AES_H
