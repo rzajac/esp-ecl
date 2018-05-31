@@ -68,7 +68,7 @@ void ICACHE_FLASH_ATTR
 esp_util_dump_bytes(const char *label, const uint8_t *buf, uint16 len);
 
 /**
- * Rise base to power of.
+ * Rise base to power of exp.
  *
  * From: http://bbs.espressif.com/viewtopic.php?t=246
  *

@@ -51,6 +51,17 @@ typedef enum {
   ESP_EB_ATTACH_MEM // Out of memory.
 } esp_eb_err;
 
+// The available for attaching wifi events.
+#define ESP_EB_EVENT_STAMODE_CONNECTED "espEbStaConn"
+#define ESP_EB_EVENT_STAMODE_DISCONNECTED "espEbStaDisc"
+#define ESP_EB_EVENT_STAMODE_AUTHMODE_CHANGE "espEbStaAuth"
+#define ESP_EB_EVENT_STAMODE_GOT_IP "espEbStaIP"
+#define ESP_EB_EVENT_STAMODE_DHCP_TIMEOUT "espEbStaDTO"
+#define ESP_EB_EVENT_SOFTAPMODE_STACONNECTED "espEbSftConn"
+#define ESP_EB_EVENT_SOFTAPMODE_STADISCONNECTED "espEbSftDisc"
+#define ESP_EB_EVENT_OPMODE_CHANGED "espEbOp"
+#define ESP_EB_EVENT_SOFTAPMODE_PROBEREQRECVED "espEbStaPro"
+
 /**
  * Subscribe to event.
  *
@@ -114,6 +125,15 @@ esp_eb_trigger(const char *event, void *arg);
  */
 void ICACHE_FLASH_ATTR
 esp_eb_trigger_delayed(const char *event_name, uint32_t delay, void *arg);
+
+/**
+ * Make esp_eb to trigger events on WiFi events.
+ *
+ * After calling this function you will be able to
+ * attach callbacks to ESP_EB_EVENT_* events.
+ */
+void ICACHE_FLASH_ATTR
+esp_eb_handle_wifi_events();
 
 /**
  * Print elements in the event list.

@@ -173,7 +173,7 @@ esp_eb_attach_throttled(const char *event_name, esp_eb_cb *cb, uint32_t throttle
   if (node == NULL && tail == NULL) {
     head = new_node(event_name, cb, throttle_us);
     if (head == NULL) return ESP_EB_ATTACH_MEM;
-    ESP_EB_DEBUG("Added head (%p) %s %d %p\n", head, event_name, throttle_us, cb);
+    ESP_EB_DEBUG("added head (%p) %s %d %p\n", head, event_name, throttle_us, cb);
 
     return ESP_EB_ATTACH_OK;
   }
@@ -184,7 +184,7 @@ esp_eb_attach_throttled(const char *event_name, esp_eb_cb *cb, uint32_t throttle
   tail->next = new_node(event_name, cb, throttle_us);
   if (tail->next == NULL) return ESP_EB_ATTACH_MEM;
 
-  ESP_EB_DEBUG("Added %s %d %p\n", event_name, throttle_us, cb);
+  ESP_EB_DEBUG("added %s %d %p\n", event_name, throttle_us, cb);
   return ESP_EB_ATTACH_OK;
 }
 
@@ -206,7 +206,7 @@ esp_eb_detach(const char *event_name, esp_eb_cb *cb)
   if (curr == head) head = curr->next;
   free_node(curr);
 
-  ESP_EB_DEBUG("Detached node %s %p\n", event_name, cb);
+  ESP_EB_DEBUG("detached node %s %p\n", event_name, cb);
   return true;
 }
 
@@ -229,7 +229,7 @@ esp_eb_remove_cb(esp_eb_cb *cb)
   if (curr == head) head = curr->next;
   free_node(curr);
 
-  ESP_EB_DEBUG("Detached node %s %p\n", curr->event->name, curr->event->cb);
+  ESP_EB_DEBUG("detached node %s %p\n", curr->event->name, curr->event->cb);
   return true;
 }
 
@@ -275,7 +275,7 @@ timer_start(const eb_node *node, void *payload, uint32_t delay)
   if (!event) return false;
   event->payload = payload;
 
-  ESP_EB_DEBUG("Scheduling %s in %d ms.\n", node->event->name, delay);
+  ESP_EB_DEBUG("scheduling %s in %d ms\n", node->event->name, delay);
   return esp_tim_start_delay(timer_cb, event, delay);
 }
 
@@ -287,7 +287,7 @@ esp_eb_trigger_delayed(const char *event_name, uint32_t delay, void *arg)
   while (curr) {
     if (strcmp(curr->event->name, event_name) == 0) {
       if (timer_start(curr, arg, delay) == false) {
-        ESP_EB_ERROR("Scheduling delayed timer timer for %s failed.\n", event_name);
+        ESP_EB_ERROR("error scheduling timer for %s\n", event_name);
       }
     }
     curr = curr->next;
@@ -303,10 +303,81 @@ esp_eb_trigger(const char *event, void *arg)
 void ICACHE_FLASH_ATTR
 esp_eb_print_list()
 {
-  os_printf("List state:\n");
+  os_printf("list state:\n");
   eb_node *node = head;
   while (node != NULL) {
     os_printf("    %s %p\n", node->event->name, node->event->cb);
     node = node->next;
   }
+}
+
+/**
+ * The WiFi events handler.
+ *
+ * @param event The WiFi event.
+ */
+static void ICACHE_FLASH_ATTR
+wifi_event_cb(System_Event_t *event)
+{
+  switch (event->event) {
+    case EVENT_STAMODE_CONNECTED:
+      ESP_EB_DEBUG("EVENT_STAMODE_CONNECTED\n");
+      esp_eb_trigger(ESP_EB_EVENT_STAMODE_CONNECTED, (void *) event);
+      break;
+
+    case EVENT_STAMODE_DISCONNECTED:
+      ESP_EB_DEBUG("EVENT_STAMODE_DISCONNECTED reason %d\n",
+                    event->event_info.disconnected.reason);
+      esp_eb_trigger(ESP_EB_EVENT_STAMODE_DISCONNECTED, (void *) event);
+      break;
+
+    case EVENT_STAMODE_AUTHMODE_CHANGE:
+      ESP_EB_DEBUG("EVENT_STAMODE_AUTHMODE_CHANGE %d -> %d\n",
+                    event->event_info.auth_change.old_mode,
+                    event->event_info.auth_change.new_mode);
+      esp_eb_trigger(ESP_EB_EVENT_STAMODE_AUTHMODE_CHANGE, (void *) event);
+      break;
+
+    case EVENT_STAMODE_GOT_IP:
+      ESP_EB_DEBUG("EVENT_STAMODE_GOT_IP %d.%d.%d.%d / %d.%d.%d.%d\n",
+                    IP2STR(&(event->event_info.got_ip.ip)),
+                    IP2STR(&(event->event_info.got_ip.mask)));
+      esp_eb_trigger(ESP_EB_EVENT_STAMODE_GOT_IP, (void *) event);
+      break;
+
+    case EVENT_STAMODE_DHCP_TIMEOUT:
+      ESP_EB_DEBUG("EVENT_STAMODE_DHCP_TIMEOUT\n");
+      esp_eb_trigger(ESP_EB_EVENT_STAMODE_DHCP_TIMEOUT, (void *) event);
+      break;
+
+    case EVENT_SOFTAPMODE_STACONNECTED:
+      ESP_EB_DEBUG("EVENT_SOFTAPMODE_STACONNECTED\n");
+      esp_eb_trigger(ESP_EB_EVENT_SOFTAPMODE_STACONNECTED, (void *) event);
+      break;
+
+    case EVENT_SOFTAPMODE_STADISCONNECTED:
+      ESP_EB_DEBUG("EVENT_SOFTAPMODE_STADISCONNECTED\n");
+      esp_eb_trigger(ESP_EB_EVENT_SOFTAPMODE_STADISCONNECTED, (void *) event);
+      break;
+
+    case EVENT_OPMODE_CHANGED:
+      ESP_EB_DEBUG("EVENT_OPMODE_CHANGED %d\n", wifi_get_opmode());
+      esp_eb_trigger(ESP_EB_EVENT_OPMODE_CHANGED, (void *) event);
+      break;
+
+    case EVENT_SOFTAPMODE_PROBEREQRECVED:
+      esp_eb_trigger(ESP_EB_EVENT_SOFTAPMODE_PROBEREQRECVED, (void *) event);
+      break;
+
+    default:
+      ESP_EB_ERROR("unexpected wifi event: %d\n", event->event);
+      break;
+  }
+}
+
+
+void ICACHE_FLASH_ATTR
+esp_eb_handle_wifi_events()
+{
+  wifi_set_event_handler_cb(wifi_event_cb);
 }
