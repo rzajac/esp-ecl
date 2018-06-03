@@ -16,12 +16,12 @@
 #
 # Once done this will define:
 #
-#   esp_tim_FOUND        - System found the library.
-#   esp_tim_INCLUDE_DIR  - The library include directory.
-#   esp_tim_INCLUDE_DIRS - If library has dependencies this will be set
+#   esp_eb_FOUND        - System found the library.
+#   esp_eb_INCLUDE_DIR  - The library include directory.
+#   esp_eb_INCLUDE_DIRS - If library has dependencies this will be set
 #                          to <lib_name>_INCLUDE_DIR [<dep1_name_INCLUDE_DIRS>, ...].
-#   esp_tim_LIBRARY      - The path to the library.
-#   esp_tim_LIBRARIES    - The dependencies to link to use the library.
+#   esp_eb_LIBRARY      - The path to the library.
+#   esp_eb_LIBRARIES    - The dependencies to link to use the library.
 #                          It will have a form of <lib_name>_LIBRARY [dep1_name_LIBRARIES, ...].
 #
 
@@ -30,14 +30,24 @@ find_path(esp_eb_INCLUDE_DIR esp_eb.h)
 find_library(esp_eb_LIBRARY NAMES esp_eb)
 
 find_package(esp_tim REQUIRED)
+find_package(esp_util REQUIRED)
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_eb
-    DEFAULT_MSG
-    esp_eb_LIBRARY
-    esp_eb_INCLUDE_DIR
-    esp_tim_LIBRARIES
-    esp_tim_INCLUDE_DIRS)
+        DEFAULT_MSG
+        esp_eb_LIBRARY
+        esp_eb_INCLUDE_DIR
+        esp_tim_LIBRARIES
+        esp_tim_INCLUDE_DIRS
+        esp_util_LIBRARIES
+        esp_util_INCLUDE_DIRS)
 
-set(esp_eb_INCLUDE_DIRS ${esp_eb_INCLUDE_DIR} ${esp_tim_INCLUDE_DIRS})
-set(esp_eb_LIBRARIES ${esp_eb_LIBRARY} ${esp_tim_LIBRARIES})
+set(esp_eb_INCLUDE_DIRS
+    ${esp_eb_INCLUDE_DIR}
+    ${esp_tim_INCLUDE_DIRS}
+    ${esp_util_INCLUDE_DIRS})
+
+set(esp_eb_LIBRARIES
+    ${esp_eb_LIBRARY}
+    ${esp_tim_LIBRARIES}
+    ${esp_util_LIBRARIES})

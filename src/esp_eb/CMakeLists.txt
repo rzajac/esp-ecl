@@ -18,13 +18,15 @@ project(esp_eb C)
 add_library(esp_eb STATIC
     esp_eb.c
     include/esp_eb.h
-    ../esp_tim/include/esp_tim.h)
+    ../esp_tim/include/esp_tim.h
+    ../esp_util/include/esp_util.h)
 
 target_include_directories(esp_eb PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     ${ESP_USER_CONFIG_DIR}
-    ../esp_tim/include)
+    ../esp_tim/include
+    ../esp_util/include)
 
 target_link_libraries(esp_eb esp_tim)
 

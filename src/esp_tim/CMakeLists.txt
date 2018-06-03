@@ -16,12 +16,13 @@
 project(esp_tim C)
 
 add_library(esp_tim STATIC
-    esp_tim.c
-    include/esp_tim.h)
+        esp_tim.c
+        include/esp_tim.h)
 
 target_include_directories(esp_tim PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-    ${ESP_USER_CONFIG_DIR})
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+        ${esp_util_INCLUDE_DIRS}
+        ${ESP_USER_CONFIG_DIR})
 
 esp_gen_lib(esp_tim)

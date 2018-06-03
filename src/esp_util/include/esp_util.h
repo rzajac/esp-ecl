@@ -26,6 +26,18 @@
 // How many loops take 1us.
 #define ESP_DELAY_MULTIPLIER 3
 
+
+/**
+ * Duplicate string.
+ *
+ * User must take care of releasing memory allocated to
+ * string duplicate.
+ *
+ * @param str The string to duplicate.
+ */
+char *ICACHE_FLASH_ATTR
+esp_util_strdup(const char *str);
+
 /**
  * Noop delay.
  *

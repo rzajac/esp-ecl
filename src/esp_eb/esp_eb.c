@@ -18,6 +18,7 @@
 #include <mem.h>
 #include <user_interface.h>
 #include <esp_tim.h>
+#include <esp_util.h>
 
 
 // Structure defining event.
@@ -42,27 +43,6 @@ typedef struct node
 static eb_node *head;
 
 /**
- * Duplicate string.
- *
- * User must take care of releasing memory allocated to
- * string duplicate.
- *
- * @param str The string to duplicate.
- */
-static char *ICACHE_FLASH_ATTR
-esp_eb_strdup(const char *str)
-{
-  size_t len;
-  char *copy;
-
-  len = strlen(str) + 1;
-  if (!(copy = os_zalloc(len))) return 0;
-  memcpy(copy, str, len);
-
-  return copy;
-}
-
-/**
  * Create new event structure.
  *
  * @param event_name  The event name.
@@ -75,7 +55,7 @@ event_new(const char *event_name, esp_eb_cb *cb, uint32_t throttle_us)
   eb_event *new = os_zalloc(sizeof(eb_event));
   if (new == NULL) return NULL;
 
-  new->name = esp_eb_strdup(event_name);
+  new->name = esp_util_strdup(event_name);
   new->cb = cb;
   new->throttle_us = throttle_us;
 

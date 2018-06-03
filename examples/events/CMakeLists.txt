@@ -18,5 +18,5 @@
 
 add_executable(events_ex main.c ${ESP_USER_CONFIG})
 target_include_directories(events_ex PUBLIC ${ESP_USER_CONFIG_DIR})
-target_link_libraries(events_ex esp_sdo esp_eb)
+target_link_libraries(events_ex esp_sdo esp_eb esp_util)
 esp_gen_exec_targets(events_ex)
