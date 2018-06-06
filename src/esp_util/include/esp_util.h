@@ -34,6 +34,8 @@
  * string duplicate.
  *
  * @param str The string to duplicate.
+ *
+ * @return Pointer to duplicated string or NULL on error.
  */
 char *ICACHE_FLASH_ATTR
 esp_util_strdup(const char *str);
