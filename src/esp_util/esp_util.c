@@ -37,15 +37,11 @@ void esp_util_delay_us(uint32_t us)
   uint32_t idx;
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-  #pragma clang diagnostic ignored "-Wunused-variable"
   uint32_t reg;
   #pragma GCC diagnostic pop
 
   us *= ESP_DELAY_MULTIPLIER;
-  #pragma clang diagnostic push
-  #pragma ide diagnostic ignored "UnusedValue"
   for (idx = 0; idx < us; idx++) reg = *((volatile uint32_t *) (ESP_DELAY_REG_READ));
-  #pragma clang diagnostic pop
 }
 
 void ICACHE_FLASH_ATTR
