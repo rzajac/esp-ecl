@@ -22,14 +22,14 @@
 #include <os_type.h>
 
 
-// The default timer delay.
+// The default timer delay in milliseconds.
 #define ESP_TIM_DELAY_DEF 10
 
 // The structure wrapping timer data.
 typedef struct {
   os_timer_func_t *os_timer_cb; // System timer callback.
   os_timer_t *_os_timer;        // System timer. Don't touch it.
-  uint32_t delay;               // The timer delay.
+  uint32_t delay;               // The timer delay in milliseconds.
   void *payload;                // The payload.
 } esp_tim_timer;
 
@@ -40,9 +40,9 @@ typedef struct {
  * @param cb      The callback.
  * @param payload The timer payload.
  *
- * @return Returns true on success, false on failure.
+ * @return Returns timer structure.
  */
-bool ICACHE_FLASH_ATTR
+esp_tim_timer *ICACHE_FLASH_ATTR
 esp_tim_start(os_timer_func_t cb, void *payload);
 
 /**
@@ -58,11 +58,11 @@ esp_tim_disarm(esp_tim_timer *timer);
  *
  * @param cb      The callback.
  * @param payload The timer payload.
- * @param delay   The delay in microseconds.
+ * @param delay   The delay in milliseconds.
  *
- * @return Returns true on success, false on failure.
+ * @return Returns timer structure.
  */
-bool ICACHE_FLASH_ATTR
+esp_tim_timer *ICACHE_FLASH_ATTR
 esp_tim_start_delay(os_timer_func_t cb, void *payload, uint32_t delay);
 
 /**

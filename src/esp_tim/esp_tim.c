@@ -20,16 +20,16 @@
 #include <osapi.h>
 
 
-bool ICACHE_FLASH_ATTR
+esp_tim_timer *ICACHE_FLASH_ATTR
 esp_tim_start_delay(os_timer_func_t cb, void *payload, uint32_t delay)
 {
   esp_tim_timer *timer = os_zalloc(sizeof(esp_tim_timer));
-  if (timer == NULL) return false;
+  if (timer == NULL) return NULL;
 
   timer->_os_timer = os_zalloc(sizeof(os_timer_t));
   if (timer->_os_timer == NULL) {
     os_free(timer);
-    return false;
+    return NULL;
   }
 
   timer->os_timer_cb = cb;
@@ -39,10 +39,10 @@ esp_tim_start_delay(os_timer_func_t cb, void *payload, uint32_t delay)
   os_timer_setfn(timer->_os_timer, timer->os_timer_cb, (void *) timer);
   os_timer_arm(timer->_os_timer, delay, false);
 
-  return true;
+  return timer;
 }
 
-bool ICACHE_FLASH_ATTR
+esp_tim_timer *ICACHE_FLASH_ATTR
 esp_tim_start(os_timer_func_t cb, void *payload)
 {
   return esp_tim_start_delay(cb, payload, ESP_TIM_DELAY_DEF);
