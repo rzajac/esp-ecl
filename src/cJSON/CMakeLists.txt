@@ -13,13 +13,27 @@
 # under the License.
 
 
-add_subdirectory(esp_aes)
-add_subdirectory(esp_cfg)
-add_subdirectory(esp_eb)
-add_subdirectory(esp_gpio)
-add_subdirectory(esp_gpio_debug)
-add_subdirectory(esp_json)
-add_subdirectory(esp_sdo)
-add_subdirectory(esp_tim)
-add_subdirectory(esp_util)
-add_subdirectory(cJSON)
+project(c_json C)
+
+set(SOURCE_FILES
+    cJSON.c
+    cJSON_Utils.c)
+
+set(HEADER_FILES
+    include/cJSON.h
+    include/cJSON_Utils.h)
+
+set(PRIVATE_HEADER_FILES
+    include/cJSON_Esp.h)
+
+add_library(c_json STATIC
+    ${SOURCE_FILES}
+    ${HEADER_FILES}
+    ${PRIVATE_HEADER_FILES})
+
+target_include_directories(c_json PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+    ${ESP_USER_CONFIG_DIR})
+
+esp_gen_lib(c_json)
