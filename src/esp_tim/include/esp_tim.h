@@ -40,7 +40,7 @@ typedef struct {
  * @param cb      The callback.
  * @param payload The timer payload.
  *
- * @return Returns timer structure.
+ * @return Returns timer structure or NULL when out of memory.
  */
 esp_tim_timer *ICACHE_FLASH_ATTR
 esp_tim_start(os_timer_func_t cb, void *payload);
@@ -60,7 +60,7 @@ esp_tim_disarm(esp_tim_timer *timer);
  * @param payload The timer payload.
  * @param delay   The delay in milliseconds.
  *
- * @return Returns timer structure.
+ * @return Returns timer structure or NULL when out of memory.
  */
 esp_tim_timer *ICACHE_FLASH_ATTR
 esp_tim_start_delay(os_timer_func_t cb, void *payload, uint32_t delay);
