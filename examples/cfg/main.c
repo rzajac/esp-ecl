@@ -15,10 +15,10 @@
  */
 
 
-#include <esp_cfg.h>
-#include <esp_sdo.h>
 #include <osapi.h>
 #include <user_interface.h>
+#include "esp_cfg.h"
+#include "esp_sdo.h"
 
 // The my_config0 magic number.
 #define MY_CFG_MAGIC_0 0xA3

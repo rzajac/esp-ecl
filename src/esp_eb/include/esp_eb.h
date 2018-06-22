@@ -21,22 +21,11 @@
 #include <c_types.h>
 #include <osapi.h>
 
-
 #ifndef ESP_EB_DEBUG_ON
-  #define ESP_EB_DEBUG_ON 0
+  #ifdef DEBUG_ON
+    #define ESP_EB_DEBUG_ON
+  #endif
 #endif
-
-#ifndef DEBUG_ON
-  #define DEBUG_ON 0
-#endif
-
-#if ESP_EB_DEBUG_ON || DEBUG_ON
-  #define ESP_EB_DEBUG(format, ...) os_printf("EB DBG: " format, ## __VA_ARGS__ )
-#else
-  #define ESP_EB_DEBUG(format, ...) do {} while(0)
-#endif
-
-#define ESP_EB_ERROR(format, ...) os_printf("EB ERR: " format, ## __VA_ARGS__ )
 
 // The number of milliseconds to use when arming the event callback timer.
 #define ESP_EB_TIMER_MS 10

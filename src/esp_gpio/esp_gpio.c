@@ -14,7 +14,10 @@
  * under the License.
  */
 
-#include <esp_gpio.h>
+
+#include <osapi.h>
+#include "include/esp_gpio.h"
+
 
 // GPIO MUX register address offsets.
 uint16_t esp_gpio_mux[17] = {0x834, 0x818, 0x838, 0x814,

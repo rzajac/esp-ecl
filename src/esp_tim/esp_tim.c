@@ -15,9 +15,9 @@
  */
 
 
-#include <esp_tim.h>
 #include <mem.h>
 #include <osapi.h>
+#include "../esp_tim/include/esp_tim.h"
 
 
 esp_tim_timer *ICACHE_FLASH_ATTR

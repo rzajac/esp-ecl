@@ -14,11 +14,14 @@
  * under the License.
  */
 
-#include <esp_eb.h>
+
 #include <mem.h>
 #include <user_interface.h>
-#include <esp_tim.h>
-#include <esp_util.h>
+
+#include "../esp_tim/include/esp_tim.h"
+#include "../esp_util/include/esp_util.h"
+#include "include/esp_eb.h"
+#include "include/esp_eb_internal.h"
 
 
 // Structure defining event.

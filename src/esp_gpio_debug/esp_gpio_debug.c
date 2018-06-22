@@ -15,9 +15,10 @@
  */
 
 
-#include <esp_gpio_debug.h>
-#include <esp_gpio.h>
-#include <esp_util.h>
+#include <osapi.h>
+#include "../esp_gpio/include/esp_gpio.h"
+#include "../esp_util/include/esp_util.h"
+#include "include/esp_gpio_debug.h"
 
 
 void ICACHE_FLASH_ATTR

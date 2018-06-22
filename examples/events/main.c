@@ -15,9 +15,9 @@
  */
 
 
-#include <esp_eb.h>
-#include <esp_sdo.h>
 #include <user_interface.h>
+#include "esp_eb.h"
+#include "esp_sdo.h"
 
 
 #define EVENT_BATTERY_LOW "batteryLow"

@@ -33,8 +33,8 @@ NOTE:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
 /*****************************************************************************/
 /* Includes:                                                                 */
 /*****************************************************************************/
-#include <esp_aes.h>
 #include <osapi.h>
+#include "include/esp_aes.h"
 
 
 /*****************************************************************************/
@@ -182,7 +182,7 @@ static void KeyExpansion(void)
         tempa[0] = tempa[1];
         tempa[1] = tempa[2];
         tempa[2] = tempa[3];
-        tempa[3] = k;
+        tempa[3] = (uint8_t) k;
       }
 
       // SubWord() is a function that takes a four-byte input word and

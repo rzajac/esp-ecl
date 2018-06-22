@@ -15,16 +15,16 @@
 
 project(esp_aes C)
 
-add_library(esp_aes STATIC
+add_library(${PROJECT_NAME} STATIC
     esp_aes.c
     include/esp_aes.h)
 
-target_include_directories(esp_aes PUBLIC
+target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     ${ESP_USER_CONFIG_DIR})
 
-esp_gen_lib(esp_aes)
+esp_gen_lib(${PROJECT_NAME})
 
 install(
     FILES

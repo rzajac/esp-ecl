@@ -22,9 +22,9 @@
 
 /* cJSON */
 /* JSON parser in C. */
-#include <esp_json.h>
 #include <mem.h>
 #include <osapi.h>
+#include "include/esp_json.h"
 
 static const char *ep;
 

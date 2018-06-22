@@ -15,13 +15,13 @@
 
 project(esp_sdo C)
 
-add_library(esp_sdo STATIC
+add_library(${PROJECT_NAME} STATIC
     esp_sdo.c
     include/esp_sdo.h)
 
-target_include_directories(esp_sdo PUBLIC
+target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     ${ESP_USER_CONFIG_DIR})
 
-esp_gen_lib(esp_sdo ${ESP_CMAKE_FIND_DIR})
+esp_gen_lib(${PROJECT_NAME})

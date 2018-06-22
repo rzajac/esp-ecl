@@ -11,9 +11,9 @@
  * The source was modified to use esp_gpio library.
  */
 
-#include <esp_sdo.h>
 #include <user_interface.h>
 #include <osapi.h>
+#include "../esp_sdo/include/esp_sdo.h"
 
 
 static void ICACHE_FLASH_ATTR

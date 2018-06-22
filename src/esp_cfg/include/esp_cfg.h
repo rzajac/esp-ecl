@@ -19,7 +19,6 @@
 #define ESP_CFG_H
 
 #include <c_types.h>
-#include <spi_flash.h>
 
 
 // The start address for configuration sectors.
@@ -31,8 +30,6 @@
 #ifndef ESP_CFG_NUMBER
   #define ESP_CFG_NUMBER 4
 #endif
-
-#define ESP_CFG_MAX_INDEX (ESP_CFG_NUMBER - 1)
 
 // This has the same order as SpiFlashOpResult with additional result codes.
 // We do that so we can easily cast SpiFlashOpResult to esp_cfg_err.

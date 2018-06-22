@@ -15,13 +15,13 @@
 
 project(esp_gpio C)
 
-add_library(esp_gpio STATIC
+add_library(${PROJECT_NAME} STATIC
     esp_gpio.c
     include/esp_gpio.h)
 
-target_include_directories(esp_gpio PUBLIC
+target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     ${ESP_USER_CONFIG_DIR})
 
-esp_gen_lib(esp_gpio)
+esp_gen_lib(${PROJECT_NAME})

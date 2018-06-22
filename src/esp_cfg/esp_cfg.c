@@ -15,9 +15,13 @@
  */
 
 
-#include <esp_cfg.h>
 #include <ets_sys.h>
 #include <mem.h>
+#include <spi_flash.h>
+#include "include/esp_cfg.h"
+
+
+#define ESP_CFG_MAX_INDEX (ESP_CFG_NUMBER - 1)
 
 
 // Type defining user configuration structure.

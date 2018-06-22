@@ -15,19 +15,35 @@
 
 project(esp_eb C)
 
-add_library(esp_eb STATIC
-    esp_eb.c
-    include/esp_eb.h
-    ../esp_tim/include/esp_tim.h
-    ../esp_util/include/esp_util.h)
+set(SOURCE_FILES esp_eb.c)
 
-target_include_directories(esp_eb PUBLIC
+set(HEADER_FILES include/esp_eb.h)
+
+set(PRIVATE_HEADER_FILES include/esp_eb_internal.h)
+
+add_library(${PROJECT_NAME} STATIC
+    ${SOURCE_FILES}
+    ${HEADER_FILES}
+    ${PRIVATE_HEADER_FILES})
+
+target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    ${ESP_USER_CONFIG_DIR}
-    ../esp_tim/include
-    ../esp_util/include)
+    ${esp_tim_INCLUDE_DIRS}
+    ${esp_util_INCLUDE_DIRS}
+    ${ESP_USER_CONFIG_DIR})
 
-target_link_libraries(esp_eb esp_tim)
+target_link_libraries(${PROJECT_NAME} esp_tim esp_util)
 
-esp_gen_lib(esp_eb)
+set_target_properties(
+    ${PROJECT_NAME}
+    PROPERTIES
+    FRAMEWORK ON
+    PUBLIC_HEADER "${HEADER_FILES}"
+    PRIVATE_HEADER "${PRIVATE_HEADER_FILES}")
+
+if($ENV{ESP_EB_DEBUG_ON})
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DESP_EB_DEBUG_ON")
+endif()
+
+esp_gen_lib(${PROJECT_NAME})
