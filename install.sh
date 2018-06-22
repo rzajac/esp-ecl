@@ -25,36 +25,10 @@ LIB_FULL_NAME="rzajac/esp-ecl"
 
 # No modifications below this comment unless you know what you're doing.
 
-LIB_REPO="https://github.com/${LIB_FULL_NAME}"
-LIB_NAME=${LIB_FULL_NAME##*/}
-CMAKE=`which cmake`
-
 # Check / set ESPROOT.
 if [ "${ESPROOT}" == "" ]; then ESPROOT=$HOME/esproot; fi
-if ! [ -d "${ESPROOT}" ]; then mkdir -p ${ESPROOT}; fi
-echo "Using ${ESPROOT} as ESPROOT"
 
-LIB_DST_DIR=${ESPROOT}/src/${LIB_NAME}
+# Install.
+sh ${ESPROOT}/bin/lib-install.sh
 
-echo "Cloning ${LIB_REPO} to ${LIB_DST_DIR}."
-if [ -d "${LIB_DST_DIR}" ]; then
-    echo "Directory ${LIB_DST_DIR} already exists. Will git reset."
-    (cd ${LIB_DST_DIR} && git fetch && git reset --hard origin master)
-else
-    git clone ${LIB_REPO} ${LIB_DST_DIR}
-    if [ $? != 0 ]; then
-        echo "Error: Cloning ${LIB_REPO} failed!"
-        exit 1
-    fi
-fi
-
-echo "Installing library ${LIB_NAME} to ${ESPROOT}"
-rm -rf ${LIB_DST_DIR}/build
-mkdir ${LIB_DST_DIR}/build
-(cd ${LIB_DST_DIR}/build && ${CMAKE} .. && make install)
-if [ $? != 0 ]; then
-    echo "Error: Installing library ${LIB_NAME} failed!"
-    exit 1
-fi
-
-exit 0
+exit ?0
