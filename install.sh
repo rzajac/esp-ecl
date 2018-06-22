@@ -31,4 +31,4 @@ if [ "${ESPROOT}" == "" ]; then ESPROOT=$HOME/esproot; fi
 # Install.
 sh ${ESPROOT}/bin/lib-install.sh
 
-exit ?0
+exit $?
