@@ -26,7 +26,7 @@ export LIB_FULL_NAME="rzajac/esp-ecl"
 # No modifications below this comment unless you know what you're doing.
 
 # Check / set ESPROOT.
-if [ "${ESPROOT}" == "" ]; then ESPROOT=$HOME/esproot; fi
+if [ "x${ESPROOT}" == "x" ]; then ESPROOT=$HOME/esproot; fi
 
 # Install.
 sh ${ESPROOT}/bin/lib-install.sh
