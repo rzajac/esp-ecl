@@ -16,7 +16,7 @@
 
 
 #include <osapi.h>
-#include "include/esp_gpio.h"
+#include "esp_gpio.h"
 
 
 // GPIO MUX register address offsets.

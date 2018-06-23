@@ -43,7 +43,7 @@ typedef struct {
  * @return Returns timer structure or NULL when out of memory.
  */
 esp_tim_timer *ICACHE_FLASH_ATTR
-esp_tim_start(os_timer_func_t cb, void *payload);
+esp_tim_start(os_timer_func_t *cb, void *payload);
 
 /**
  * Disarm timer.
@@ -63,7 +63,7 @@ esp_tim_disarm(esp_tim_timer *timer);
  * @return Returns timer structure or NULL when out of memory.
  */
 esp_tim_timer *ICACHE_FLASH_ATTR
-esp_tim_start_delay(os_timer_func_t cb, void *payload, uint32_t delay);
+esp_tim_start_delay(os_timer_func_t *cb, void *payload, uint32_t delay);
 
 /**
  * Stop timer.

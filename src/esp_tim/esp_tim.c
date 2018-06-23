@@ -17,11 +17,11 @@
 
 #include <mem.h>
 #include <osapi.h>
-#include "../esp_tim/include/esp_tim.h"
+#include "esp_tim.h"
 
 
 esp_tim_timer *ICACHE_FLASH_ATTR
-esp_tim_start_delay(os_timer_func_t cb, void *payload, uint32_t delay)
+esp_tim_start_delay(os_timer_func_t *cb, void *payload, uint32_t delay)
 {
   esp_tim_timer *timer = os_zalloc(sizeof(esp_tim_timer));
   if (timer == NULL) return NULL;
@@ -43,7 +43,7 @@ esp_tim_start_delay(os_timer_func_t cb, void *payload, uint32_t delay)
 }
 
 esp_tim_timer *ICACHE_FLASH_ATTR
-esp_tim_start(os_timer_func_t cb, void *payload)
+esp_tim_start(os_timer_func_t *cb, void *payload)
 {
   return esp_tim_start_delay(cb, payload, ESP_TIM_DELAY_DEF);
 }

@@ -18,14 +18,15 @@
 #include <user_interface.h>
 #include <osapi.h>
 #include <mem.h>
-#include "esp_sdo.h"
-#include "esp_tim.h"
+#include "../../src/esp_sdo/esp_sdo.h"
+#include "../../src/esp_tim/esp_tim.h"
 
 
 typedef struct {
   uint8_t val1;
   int8_t val2;
 } my_data;
+
 
 void ICACHE_FLASH_ATTR
 my_cb(void *arg)

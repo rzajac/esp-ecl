@@ -16,15 +16,11 @@
 project(esp_eb C)
 
 set(SOURCE_FILES esp_eb.c)
-
-set(HEADER_FILES include/esp_eb.h)
-
-set(PRIVATE_HEADER_FILES include/esp_eb_internal.h)
+set(HEADER_FILES esp_eb.h)
+set(PRIVATE_HEADER_FILES esp_eb_internal.h)
 
 add_library(${PROJECT_NAME} STATIC
-    ${SOURCE_FILES}
-    ${HEADER_FILES}
-    ${PRIVATE_HEADER_FILES})
+    ${SOURCE_FILES} ${HEADER_FILES} ${PRIVATE_HEADER_FILES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

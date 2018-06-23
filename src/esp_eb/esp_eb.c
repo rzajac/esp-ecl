@@ -18,26 +18,24 @@
 #include <mem.h>
 #include <user_interface.h>
 
-#include "../esp_tim/include/esp_tim.h"
-#include "../esp_util/include/esp_util.h"
-#include "include/esp_eb.h"
-#include "include/esp_eb_internal.h"
+#include "../esp_tim/esp_tim.h"
+#include "../esp_util/esp_util.h"
+#include "esp_eb.h"
+#include "esp_eb_internal.h"
 
 
 // Structure defining event.
-typedef struct
-{
+typedef struct {
   char *name;           // Event name.
   esp_eb_cb *cb;        // Event callback function.
   uint32_t ctime_us;    // Last time callback was called.
   uint32_t throttle_us; // Throttle callback calls (0 - no throttle).
-                        // The minimum number of microseconds to wait between callback executions.
+  // The minimum number of microseconds to wait between callback executions.
   void *payload;        // Passed to callback.
 } eb_event;
 
 // Linked list of attached events.
-typedef struct node
-{
+typedef struct node {
   eb_event *event;   // The event.
   struct node *next; // The pointer to the next node on the list.
 } eb_node;
@@ -249,7 +247,7 @@ timer_cb(void *arg)
   esp_tim_stop(timer);
 }
 
-static bool ICACHE_FLASH_ATTR
+static esp_tim_timer *ICACHE_FLASH_ATTR
 timer_start(const eb_node *node, void *payload, uint32_t delay)
 {
   // We are scheduling callback, by the time it is called
@@ -269,7 +267,7 @@ esp_eb_trigger_delayed(const char *event_name, uint32_t delay, void *arg)
 
   while (curr) {
     if (strcmp(curr->event->name, event_name) == 0) {
-      if (timer_start(curr, arg, delay) == false) {
+      if (timer_start(curr, arg, delay) == NULL) {
         ESP_EB_ERROR("error scheduling timer for %s\n", event_name);
       }
     }
@@ -310,21 +308,21 @@ wifi_event_cb(System_Event_t *event)
 
     case EVENT_STAMODE_DISCONNECTED:
       ESP_EB_DEBUG("EVENT_STAMODE_DISCONNECTED reason %d\n",
-                    event->event_info.disconnected.reason);
+                   event->event_info.disconnected.reason);
       esp_eb_trigger(ESP_EB_EVENT_STAMODE_DISCONNECTED, (void *) event);
       break;
 
     case EVENT_STAMODE_AUTHMODE_CHANGE:
       ESP_EB_DEBUG("EVENT_STAMODE_AUTHMODE_CHANGE %d -> %d\n",
-                    event->event_info.auth_change.old_mode,
-                    event->event_info.auth_change.new_mode);
+                   event->event_info.auth_change.old_mode,
+                   event->event_info.auth_change.new_mode);
       esp_eb_trigger(ESP_EB_EVENT_STAMODE_AUTHMODE_CHANGE, (void *) event);
       break;
 
     case EVENT_STAMODE_GOT_IP:
       ESP_EB_DEBUG("EVENT_STAMODE_GOT_IP %d.%d.%d.%d / %d.%d.%d.%d\n",
-                    IP2STR(&(event->event_info.got_ip.ip)),
-                    IP2STR(&(event->event_info.got_ip.mask)));
+                   IP2STR(&(event->event_info.got_ip.ip)),
+                   IP2STR(&(event->event_info.got_ip.mask)));
       esp_eb_trigger(ESP_EB_EVENT_STAMODE_GOT_IP, (void *) event);
       break;
 

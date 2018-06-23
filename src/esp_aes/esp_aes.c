@@ -34,7 +34,7 @@ NOTE:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
 /* Includes:                                                                 */
 /*****************************************************************************/
 #include <osapi.h>
-#include "include/esp_aes.h"
+#include "esp_aes.h"
 
 
 /*****************************************************************************/
@@ -431,7 +431,7 @@ static void InvCipher(void)
   AddRoundKey(0);
 }
 
-static void BlockCopy(uint8_t* output, uint8_t* input)
+static void BlockCopy(uint8_t* output, const uint8_t* input)
 {
   uint8_t i;
   for (i=0;i<KEYLEN;++i)
@@ -440,7 +440,7 @@ static void BlockCopy(uint8_t* output, uint8_t* input)
   }
 }
 
-static void FragmentCopy(uint8_t* output, uint8_t* input, uint8_t len)
+static void FragmentCopy(uint8_t* output, const uint8_t* input, uint8_t len)
 {
   uint8_t i;
   for (i=0;i<len;++i)

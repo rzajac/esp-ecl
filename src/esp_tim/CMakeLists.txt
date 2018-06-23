@@ -15,14 +15,22 @@
 
 project(esp_tim C)
 
-add_library(${PROJECT_NAME} STATIC
-        esp_tim.c
-        include/esp_tim.h)
+set(SOURCE_FILES esp_tim.c)
+set(HEADER_FILES esp_tim.h)
+
+add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
         $<INSTALL_INTERFACE:include>
         ${esp_util_INCLUDE_DIRS}
         ${ESP_USER_CONFIG_DIR})
+
+set_target_properties(
+    ${PROJECT_NAME}
+    PROPERTIES
+    FRAMEWORK ON
+    PUBLIC_HEADER "${HEADER_FILES}"
+    PRIVATE_HEADER "${PRIVATE_HEADER_FILES}")
 
 esp_gen_lib(${PROJECT_NAME})

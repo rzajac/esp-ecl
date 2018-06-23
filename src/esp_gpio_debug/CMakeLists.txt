@@ -15,9 +15,10 @@
 
 project(esp_gpio_debug C)
 
-add_library(${PROJECT_NAME} STATIC
-    esp_gpio_debug.c
-    include/esp_gpio_debug.h)
+set(SOURCE_FILES esp_gpio_debug.c)
+set(HEADER_FILES esp_gpio_debug.h)
+
+add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -25,5 +26,12 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${ESP_USER_CONFIG_DIR}
     ${esp_gpio_INCLUDE_DIRS}
     ${esp_util_INCLUDE_DIRS})
+
+set_target_properties(
+    ${PROJECT_NAME}
+    PROPERTIES
+    FRAMEWORK ON
+    PUBLIC_HEADER "${HEADER_FILES}"
+    PRIVATE_HEADER "${PRIVATE_HEADER_FILES}")
 
 esp_gen_lib(${PROJECT_NAME})

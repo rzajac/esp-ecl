@@ -17,4 +17,4 @@ This library will allow you to:
  - pass arguments during event trigger
  
 See [example program](../../examples/events) and library documentation in 
-[esp_eb.h](include/esp_eb.h) header file for more details.
+[esp_eb.h](esp_eb.h) header file for more details.

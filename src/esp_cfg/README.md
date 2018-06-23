@@ -22,4 +22,4 @@ You can customize where the library stores your data with
 `ESP_CFG_START_SECTOR` and `ESP_CFG_NUMBER` in `esp_config.h` file.
 
 See [example program](../../examples/cfg) and library documentation in 
-[esp_cfg.h](include/esp_cfg.h) header file for more details.
+[esp_cfg.h](esp_cfg.h) header file for more details.

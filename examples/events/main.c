@@ -16,8 +16,8 @@
 
 
 #include <user_interface.h>
-#include "esp_eb.h"
-#include "esp_sdo.h"
+#include "../../src/esp_sdo/esp_sdo.h"
+#include "../../src/esp_eb/esp_eb.h"
 
 
 #define EVENT_BATTERY_LOW "batteryLow"
@@ -25,6 +25,7 @@
 #define EVENT_THROTTLED "throttled"
 
 uint32_t arg1, arg2;
+
 
 void ICACHE_FLASH_ATTR
 my_event1_cb(const char *event, void *arg)

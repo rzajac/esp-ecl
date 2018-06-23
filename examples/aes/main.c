@@ -14,12 +14,13 @@
  * under the License.
  */
 
+
 #include <user_interface.h>
 #include <osapi.h>
 #include <mem.h>
-#include "esp_sdo.h"
-#include "esp_aes.h"
-#include "esp_util.h"
+#include "../../src/esp_sdo/esp_sdo.h"
+#include "../../src/esp_util/esp_util.h"
+#include "../../src/esp_aes/esp_aes.h"
 
 
 // AES key and initialization vector.

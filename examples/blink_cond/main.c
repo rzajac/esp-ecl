@@ -17,8 +17,9 @@
 
 #include <user_interface.h>
 #include <osapi.h>
-#include "esp_gpio.h"
-#include "esp_sdo.h"
+#include "../../src/esp_sdo/esp_sdo.h"
+#include "../../src/esp_gpio/esp_gpio.h"
+
 
 static os_timer_t timer;
 
