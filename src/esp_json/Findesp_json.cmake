@@ -26,7 +26,7 @@
 #
 
 
-find_path(esp_json_INCLUDE_DIR include/esp_json.h)
+find_path(esp_json_INCLUDE_DIR esp_json.h)
 find_library(esp_json_LIBRARY NAMES esp_json)
 
 include(FindPackageHandleStandardArgs)

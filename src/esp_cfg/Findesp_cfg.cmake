@@ -26,7 +26,7 @@
 #
 
 
-find_path(esp_cfg_INCLUDE_DIR include/esp_cfg.h)
+find_path(esp_cfg_INCLUDE_DIR esp_cfg.h)
 find_library(esp_cfg_LIBRARY NAMES esp_cfg)
 
 include(FindPackageHandleStandardArgs)

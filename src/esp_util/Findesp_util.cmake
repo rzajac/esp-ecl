@@ -26,7 +26,7 @@
 #
 
 
-find_path(esp_util_INCLUDE_DIR include/esp_util.h)
+find_path(esp_util_INCLUDE_DIR esp_util.h)
 find_library(esp_util_LIBRARY NAMES esp_util)
 
 include(FindPackageHandleStandardArgs)

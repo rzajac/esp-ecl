@@ -26,7 +26,7 @@
 #
 
 
-find_path(esp_gpio_debug_INCLUDE_DIR include/esp_gpio_debug.h)
+find_path(esp_gpio_debug_INCLUDE_DIR esp_gpio_debug.h)
 find_library(esp_gpio_debug_LIBRARY NAMES esp_gpio_debug)
 
 find_package(esp_util REQUIRED)

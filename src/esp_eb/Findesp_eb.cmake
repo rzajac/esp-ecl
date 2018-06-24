@@ -26,7 +26,7 @@
 #
 
 
-find_path(esp_eb_INCLUDE_DIR include/esp_eb.h)
+find_path(esp_eb_INCLUDE_DIR esp_eb.h)
 find_library(esp_eb_LIBRARY NAMES esp_eb)
 
 find_package(esp_tim REQUIRED)
