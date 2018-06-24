@@ -18,9 +18,9 @@
 #include <mem.h>
 #include <user_interface.h>
 
-#include "../esp_tim/esp_tim.h"
-#include "../esp_util/esp_util.h"
-#include "esp_eb.h"
+#include "esp_tim.h"
+#include "esp_util.h"
+#include "include/esp_eb.h"
 #include "esp_eb_internal.h"
 
 

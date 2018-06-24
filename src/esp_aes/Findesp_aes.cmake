@@ -26,7 +26,7 @@
 #
 
 
-find_path(esp_aes_INCLUDE_DIR esp_aes.h)
+find_path(esp_aes_INCLUDE_DIR include/esp_aes.h)
 find_library(esp_aes_LIBRARY NAMES esp_aes)
 
 include(FindPackageHandleStandardArgs)

@@ -16,7 +16,7 @@
 project(esp_tim C)
 
 set(SOURCE_FILES esp_tim.c)
-set(HEADER_FILES esp_tim.h)
+set(HEADER_FILES include/esp_tim.h)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 

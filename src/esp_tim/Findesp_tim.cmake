@@ -26,7 +26,7 @@
 #
 
 
-find_path(esp_tim_INCLUDE_DIR esp_tim.h)
+find_path(esp_tim_INCLUDE_DIR include/esp_tim.h)
 find_library(esp_tim_LIBRARY NAMES esp_tim)
 
 include(FindPackageHandleStandardArgs)

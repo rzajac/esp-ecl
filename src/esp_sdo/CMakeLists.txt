@@ -16,7 +16,7 @@
 project(esp_sdo C)
 
 set(SOURCE_FILES esp_sdo.c)
-set(HEADER_FILES esp_sdo.h)
+set(HEADER_FILES include/esp_sdo.h)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 

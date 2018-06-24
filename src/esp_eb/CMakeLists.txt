@@ -16,7 +16,7 @@
 project(esp_eb C)
 
 set(SOURCE_FILES esp_eb.c)
-set(HEADER_FILES esp_eb.h)
+set(HEADER_FILES include/esp_eb.h)
 set(PRIVATE_HEADER_FILES esp_eb_internal.h)
 
 add_library(${PROJECT_NAME} STATIC

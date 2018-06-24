@@ -26,7 +26,7 @@
 #
 
 
-find_path(esp_sdo_INCLUDE_DIR esp_sdo.h)
+find_path(esp_sdo_INCLUDE_DIR include/esp_sdo.h)
 find_library(esp_sdo_LIBRARY NAMES esp_sdo)
 
 find_package(esp_gpio REQUIRED)

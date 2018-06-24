@@ -16,7 +16,7 @@
 project(esp_cfg C)
 
 set(SOURCE_FILES esp_cfg.c)
-set(HEADER_FILES esp_cfg.h)
+set(HEADER_FILES include/esp_cfg.h)
 
 add_library(${PROJECT_NAME} STATIC
     ${SOURCE_FILES}

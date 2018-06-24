@@ -16,7 +16,7 @@
 project(esp_aes C)
 
 set(SOURCE_FILES esp_aes.c)
-set(HEADER_FILES esp_aes.h)
+set(HEADER_FILES include/esp_aes.h)
 
 add_library(${PROJECT_NAME} STATIC
     ${SOURCE_FILES}

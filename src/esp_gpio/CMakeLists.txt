@@ -16,7 +16,7 @@
 project(esp_gpio C)
 
 set(SOURCE_FILES esp_gpio.c)
-set(HEADER_FILES esp_gpio.h)
+set(HEADER_FILES include/esp_gpio.h)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 

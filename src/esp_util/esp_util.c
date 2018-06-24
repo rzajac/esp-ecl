@@ -17,7 +17,7 @@
 
 #include <osapi.h>
 #include <mem.h>
-#include "esp_util.h"
+#include "include/esp_util.h"
 
 char *ICACHE_FLASH_ATTR
 esp_util_strdup(const char *str)

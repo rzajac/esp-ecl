@@ -17,8 +17,8 @@
 
 #include <osapi.h>
 #include <user_interface.h>
-#include "../../src/esp_sdo/esp_sdo.h"
-#include "../../src/esp_cfg/esp_cfg.h"
+#include "esp_sdo.h"
+#include "esp_cfg.h"
 
 
 // The my_config0 magic number.

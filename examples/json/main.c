@@ -18,8 +18,8 @@
 #include <user_interface.h>
 #include <osapi.h>
 #include <mem.h>
-#include "../../src/esp_sdo/esp_sdo.h"
-#include "../../src/esp_json/esp_json.h"
+#include "esp_sdo.h"
+#include "esp_json.h"
 
 #define EXAMPLE_JSON "{\"cmd\": \"test\", \"code\": 23, \"fast\": true}"
 

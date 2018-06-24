@@ -18,8 +18,8 @@
 #include <user_interface.h>
 #include <osapi.h>
 #include <mem.h>
-#include "../../src/esp_sdo/esp_sdo.h"
-#include "../../src/esp_tim/esp_tim.h"
+#include "esp_sdo.h"
+#include "esp_tim.h"
 
 
 typedef struct {

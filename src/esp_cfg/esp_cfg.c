@@ -18,7 +18,7 @@
 #include <ets_sys.h>
 #include <mem.h>
 #include <spi_flash.h>
-#include "esp_cfg.h"
+#include "include/esp_cfg.h"
 
 
 #define ESP_CFG_MAX_INDEX (ESP_CFG_NUMBER - 1)

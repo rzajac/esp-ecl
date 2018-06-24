@@ -13,7 +13,7 @@
 
 #include <user_interface.h>
 #include <osapi.h>
-#include "esp_sdo.h"
+#include "include/esp_sdo.h"
 
 
 static void ICACHE_FLASH_ATTR

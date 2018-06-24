@@ -16,7 +16,7 @@
 project(esp_json C)
 
 set(SOURCE_FILES esp_json.c)
-set(HEADER_FILES esp_json.h)
+set(HEADER_FILES include/esp_json.h)
 
 add_library(${PROJECT_NAME} STATIC
     ${SOURCE_FILES}

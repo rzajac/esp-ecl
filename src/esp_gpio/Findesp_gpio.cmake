@@ -26,7 +26,7 @@
 #
 
 
-find_path(esp_gpio_INCLUDE_DIR esp_gpio.h)
+find_path(esp_gpio_INCLUDE_DIR include/esp_gpio.h)
 find_library(esp_gpio_LIBRARY NAMES esp_gpio)
 
 include(FindPackageHandleStandardArgs)
