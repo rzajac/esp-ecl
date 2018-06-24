@@ -302,51 +302,67 @@ wifi_event_cb(System_Event_t *event)
 {
   switch (event->event) {
     case EVENT_STAMODE_CONNECTED:
-      ESP_EB_DEBUG("EVENT_STAMODE_CONNECTED\n");
+      ESP_EB_DEBUG("WIFI: EVENT_STAMODE_CONNECTED\n");
+      ESP_EB_DEBUG("      ssid    %s\n", event->event_info.connected.ssid);
+      ESP_EB_DEBUG("      bssid   " MACSTR "\n", MAC2STR(event->event_info.connected.bssid));
+      ESP_EB_DEBUG("      channel %d\n", event->event_info.connected.channel);
       esp_eb_trigger(ESP_EB_EVENT_STAMODE_CONNECTED, (void *) event);
       break;
 
     case EVENT_STAMODE_DISCONNECTED:
-      ESP_EB_DEBUG("EVENT_STAMODE_DISCONNECTED reason %d\n",
-                   event->event_info.disconnected.reason);
+      ESP_EB_DEBUG("WIFI: EVENT_STAMODE_DISCONNECTED reason\n");
+      ESP_EB_DEBUG("      ssid   %s\n", event->event_info.disconnected.ssid);
+      ESP_EB_DEBUG("      bssid  " MACSTR "\n", MAC2STR(event->event_info.disconnected.bssid));
+      ESP_EB_DEBUG("      reason %d\n", event->event_info.disconnected.reason);
       esp_eb_trigger(ESP_EB_EVENT_STAMODE_DISCONNECTED, (void *) event);
       break;
 
     case EVENT_STAMODE_AUTHMODE_CHANGE:
-      ESP_EB_DEBUG("EVENT_STAMODE_AUTHMODE_CHANGE %d -> %d\n",
-                   event->event_info.auth_change.old_mode,
-                   event->event_info.auth_change.new_mode);
+      // The mode is one of the AUTH_* values of AUTH_MODE defined in user_interface.h
+      os_printf("WIFI: EVENT_STAMODE_AUTHMODE_CHANGE %d -> %d\n",
+                event->event_info.auth_change.old_mode,
+                event->event_info.auth_change.new_mode);
       esp_eb_trigger(ESP_EB_EVENT_STAMODE_AUTHMODE_CHANGE, (void *) event);
       break;
 
     case EVENT_STAMODE_GOT_IP:
-      ESP_EB_DEBUG("EVENT_STAMODE_GOT_IP %d.%d.%d.%d / %d.%d.%d.%d\n",
-                   IP2STR(&(event->event_info.got_ip.ip)),
-                   IP2STR(&(event->event_info.got_ip.mask)));
+      ESP_EB_DEBUG("WIFI: EVENT_STAMODE_GOT_IP\n");
+      ESP_EB_DEBUG("      ip   " IPSTR "\n", IP2STR(&(event->event_info.got_ip.ip)));
+      ESP_EB_DEBUG("      mask " IPSTR "\n", IP2STR(&(event->event_info.got_ip.mask)));
+      ESP_EB_DEBUG("      gw   " IPSTR "\n", IP2STR(&(event->event_info.got_ip.gw)));
       esp_eb_trigger(ESP_EB_EVENT_STAMODE_GOT_IP, (void *) event);
       break;
 
     case EVENT_STAMODE_DHCP_TIMEOUT:
-      ESP_EB_DEBUG("EVENT_STAMODE_DHCP_TIMEOUT\n");
+      ESP_EB_DEBUG("WIFI: EVENT_STAMODE_DHCP_TIMEOUT\n");
       esp_eb_trigger(ESP_EB_EVENT_STAMODE_DHCP_TIMEOUT, (void *) event);
       break;
 
     case EVENT_SOFTAPMODE_STACONNECTED:
-      ESP_EB_DEBUG("EVENT_SOFTAPMODE_STACONNECTED\n");
+      ESP_EB_DEBUG("WIFI: EVENT_SOFTAPMODE_STACONNECTED\n");
+      ESP_EB_DEBUG("      aid %d\n", event->event_info.sta_connected.aid);
+      ESP_EB_DEBUG("      mac " MACSTR "\n", MAC2STR(event->event_info.sta_connected.mac));
       esp_eb_trigger(ESP_EB_EVENT_SOFTAPMODE_STACONNECTED, (void *) event);
       break;
 
     case EVENT_SOFTAPMODE_STADISCONNECTED:
-      ESP_EB_DEBUG("EVENT_SOFTAPMODE_STADISCONNECTED\n");
+      ESP_EB_DEBUG("WIFI: EVENT_SOFTAPMODE_STADISCONNECTED\n");
+      ESP_EB_DEBUG("      aid %d\n", event->event_info.sta_connected.aid);
+      ESP_EB_DEBUG("      mac " MACSTR "\n", MAC2STR(event->event_info.sta_disconnected.mac));
       esp_eb_trigger(ESP_EB_EVENT_SOFTAPMODE_STADISCONNECTED, (void *) event);
       break;
 
     case EVENT_OPMODE_CHANGED:
-      ESP_EB_DEBUG("EVENT_OPMODE_CHANGED %d\n", wifi_get_opmode());
+      ESP_EB_DEBUG("WIFI: EVENT_OPMODE_CHANGED %d -> %d\n",
+                event->event_info.opmode_changed.old_opmode,
+                event->event_info.opmode_changed.new_opmode);
       esp_eb_trigger(ESP_EB_EVENT_OPMODE_CHANGED, (void *) event);
       break;
 
     case EVENT_SOFTAPMODE_PROBEREQRECVED:
+      ESP_EB_DEBUG("WIFI: EVENT_SOFTAPMODE_PROBEREQRECVED\n");
+      ESP_EB_DEBUG("      rssi %d\n", event->event_info.ap_probereqrecved.rssi);
+      ESP_EB_DEBUG("      mac  " MACSTR "\n", MAC2STR(event->event_info.ap_probereqrecved.mac));
       esp_eb_trigger(ESP_EB_EVENT_SOFTAPMODE_PROBEREQRECVED, (void *) event);
       break;
 
@@ -355,7 +371,6 @@ wifi_event_cb(System_Event_t *event)
       break;
   }
 }
-
 
 void ICACHE_FLASH_ATTR
 esp_eb_handle_wifi_events()
