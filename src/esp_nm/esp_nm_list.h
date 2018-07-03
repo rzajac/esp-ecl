@@ -15,17 +15,16 @@
  */
 
 
-#ifndef ESP_EB_INTERNAL_H
-#define ESP_EB_INTERNAL_H
+#ifndef ESP_NM_LIST_H
+#define ESP_NM_LIST_H
 
-#include "esp_eb.h"
+#include "include/esp_nm.h"
 
-#ifdef ESP_EB_DEBUG_ON
-  #define ESP_EB_DEBUG(format, ...) os_printf("EB DBG: " format, ## __VA_ARGS__ )
-#else
-  #define ESP_EB_DEBUG(format, ...) do {} while(0)
-#endif
 
-#define ESP_EB_ERROR(format, ...) os_printf("EB ERR: " format, ## __VA_ARGS__ )
+esp_nm_err ICACHE_FLASH_ATTR
+esp_nm_list_init();
 
-#endif //ESP_EB_INTERNAL_H
+esp_nm_conn *ICACHE_FLASH_ATTR
+esp_nm_list_find(struct espconn *esp);
+
+#endif //ESP_NM_LIST_H

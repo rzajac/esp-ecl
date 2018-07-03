@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright 2018 Rafal Zajac <rzajac@gmail.com>.
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -17,44 +17,19 @@
 
 #include <user_interface.h>
 #include <osapi.h>
+#include <mem.h>
+
 #include "esp_sdo.h"
-#include "esp_gpio.h"
-
-
-static os_timer_t timer;
-
+#include "esp_nm.h"
 
 void ICACHE_FLASH_ATTR
-blink(void *arg)
+sys_init_done(void)
 {
-  // If GPIO3 is low don't change GPIO2 state.
-  if (!GPIO_VALUE(GPIO3)) return;
-
-  bool state = GPIO_VALUE(GPIO2);
-
-  os_printf("LED state: %d\n", state);
-  state ? GPIO_OUT_LOW(GPIO2) : GPIO_OUT_HIGH(GPIO2);
+  os_printf("USER: system initialized\n");
 }
 
-void ICACHE_FLASH_ATTR
-sys_init_done()
+void ICACHE_FLASH_ATTR user_init()
 {
-  esp_gpio_setup(GPIO2, GPIO_MODE_OUTPUT);
-  esp_gpio_setup(GPIO3, GPIO_MODE_INPUT);
-
-  //Setup timer to call our callback in 1 second intervals.
-  os_timer_disarm(&timer);
-  os_timer_setfn(&timer, (os_timer_func_t *) blink, 0);
-  os_timer_arm(&timer, 1000, true);
-}
-
-void ICACHE_FLASH_ATTR
-user_init()
-{
-  // We don't need WiFi for this example.
-  wifi_station_disconnect();
-  wifi_set_opmode(NULL_MODE);
-
   stdout_init(BIT_RATE_74880);
   system_init_done_cb(sys_init_done);
 }

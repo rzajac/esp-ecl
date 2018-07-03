@@ -1,4 +1,4 @@
-# Copyright 2017 Rafal Zajac <rzajac@gmail.com>.
+# Copyright 2018 Rafal Zajac <rzajac@gmail.com>.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
 # not use this file except in compliance with the License. You may obtain
@@ -19,6 +19,7 @@ add_subdirectory(esp_eb)
 add_subdirectory(esp_gpio)
 add_subdirectory(esp_gpio_debug)
 add_subdirectory(esp_json)
+add_subdirectory(esp_nm)
 add_subdirectory(esp_sdo)
 add_subdirectory(esp_tim)
 add_subdirectory(esp_util)

@@ -13,23 +13,22 @@
 # under the License.
 
 
-project(esp_eb C)
+project(esp_nm C)
 
-set(SOURCE_FILES esp_eb.c)
-set(HEADER_FILES include/esp_eb.h)
-set(PRIVATE_HEADER_FILES esp_eb_internal.h)
+set(SOURCE_FILES esp_nm.c esp_nm_list.c)
+set(HEADER_FILES include/esp_nm.h)
+set(PRIVATE_HEADER_FILES esp_nm_internal.h esp_nm_list.h)
 
-add_library(${PROJECT_NAME} STATIC
-    ${SOURCE_FILES} ${HEADER_FILES} ${PRIVATE_HEADER_FILES})
+add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    ${esp_tim_INCLUDE_DIRS}
-    ${esp_util_INCLUDE_DIRS}
+    ${esp_sdo_INCLUDE_DIRS}
+    ${esp_eb_INCLUDE_DIRS}
     ${ESP_USER_CONFIG_DIR})
 
-target_link_libraries(${PROJECT_NAME} esp_tim esp_util)
+target_link_libraries(${PROJECT_NAME} esp_sdo esp_eb)
 
 set_target_properties(
     ${PROJECT_NAME}
@@ -37,9 +36,5 @@ set_target_properties(
     FRAMEWORK ON
     PUBLIC_HEADER "${HEADER_FILES}"
     PRIVATE_HEADER "${PRIVATE_HEADER_FILES}")
-
-if($ENV{ESP_EB_DEBUG_ON})
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DESP_EB_DEBUG_ON")
-endif()
 
 esp_gen_lib(${PROJECT_NAME})

@@ -15,17 +15,12 @@
  */
 
 
-#ifndef ESP_EB_INTERNAL_H
-#define ESP_EB_INTERNAL_H
+#ifndef ESP_NM_INTERNAL_H
+#define ESP_NM_INTERNAL_H
 
-#include "esp_eb.h"
 
-#ifdef ESP_EB_DEBUG_ON
-  #define ESP_EB_DEBUG(format, ...) os_printf("EB DBG: " format, ## __VA_ARGS__ )
-#else
-  #define ESP_EB_DEBUG(format, ...) do {} while(0)
+#ifndef UNUSED
+  #define UNUSED(x) ( (void)(x) )
 #endif
 
-#define ESP_EB_ERROR(format, ...) os_printf("EB ERR: " format, ## __VA_ARGS__ )
-
-#endif //ESP_EB_INTERNAL_H
+#endif //ESP_NM_INTERNAL_H
