@@ -15,7 +15,6 @@
  */
 
 
-#include <espconn.h>
 #include "include/esp_nm.h"
 #include "esp_nm_internal.h"
 #include "esp_nm_list.h"
@@ -24,66 +23,102 @@
 // Declarations.
 /////////////////////////////////////////////////////////////////////////////
 
-static void ICACHE_FLASH_ATTR wifi_event_cb(const char *event, void *arg);
+static void ICACHE_FLASH_ATTR
+wifi_event_cb(uint16_t ev_code, void *arg);
 
-static void ICACHE_FLASH_ATTR wifi_events_detach();
+static void ICACHE_FLASH_ATTR
+wifi_events_detach();
 
-static void ICACHE_FLASH_ATTR release_espconn(esp_nm_conn *conn);
+static void ICACHE_FLASH_ATTR
+release_espconn(esp_nm_conn *conn);
 
-static void ICACHE_FLASH_ATTR connect_cb(void *arg);
+static void ICACHE_FLASH_ATTR
+connect_cb(void *arg);
 
-static void ICACHE_FLASH_ATTR error_cb(void *arg, sint8 errCode);
+static void ICACHE_FLASH_ATTR
+sent_cb(void *arg);
 
-static void ICACHE_FLASH_ATTR disc_cb(void *arg);
+static void ICACHE_FLASH_ATTR
+recv_cb(void *arg, char *pdata, unsigned short len);
 
-static void ICACHE_FLASH_ATTR sent_cb(void *arg);
+static void ICACHE_FLASH_ATTR
+error_cb(void *arg, sint8 errCode);
+
+static void ICACHE_FLASH_ATTR
+disc_cb(void *arg);
 
 /////////////////////////////////////////////////////////////////////////////
 // Code.
 /////////////////////////////////////////////////////////////////////////////
 
 esp_nm_err ICACHE_FLASH_ATTR
-esp_nm_init()
+esp_nm_start(char *wifi_name,
+             char *wifi_pass,
+             bool reconnect_policy,
+             uint32_t static_ip,
+             uint32_t static_netmask,
+             uint32_t static_gw)
 {
   if (esp_nm_list_init() != ESP_NM_OK) return ESP_NM_INITIALIZED;
+
+  // Switch to station mode and configure static IP if necessary.
+  wifi_set_opmode_current(STATION_MODE);
+  if (static_ip == 0 || static_netmask == 0 || static_gw == 0) {
+    wifi_station_dhcpc_start();
+  } else {
+    wifi_station_dhcpc_stop();
+    struct ip_info info;
+    info.ip.addr = static_ip;
+    info.netmask.addr = static_netmask;
+    info.gw.addr = static_gw;
+    wifi_set_ip_info(STATION_IF, &info);
+  }
 
   // Receive WiFi events.
   esp_eb_handle_wifi_events();
 
-  esp_eb_err err;
-
-  err = esp_eb_attach(ESP_EB_EVENT_STAMODE_CONNECTED, wifi_event_cb);
+  esp_eb_err err = esp_eb_attach(EVENT_STAMODE_CONNECTED, wifi_event_cb);
   if (err != ESP_EB_ATTACH_OK) return ESP_NM_ERR_MEM;
 
-  err = esp_eb_attach(ESP_EB_EVENT_STAMODE_DISCONNECTED, wifi_event_cb);
+  err = esp_eb_attach(EVENT_STAMODE_DISCONNECTED, wifi_event_cb);
   if (err != ESP_EB_ATTACH_OK) {
     wifi_events_detach();
     return ESP_NM_ERR_MEM;
   }
 
-  err = esp_eb_attach(ESP_EB_EVENT_STAMODE_GOT_IP, wifi_event_cb);
+  err = esp_eb_attach(EVENT_STAMODE_GOT_IP, wifi_event_cb);
   if (err != ESP_EB_ATTACH_OK) {
     wifi_events_detach();
     return ESP_NM_ERR_MEM;
   }
 
-  err = esp_eb_attach(ESP_EB_EVENT_STAMODE_DHCP_TIMEOUT, wifi_event_cb);
+  err = esp_eb_attach(EVENT_STAMODE_DHCP_TIMEOUT, wifi_event_cb);
   if (err != ESP_EB_ATTACH_OK) {
     wifi_events_detach();
     return ESP_NM_ERR_MEM;
   }
 
-  err = esp_eb_attach(ESP_EB_EVENT_OPMODE_CHANGED, wifi_event_cb);
+  err = esp_eb_attach(EVENT_OPMODE_CHANGED, wifi_event_cb);
   if (err != ESP_EB_ATTACH_OK) {
     wifi_events_detach();
     return ESP_NM_ERR_MEM;
   }
+
+  // Configure WiFi
+  struct station_config station_config;
+  os_memset(&station_config, 0, sizeof(struct station_config));
+  strlcpy((char *) station_config.ssid, wifi_name, 32);
+  strlcpy((char *) station_config.password, wifi_pass, 64);
+  wifi_station_set_config_current(&station_config);
+
+  wifi_station_set_reconnect_policy(reconnect_policy);
+  wifi_station_connect();
 
   return ESP_NM_OK;
 }
 
 esp_nm_err ICACHE_FLASH_ATTR
-esp_nm_new(esp_nm_conn *conn, char *host, int port, bool ssl)
+esp_nm_client(esp_nm_conn *conn, char *host, int port, bool ssl)
 {
   conn->esp = os_zalloc(sizeof(struct espconn));
   if (conn->esp == NULL) return ESP_NM_ERR_MEM;
@@ -120,21 +155,31 @@ esp_nm_set_keepalive(esp_nm_conn *conn, int idle, int intvl, int cnt)
 
 void ICACHE_FLASH_ATTR
 esp_nm_set_callbacks(esp_nm_conn *conn,
-                     esp_nm_err_cb *err_cb,
-                     espconn_recv_callback *recv_cb)
+                     esp_nm_cb ready_cb,
+                     esp_nm_cb sent_cb,
+                     esp_nm_recv_cb recv_cb,
+                     esp_nm_err_cb err_cb)
 {
-  conn->err_cb = err_cb;
+  conn->ready_cb = ready_cb;
+  conn->send_cb = sent_cb;
   conn->recv_cb = recv_cb;
+  conn->err_cb = err_cb;
+}
+
+sint8 ICACHE_FLASH_ATTR
+esp_nm_send(esp_nm_conn *conn, uint8_t *data, size_t len)
+{
+  return espconn_send(conn->esp, data, (uint16) len);
 }
 
 static void ICACHE_FLASH_ATTR
-wifi_event_cb(const char *event, void *arg)
+wifi_event_cb(uint16_t ev_code, void *arg)
 {
-  UNUSED(event);
-
   System_Event_t *ev = arg;
 
-  switch (ev->event) {
+  UNUSED(ev);
+
+  switch (ev_code) {
     case EVENT_STAMODE_CONNECTED:
       break;
 
@@ -151,18 +196,18 @@ wifi_event_cb(const char *event, void *arg)
       break;
 
     default:
-      ESP_NM_ERROR("unexpected wifi event: %d\n", ev->event);
+      break;
   }
 }
 
 static void ICACHE_FLASH_ATTR
 wifi_events_detach()
 {
-  esp_eb_detach(ESP_EB_EVENT_STAMODE_CONNECTED, wifi_event_cb);
-  esp_eb_detach(ESP_EB_EVENT_STAMODE_DISCONNECTED, wifi_event_cb);
-  esp_eb_detach(ESP_EB_EVENT_STAMODE_GOT_IP, wifi_event_cb);
-  esp_eb_detach(ESP_EB_EVENT_STAMODE_DHCP_TIMEOUT, wifi_event_cb);
-  esp_eb_detach(ESP_EB_EVENT_OPMODE_CHANGED, wifi_event_cb);
+  esp_eb_detach(EVENT_STAMODE_CONNECTED, wifi_event_cb);
+  esp_eb_detach(EVENT_STAMODE_DISCONNECTED, wifi_event_cb);
+  esp_eb_detach(EVENT_STAMODE_GOT_IP, wifi_event_cb);
+  esp_eb_detach(EVENT_STAMODE_DHCP_TIMEOUT, wifi_event_cb);
+  esp_eb_detach(EVENT_OPMODE_CHANGED, wifi_event_cb);
 }
 
 /**
@@ -190,15 +235,24 @@ connect_cb(void *arg)
   esp_nm_conn *conn = esp_nm_list_find(esp);
 
   if (conn->ka_idle && conn->ka_intvl && conn->ka_cnt) {
-    espconn_set_opt(conn, ESPCONN_KEEPALIVE);
-    espconn_set_keepalive(conn, ESPCONN_KEEPIDLE, &conn->ka_idle);
-    espconn_set_keepalive(conn, ESPCONN_KEEPINTVL, &conn->ka_intvl);
-    espconn_set_keepalive(conn, ESPCONN_KEEPCNT, &conn->ka_cnt);
+    espconn_set_opt(conn->esp, ESPCONN_KEEPALIVE);
+    espconn_set_keepalive(conn->esp, ESPCONN_KEEPIDLE, &conn->ka_idle);
+    espconn_set_keepalive(conn->esp, ESPCONN_KEEPINTVL, &conn->ka_intvl);
+    espconn_set_keepalive(conn->esp, ESPCONN_KEEPCNT, &conn->ka_cnt);
   }
 
-  espconn_regist_disconcb(conn, disc_cb);
-  espconn_regist_recvcb(conn, conn->recv_cb);
-  espconn_regist_sentcb(conn, sent_cb);
+  espconn_regist_disconcb(conn->esp, disc_cb);
+  espconn_regist_recvcb(conn->esp, recv_cb);
+  espconn_regist_sentcb(conn->esp, sent_cb);
+}
+
+static void ICACHE_FLASH_ATTR
+recv_cb(void *arg, char *pdata, unsigned short len)
+{
+  struct espconn *esp = (struct espconn *) arg;
+  esp_nm_conn *conn = esp_nm_list_find(esp);
+
+  conn->recv_cb(conn, (uint8_t *) pdata, len);
 }
 
 static void ICACHE_FLASH_ATTR
@@ -206,6 +260,9 @@ error_cb(void *arg, sint8 errCode)
 {
   struct espconn *esp = (struct espconn *) arg;
   esp_nm_conn *conn = esp_nm_list_find(esp);
+
+  UNUSED(conn);
+  UNUSED(errCode);
 }
 
 static void ICACHE_FLASH_ATTR
@@ -213,6 +270,8 @@ disc_cb(void *arg)
 {
   struct espconn *esp = (struct espconn *) arg;
   esp_nm_conn *conn = esp_nm_list_find(esp);
+
+  UNUSED(conn);
 }
 
 static void ICACHE_FLASH_ATTR
@@ -220,4 +279,6 @@ sent_cb(void *arg)
 {
   struct espconn *esp = (struct espconn *) arg;
   esp_nm_conn *conn = esp_nm_list_find(esp);
+
+  UNUSED(conn);
 }

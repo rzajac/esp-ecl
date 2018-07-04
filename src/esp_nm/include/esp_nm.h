@@ -21,7 +21,8 @@
 #include <espconn.h>
 #include <mem.h>
 
-#include "esp_eb.h"
+#include <esp_eb.h>
+#include <esp_util.h>
 
 
 #ifdef ESP_NM_DEBUG_ON
@@ -40,31 +41,53 @@ typedef enum {
   ESP_NM_ERR_KEEPALIVE, // Error setting keep alive on the connection.
 } esp_nm_err;
 
-struct esp_nm_conn_;
+struct esp_nmc_;
 
 // The fatal error callback prototype.
-typedef void (esp_nm_err_cb)(struct esp_nm_conn_ *, esp_nm_err);
+typedef void (*esp_nm_err_cb)(struct esp_nmc_ *, esp_nm_err);
+
+// The receive callback prototype.
+typedef void (*esp_nm_recv_cb)(struct esp_nmc_ *, uint8_t *data, size_t len);
+
+// The send callback prototype.
+typedef void (*esp_nm_cb)(struct esp_nmc_ *);
+
 
 // Represents managed connection.
-typedef struct esp_nm_conn_ {
-  struct espconn *esp;   // The connection.
-  bool ssl;              // Use SSL for the connection.
-  int ka_idle;           // Keep alive idle.
-  int ka_intvl;          // Keep alive interval.
-  int ka_cnt;            // Keep alive count.
-  esp_nm_err_cb *err_cb; // Fatal error callback.
-  espconn_recv_callback *recv_cb; // Receive callback.
+typedef struct esp_nmc_ {
+  struct espconn *esp;    // The connection.
+  bool ssl;               // Use SSL for the connection.
+  int ka_idle;            // Keep alive idle.
+  int ka_intvl;           // Keep alive interval.
+  int ka_cnt;             // Keep alive count.
+  esp_nm_cb ready_cb;     // Ready callback.
+  esp_nm_cb send_cb;      // Sent callback.
+  esp_nm_recv_cb recv_cb; // Receive callback.
+  esp_nm_err_cb err_cb;   // Fatal error callback.
 } esp_nm_conn;
 
 esp_nm_err ICACHE_FLASH_ATTR
-esp_nm_new(esp_nm_conn *conn, char *host, int port, bool ssl);
+esp_nm_start(char *wifi_name,
+             char *wifi_pass,
+             bool reconnect_policy,
+             uint32_t static_ip,
+             uint32_t static_netmask,
+             uint32_t static_gw);
+
+esp_nm_err ICACHE_FLASH_ATTR
+esp_nm_client(esp_nm_conn *conn, char *host, int port, bool ssl);
 
 void ICACHE_FLASH_ATTR
 esp_nm_set_keepalive(esp_nm_conn *conn, int idle, int intvl, int cnt);
 
 void ICACHE_FLASH_ATTR
 esp_nm_set_callbacks(esp_nm_conn *conn,
-                     esp_nm_err_cb *err_cb,
-                     espconn_recv_callback *recv_cb);
+                     esp_nm_cb ready_cb,
+                     esp_nm_cb sent_cb,
+                     esp_nm_recv_cb recv_cb,
+                     esp_nm_err_cb err_cb);
+
+sint8 ICACHE_FLASH_ATTR
+esp_nm_send(esp_nm_conn *conn, uint8_t *data, size_t len);
 
 #endif //ESP_NM_H

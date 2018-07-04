@@ -26,6 +26,8 @@ void ICACHE_FLASH_ATTR
 sys_init_done(void)
 {
   os_printf("USER: system initialized\n");
+
+  esp_nm_start("TestHive", "xqfiricw2g", true, 0, 0, 0);
 }
 
 void ICACHE_FLASH_ATTR user_init()

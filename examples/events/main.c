@@ -20,29 +20,29 @@
 #include "esp_eb.h"
 
 
-#define EVENT_BATTERY_LOW "batteryLow"
-#define EVENT_BATTERY_FULL "batteryFull"
-#define EVENT_THROTTLED "throttled"
+#define EVENT_BATTERY_LOW 2000
+#define EVENT_BATTERY_FULL 2001
+#define EVENT_THROTTLED 2002
 
 uint32_t arg1, arg2;
 
 
 void ICACHE_FLASH_ATTR
-my_event1_cb(const char *event, void *arg)
+my_event1_cb(uint16_t ev_code, void *arg)
 {
-  os_printf("event1_cb %s handled with arg: %d\n", event, *(uint32_t *) arg);
+  os_printf("event1 %d handled with arg: %d\n", ev_code, *(uint32_t *) arg);
 }
 
 void ICACHE_FLASH_ATTR
-my_event2_cb(const char *event, void *arg)
+my_event2_cb(uint16_t ev_code, void *arg)
 {
-  os_printf("event2_cb %s handled with arg: %d\n", event, *(uint32_t *) arg);
+  os_printf("event2 %d handled with arg: %d\n", ev_code, *(uint32_t *) arg);
 }
 
 void ICACHE_FLASH_ATTR
-my_event_throttled_cb(const char *event, void *arg)
+my_event_throttled_cb(uint16_t ev_code, void *arg)
 {
-  os_printf("event throttled %s handled with arg: %d\n", event, *(uint32_t *) arg);
+  os_printf("event throttled %d handled with arg: %d\n", ev_code, *(uint32_t *) arg);
 }
 
 void ICACHE_FLASH_ATTR
@@ -52,7 +52,8 @@ sys_init_done(void)
   arg2 = 321;
 
   os_printf("system initialized\n");
-  os_printf("callback pointers:\n event1: %p\n event2: %p\n", my_event1_cb, my_event2_cb);
+  os_printf("callback pointers:\n event1: %p\n event2: %p\n", my_event1_cb,
+            my_event2_cb);
 
   // Add two subscribers to batteryLow event.
   esp_eb_attach(EVENT_BATTERY_LOW, my_event1_cb);

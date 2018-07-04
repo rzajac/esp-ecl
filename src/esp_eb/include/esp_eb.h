@@ -31,7 +31,7 @@
 #define ESP_EB_TIMER_MS 10
 
 // The event callback prototype.
-typedef void (esp_eb_cb)(const char *event, void *arg);
+typedef void (esp_eb_cb)(uint16_t ev_code, void *arg);
 
 // Event bus errors.
 typedef enum {
@@ -40,32 +40,21 @@ typedef enum {
   ESP_EB_ATTACH_MEM // Out of memory.
 } esp_eb_err;
 
-// The available for attaching wifi events.
-#define ESP_EB_EVENT_STAMODE_CONNECTED "espEbStaConn"
-#define ESP_EB_EVENT_STAMODE_DISCONNECTED "espEbStaDisc"
-#define ESP_EB_EVENT_STAMODE_AUTHMODE_CHANGE "espEbStaAuth"
-#define ESP_EB_EVENT_STAMODE_GOT_IP "espEbStaIP"
-#define ESP_EB_EVENT_STAMODE_DHCP_TIMEOUT "espEbStaDTO"
-#define ESP_EB_EVENT_SOFTAPMODE_STACONNECTED "espEbSftConn"
-#define ESP_EB_EVENT_SOFTAPMODE_STADISCONNECTED "espEbSftDisc"
-#define ESP_EB_EVENT_OPMODE_CHANGED "espEbOp"
-#define ESP_EB_EVENT_SOFTAPMODE_PROBEREQRECVED "espEbStaPro"
-
 /**
  * Subscribe to event.
  *
- * @param event       The event name.
- * @param cb          The event callback.
+ * @param ev_code The event code (0-1023 reserved for internal use).
+ * @param cb      The event callback.
  *
  * @return The result of adding new subscriber.
  */
 esp_eb_err ICACHE_FLASH_ATTR
-esp_eb_attach(const char *event, esp_eb_cb *cb);
+esp_eb_attach(uint16_t code, esp_eb_cb *cb);
 
 /**
  * Subscribe to event and throttle callbacks.
  *
- * @param event       The event name.
+ * @param ev_code     The event code (0-1023 reserved for internal use).
  * @param cb          The event callback.
  * @param throttle_us Wait at least microseconds between callback executions.
  *                    Turn off throttling by passing 0.
@@ -73,18 +62,19 @@ esp_eb_attach(const char *event, esp_eb_cb *cb);
  * @return The result of adding new subscriber.
  */
 esp_eb_err ICACHE_FLASH_ATTR
-esp_eb_attach_throttled(const char *event_name, esp_eb_cb *cb, uint32_t throttle_us);
+esp_eb_attach_throttled(uint16_t ev_code, esp_eb_cb *cb,
+                        uint32_t throttle_us);
 
 /**
  * Stop event subscription.
  *
- * @param event The event name.
- * @param cb    The event callback.
+ * @param ev_code The event code (0-1023 reserved for internal use).
+ * @param cb      The event callback.
  *
  * @return true - success, false - failure
  */
 bool ICACHE_FLASH_ATTR
-esp_eb_detach(const char *event, esp_eb_cb *cb);
+esp_eb_detach(uint16_t ev_code, esp_eb_cb *cb);
 
 /**
  * Remove all event subscriptions with given callback.
@@ -99,27 +89,27 @@ esp_eb_remove_cb(esp_eb_cb *cb);
 /**
  * Trigger event and notify all subscribers.
  *
- * @param event The event name to trigger.
- * @param arg   The optional argument to pass to all subscribers.
+ * @param ev_code The event code to trigger.
+ * @param arg     The optional argument to pass to all subscribers.
  */
 void ICACHE_FLASH_ATTR
-esp_eb_trigger(const char *event, void *arg);
+esp_eb_trigger(uint16_t ev_code, void *arg);
 
 /**
  * Trigger event and notify all subscribers after delay.
  *
- * @param event_name The event name to trigger.
- * @param delay      The delay in milliseconds.
- * @param arg        The optional argument to pass to all subscribers.
+ * @param ev_code The event code to trigger (0-1023 reserved for internal use).
+ * @param delay   The delay in milliseconds.
+ * @param arg     The optional argument to pass to all subscribers.
  */
 void ICACHE_FLASH_ATTR
-esp_eb_trigger_delayed(const char *event_name, uint32_t delay, void *arg);
+esp_eb_trigger_delayed(uint16_t ev_code, uint32_t delay, void *arg);
 
 /**
  * Make esp_eb to trigger events on WiFi events.
  *
  * After calling this function you will be able to
- * attach callbacks to ESP_EB_EVENT_* events.
+ * attach callbacks to WiFi events defined in user_interface.h
  */
 void ICACHE_FLASH_ATTR
 esp_eb_handle_wifi_events();
