@@ -26,6 +26,7 @@
 
 // Structure defining event.
 typedef struct {
+  uint8_t group;        // The group, 0 - no group (1-128 reserved).
   uint16_t ev_code;     // Event code (0-1023 reserved for internal use).
   esp_eb_cb *cb;        // Event callback function.
   uint32_t ctime_us;    // Last time callback was called.
@@ -38,24 +39,29 @@ typedef struct {
 typedef struct node {
   eb_event *event;   // The event.
   struct node *next; // The pointer to the next node on the list.
+  struct node *prev; // The pointer to the previous node on the list.
 } eb_node;
 
 // The linked list head node.
 static eb_node *head;
+// The linked list tail node.
+static eb_node *tail;
 
 /**
  * Create new event structure.
  *
+ * @param group       The group, 0 - no group (1-128 reserved).
  * @param ev_code     The event code (0-1023 reserved for internal use).
  * @param cb          The callback.
  * @param throttle_us Throttle callback calls (0 - no throttle).
  */
 static eb_event *ICACHE_FLASH_ATTR
-event_new(uint16_t ev_code, esp_eb_cb *cb, uint32_t throttle_us)
+event_new(uint8_t group, uint16_t ev_code, esp_eb_cb *cb, uint32_t throttle_us)
 {
   eb_event *new = os_zalloc(sizeof(eb_event));
   if (new == NULL) return NULL;
 
+  new->group = group;
   new->ev_code = ev_code;
   new->cb = cb;
   new->throttle_us = throttle_us;
@@ -66,14 +72,15 @@ event_new(uint16_t ev_code, esp_eb_cb *cb, uint32_t throttle_us)
 /**
  * Create new event list node.
  *
+ * @param group       The group, 0 - no group (1-128 reserved).
  * @param ev_code     The event code (0-1023 reserved for internal use).
  * @param cb          The callback.
  * @param throttle_us Throttle callback calls (0 - no throttle).
  */
 static eb_node *ICACHE_FLASH_ATTR
-new_node(uint16_t ev_code, esp_eb_cb *cb, uint32_t throttle_us)
+new_node(uint8_t group, uint16_t ev_code, esp_eb_cb *cb, uint32_t throttle_us)
 {
-  eb_event *event = event_new(ev_code, cb, throttle_us);
+  eb_event *event = event_new(group, ev_code, cb, throttle_us);
   if (event == NULL) return NULL;
 
   eb_node *new_node = os_zalloc(sizeof(eb_node));
@@ -84,6 +91,48 @@ new_node(uint16_t ev_code, esp_eb_cb *cb, uint32_t throttle_us)
   new_node->event = event;
 
   return new_node;
+}
+
+static void ICACHE_FLASH_ATTR
+add_node(eb_node *node)
+{
+  // Empty list.
+  if (tail == NULL) {
+    head = node;
+    tail = node;
+    return;
+  }
+
+  tail->next = node;
+  tail = node;
+}
+
+static void ICACHE_FLASH_ATTR
+remove_node(eb_node *node)
+{
+  // Empty list.
+  if (tail == NULL) return;
+
+  // One element on the list.
+  if (tail == head && node == head) {
+    tail = NULL;
+    head = NULL;
+    return;
+  };
+
+  if (head == node) {
+    head = head->next;
+    return;
+  }
+
+  if (node == head) {
+    if (head == tail) {
+      head = NULL;
+      tail = NULL;
+    } else {
+      head = head->next;
+    }
+  }
 }
 
 /**
@@ -121,14 +170,17 @@ find_node(uint16_t ev_code, esp_eb_cb *cb, eb_node **prev)
 }
 
 esp_eb_err ICACHE_FLASH_ATTR
-esp_eb_attach_throttled(uint16_t ev_code, esp_eb_cb *cb, uint32_t throttle_us)
+esp_eb_attach_throttled(uint8_t group,
+                        uint16_t ev_code,
+                        esp_eb_cb *cb,
+                        uint32_t throttle_us)
 {
   eb_node *tail = NULL;
   eb_node *node = find_node(ev_code, cb, &tail);
 
   // Empty list.
   if (node == NULL && tail == NULL) {
-    head = new_node(ev_code, cb, throttle_us);
+    head = new_node(group, ev_code, cb, throttle_us);
     if (head == NULL) return ESP_EB_ATTACH_MEM;
     ESP_EB_DEBUG("added head (%p) %d %d %p\n", head, ev_code, throttle_us, cb);
 
@@ -138,7 +190,7 @@ esp_eb_attach_throttled(uint16_t ev_code, esp_eb_cb *cb, uint32_t throttle_us)
   // If node already exists we return.
   if (node != NULL) return ESP_EB_ATTACH_EXISTED;
 
-  tail->next = new_node(ev_code, cb, throttle_us);
+  tail->next = new_node(group, ev_code, cb, throttle_us);
   if (tail->next == NULL) return ESP_EB_ATTACH_MEM;
 
   ESP_EB_DEBUG("added %d %d %p\n", ev_code, throttle_us, cb);
@@ -146,9 +198,9 @@ esp_eb_attach_throttled(uint16_t ev_code, esp_eb_cb *cb, uint32_t throttle_us)
 }
 
 esp_eb_err ICACHE_FLASH_ATTR
-esp_eb_attach(uint16_t ev_code, esp_eb_cb *cb)
+esp_eb_attach(uint8_t group, uint16_t ev_code, esp_eb_cb *cb)
 {
-  return esp_eb_attach_throttled(ev_code, cb, 0);
+  return esp_eb_attach_throttled(group, ev_code, cb, 0);
 }
 
 bool ICACHE_FLASH_ATTR
@@ -171,11 +223,39 @@ esp_eb_detach(uint16_t ev_code, esp_eb_cb *cb)
 bool ICACHE_FLASH_ATTR
 esp_eb_remove_cb(esp_eb_cb *cb)
 {
+  // TODO: this code is broken.
   eb_node *prev = NULL;
   eb_node *curr = head;
 
   while (curr) {
-    if (curr->event->cb == cb) break;
+    if (curr->event->cb == cb) {
+      // TODO: remove node and search for next one.
+    }
+    prev = curr;
+    curr = curr->next;
+  }
+
+  // Node not found or empty list.
+  if (curr == NULL) return true;
+
+  if (prev) prev->next = curr->next;
+  if (curr == head) head = curr->next;
+  os_free(curr->event);
+  os_free(curr);
+
+  ESP_EB_DEBUG("detached node %d %p\n", curr->event->ev_code, curr->event->cb);
+  return true;
+}
+
+bool ICACHE_FLASH_ATTR
+esp_eb_remove_group(uint8_t group)
+{
+  // TODO: this code is broken.
+  eb_node *prev = NULL;
+  eb_node *curr = head;
+
+  while (curr) {
+    if (curr->event->group == group) break;
     prev = curr;
     curr = curr->next;
   }

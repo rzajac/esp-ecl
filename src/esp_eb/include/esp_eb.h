@@ -43,17 +43,19 @@ typedef enum {
 /**
  * Subscribe to event.
  *
+ * @param group   The group, 0 - no group (1-128 reserved).
  * @param ev_code The event code (0-1023 reserved for internal use).
  * @param cb      The event callback.
  *
  * @return The result of adding new subscriber.
  */
 esp_eb_err ICACHE_FLASH_ATTR
-esp_eb_attach(uint16_t code, esp_eb_cb *cb);
+esp_eb_attach(uint8_t group, uint16_t code, esp_eb_cb *cb);
 
 /**
  * Subscribe to event and throttle callbacks.
  *
+ * @param group       The group, 0 - no group (1-128 reserved).
  * @param ev_code     The event code (0-1023 reserved for internal use).
  * @param cb          The event callback.
  * @param throttle_us Wait at least microseconds between callback executions.
@@ -62,7 +64,9 @@ esp_eb_attach(uint16_t code, esp_eb_cb *cb);
  * @return The result of adding new subscriber.
  */
 esp_eb_err ICACHE_FLASH_ATTR
-esp_eb_attach_throttled(uint16_t ev_code, esp_eb_cb *cb,
+esp_eb_attach_throttled(uint8_t group,
+                        uint16_t ev_code,
+                        esp_eb_cb *cb,
                         uint32_t throttle_us);
 
 /**

@@ -26,11 +26,11 @@
 static void ICACHE_FLASH_ATTR
 wifi_event_cb(uint16_t ev_code, void *arg);
 
-static void ICACHE_FLASH_ATTR
-wifi_events_detach();
+static esp_nm_err ICACHE_FLASH_ATTR
+wifi_events_detach(esp_nm_err err);
 
-static void ICACHE_FLASH_ATTR
-release_espconn(esp_nm_conn *conn);
+static esp_nm_err ICACHE_FLASH_ATTR
+release_espconn(esp_nm_conn *conn, esp_nm_err err);
 
 static void ICACHE_FLASH_ATTR
 connect_cb(void *arg);
@@ -59,49 +59,25 @@ esp_nm_start(char *wifi_name,
              uint32_t static_netmask,
              uint32_t static_gw)
 {
-  if (esp_nm_list_init() != ESP_NM_OK) return ESP_NM_INITIALIZED;
+  if (esp_nm_list_init() != ESP_NM_OK) return ESP_NME_INITIALIZED;
 
   // Switch to station mode and configure static IP if necessary.
-  wifi_set_opmode_current(STATION_MODE);
+  bool suc = wifi_set_opmode_current(STATION_MODE);
+  if (!suc) return ESP_NME_MODE;
+
   if (static_ip == 0 || static_netmask == 0 || static_gw == 0) {
-    wifi_station_dhcpc_start();
+    suc = wifi_station_dhcpc_start();
+    if (!suc) return ESP_NME_DHCP_START;
   } else {
-    wifi_station_dhcpc_stop();
+    suc = wifi_station_dhcpc_stop();
+    if (!suc) return ESP_NME_DHCP_STOP;
+
     struct ip_info info;
     info.ip.addr = static_ip;
     info.netmask.addr = static_netmask;
     info.gw.addr = static_gw;
-    wifi_set_ip_info(STATION_IF, &info);
-  }
-
-  // Receive WiFi events.
-  esp_eb_handle_wifi_events();
-
-  esp_eb_err err = esp_eb_attach(EVENT_STAMODE_CONNECTED, wifi_event_cb);
-  if (err != ESP_EB_ATTACH_OK) return ESP_NM_ERR_MEM;
-
-  err = esp_eb_attach(EVENT_STAMODE_DISCONNECTED, wifi_event_cb);
-  if (err != ESP_EB_ATTACH_OK) {
-    wifi_events_detach();
-    return ESP_NM_ERR_MEM;
-  }
-
-  err = esp_eb_attach(EVENT_STAMODE_GOT_IP, wifi_event_cb);
-  if (err != ESP_EB_ATTACH_OK) {
-    wifi_events_detach();
-    return ESP_NM_ERR_MEM;
-  }
-
-  err = esp_eb_attach(EVENT_STAMODE_DHCP_TIMEOUT, wifi_event_cb);
-  if (err != ESP_EB_ATTACH_OK) {
-    wifi_events_detach();
-    return ESP_NM_ERR_MEM;
-  }
-
-  err = esp_eb_attach(EVENT_OPMODE_CHANGED, wifi_event_cb);
-  if (err != ESP_EB_ATTACH_OK) {
-    wifi_events_detach();
-    return ESP_NM_ERR_MEM;
+    suc = wifi_set_ip_info(STATION_IF, &info);
+    if (!suc) return ESP_NME_STATIC_IP;
   }
 
   // Configure WiFi
@@ -109,10 +85,27 @@ esp_nm_start(char *wifi_name,
   os_memset(&station_config, 0, sizeof(struct station_config));
   strlcpy((char *) station_config.ssid, wifi_name, 32);
   strlcpy((char *) station_config.password, wifi_pass, 64);
-  wifi_station_set_config_current(&station_config);
+  suc = wifi_station_set_config_current(&station_config);
+  if (!suc) return ESP_NME_WIFI_CFG;
 
-  wifi_station_set_reconnect_policy(reconnect_policy);
-  wifi_station_connect();
+  suc = wifi_station_set_reconnect_policy(reconnect_policy);
+  if (!suc) return ESP_NME_POLICY;
+
+  // Receive WiFi events.
+  esp_eb_handle_wifi_events();
+  esp_eb_err err = esp_eb_attach(EVENT_STAMODE_CONNECTED, wifi_event_cb);
+  if (err != ESP_EB_ATTACH_OK) return ESP_NME_MEM;
+  err = esp_eb_attach(EVENT_STAMODE_DISCONNECTED, wifi_event_cb);
+  if (err != ESP_EB_ATTACH_OK) return wifi_events_detach(ESP_NME_MEM);
+  err = esp_eb_attach(EVENT_STAMODE_GOT_IP, wifi_event_cb);
+  if (err != ESP_EB_ATTACH_OK) return wifi_events_detach(ESP_NME_MEM);
+  err = esp_eb_attach(EVENT_STAMODE_DHCP_TIMEOUT, wifi_event_cb);
+  if (err != ESP_EB_ATTACH_OK) return wifi_events_detach(ESP_NME_MEM);
+  err = esp_eb_attach(EVENT_OPMODE_CHANGED, wifi_event_cb);
+  if (err != ESP_EB_ATTACH_OK) return wifi_events_detach(ESP_NME_MEM);
+
+  suc = wifi_station_connect();
+  if (!suc) return wifi_events_detach(ESP_NME_WIFI_CONNECT);
 
   return ESP_NM_OK;
 }
@@ -121,13 +114,10 @@ esp_nm_err ICACHE_FLASH_ATTR
 esp_nm_client(esp_nm_conn *conn, char *host, int port, bool ssl)
 {
   conn->esp = os_zalloc(sizeof(struct espconn));
-  if (conn->esp == NULL) return ESP_NM_ERR_MEM;
+  if (conn->esp == NULL) return ESP_NME_MEM;
 
   conn->esp->proto.tcp = os_zalloc(sizeof(esp_tcp));
-  if (conn->esp->proto.tcp == NULL) {
-    release_espconn(conn);
-    return ESP_NM_ERR_MEM;
-  }
+  if (conn->esp->proto.tcp == NULL) return release_espconn(conn, ESP_NME_MEM);
 
   conn->ssl = ssl;
 
@@ -139,8 +129,11 @@ esp_nm_client(esp_nm_conn *conn, char *host, int port, bool ssl)
   conn->esp->proto.tcp->remote_port = port;
 
   // Register callbacks for successful connection or error.
-  espconn_regist_connectcb(conn->esp, connect_cb);
-  espconn_regist_reconcb(conn->esp, error_cb);
+  sint8 err = espconn_regist_connectcb(conn->esp, connect_cb);
+  if (err != 0) ESP_NM_ERROR("regist_connectcb fail %d\n", err);
+
+  err = espconn_regist_reconcb(conn->esp, error_cb);
+  if (err != 0) ESP_NM_ERROR("regist_reconcb fail %d\n", err);
 
   return ESP_NM_OK;
 }
@@ -164,6 +157,25 @@ esp_nm_set_callbacks(esp_nm_conn *conn,
   conn->send_cb = sent_cb;
   conn->recv_cb = recv_cb;
   conn->err_cb = err_cb;
+}
+
+void ICACHE_FLASH_ATTR
+esp_nm_reconnect(esp_nm_conn *conn, uint8_t recon_max)
+{
+  conn->recon_max = recon_max;
+  conn->recon_cnt = 0;
+}
+
+void ICACHE_FLASH_ATTR
+esp_nm_cleanup(esp_nm_conn *conn)
+{
+  wifi_events_detach(ESP_NM_OK);
+  espconn_regist_reconcb(conn->esp, NULL);
+  espconn_regist_disconcb(conn->esp, NULL);
+  espconn_abort(conn->esp);
+  release_espconn(conn, ESP_NM_OK);
+
+
 }
 
 sint8 ICACHE_FLASH_ATTR
@@ -200,14 +212,15 @@ wifi_event_cb(uint16_t ev_code, void *arg)
   }
 }
 
-static void ICACHE_FLASH_ATTR
-wifi_events_detach()
+static esp_nm_err ICACHE_FLASH_ATTR
+wifi_events_detach(esp_nm_err err)
 {
   esp_eb_detach(EVENT_STAMODE_CONNECTED, wifi_event_cb);
   esp_eb_detach(EVENT_STAMODE_DISCONNECTED, wifi_event_cb);
   esp_eb_detach(EVENT_STAMODE_GOT_IP, wifi_event_cb);
   esp_eb_detach(EVENT_STAMODE_DHCP_TIMEOUT, wifi_event_cb);
   esp_eb_detach(EVENT_OPMODE_CHANGED, wifi_event_cb);
+  return err;
 }
 
 /**
@@ -215,17 +228,18 @@ wifi_events_detach()
  *
  * @param conn The managed connection.
  *
- * @return void
+ * @return Passthrough error.
  */
-static void ICACHE_FLASH_ATTR
-release_espconn(esp_nm_conn *conn)
+static esp_nm_err ICACHE_FLASH_ATTR
+release_espconn(esp_nm_conn *conn, esp_nm_err err)
 {
-  if (conn->esp == NULL) return;
+  if (conn->esp == NULL) return err;
   if (conn->esp->proto.tcp != NULL) os_free(conn->esp->proto.tcp);
 
   ESP_NM_DEBUG("release_espconn\n");
   os_free(conn->esp);
   conn->esp = NULL;
+  return err;
 }
 
 static void ICACHE_FLASH_ATTR

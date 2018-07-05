@@ -30,11 +30,11 @@ static list *head;
 esp_nm_err ICACHE_FLASH_ATTR
 esp_nm_list_init()
 {
-  if (head != NULL) return ESP_NM_INITIALIZED;
+  if (head != NULL) return ESP_NME_INITIALIZED;
 
   // Initialize linked list.
   head = os_zalloc(sizeof(list));
-  if (head == NULL) return ESP_NM_ERR_MEM;
+  if (head == NULL) return ESP_NME_MEM;
 
   return ESP_NM_OK;
 }
