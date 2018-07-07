@@ -21,6 +21,10 @@
 #include <c_types.h>
 #include <osapi.h>
 
+#include "esp_tim.h"
+#include "esp_util.h"
+#include "esp_list.h"
+
 #ifndef ESP_EB_DEBUG_ON
   #ifdef DEBUG_ON
     #define ESP_EB_DEBUG_ON
@@ -31,43 +35,43 @@
 #define ESP_EB_TIMER_MS 10
 
 // The event callback prototype.
-typedef void (esp_eb_cb)(uint16_t ev_code, void *arg);
+typedef void (* esp_eb_cb)(uint16_t ev_code, void *arg);
 
 // Event bus errors.
 typedef enum {
-  ESP_EB_ATTACH_OK,
-  ESP_EB_ATTACH_EXISTED,
-  ESP_EB_ATTACH_MEM // Out of memory.
+  ESP_EB_OK,              // OK.
+  ESP_EB_E_MEM,           // Out of memory.
+  ESP_EB_E_EXISTED_GROUP, // Attach failed due to group conflict.
 } esp_eb_err;
 
 /**
  * Subscribe to event.
  *
- * @param group   The group, 0 - no group (1-128 reserved).
  * @param ev_code The event code (0-1023 reserved for internal use).
  * @param cb      The event callback.
+ * @param group   The group, 0 - no group (1-128 reserved).
  *
- * @return The result of adding new subscriber.
+ * @return Error code.
  */
 esp_eb_err ICACHE_FLASH_ATTR
-esp_eb_attach(uint8_t group, uint16_t code, esp_eb_cb *cb);
+esp_eb_attach(uint16_t code, esp_eb_cb cb, uint8_t group);
 
 /**
  * Subscribe to event and throttle callbacks.
  *
- * @param group       The group, 0 - no group (1-128 reserved).
  * @param ev_code     The event code (0-1023 reserved for internal use).
  * @param cb          The event callback.
  * @param throttle_us Wait at least microseconds between callback executions.
  *                    Turn off throttling by passing 0.
+ * @param group       The group, 0 - no group (1-128 reserved).
  *
- * @return The result of adding new subscriber.
+ * @return Error code.
  */
 esp_eb_err ICACHE_FLASH_ATTR
-esp_eb_attach_throttled(uint8_t group,
-                        uint16_t ev_code,
-                        esp_eb_cb *cb,
-                        uint32_t throttle_us);
+esp_eb_attach_throttled(uint16_t ev_code,
+                        esp_eb_cb cb,
+                        uint32_t throttle_us,
+                        uint8_t group);
 
 /**
  * Stop event subscription.
@@ -78,7 +82,7 @@ esp_eb_attach_throttled(uint8_t group,
  * @return true - success, false - failure
  */
 bool ICACHE_FLASH_ATTR
-esp_eb_detach(uint16_t ev_code, esp_eb_cb *cb);
+esp_eb_detach(uint16_t ev_code, esp_eb_cb cb);
 
 /**
  * Remove all event subscriptions with given callback.
@@ -88,7 +92,17 @@ esp_eb_detach(uint16_t ev_code, esp_eb_cb *cb);
  * @return true - success, false - failure
  */
 bool ICACHE_FLASH_ATTR
-esp_eb_remove_cb(esp_eb_cb *cb);
+esp_eb_remove_cb(esp_eb_cb cb);
+
+/**
+ * Romove all event subscriptions with given group.
+ *
+ * @param group The group, 0 - no group (1-128 reserved).
+ *
+ * @return true - success, false - failure
+ */
+bool ICACHE_FLASH_ATTR
+esp_eb_remove_group(uint8_t group);
 
 /**
  * Trigger event and notify all subscribers.
@@ -117,6 +131,17 @@ esp_eb_trigger_delayed(uint16_t ev_code, uint32_t delay, void *arg);
  */
 void ICACHE_FLASH_ATTR
 esp_eb_handle_wifi_events();
+
+/**
+ * Attach all station mode events to given callback.
+ *
+ * @param cb    The event callback.
+ * @param group The group, 0 - no group (1-128 reserved).
+ *
+ * @return Error code.
+ */
+esp_eb_err ICACHE_FLASH_ATTR
+esp_eb_attach_wifi_events(esp_eb_cb cb, uint8_t group);
 
 /**
  * Print elements in the event list.

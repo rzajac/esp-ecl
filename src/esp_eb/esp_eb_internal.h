@@ -28,4 +28,6 @@
 
 #define ESP_EB_ERROR(format, ...) os_printf("EB ERR: " format, ## __VA_ARGS__ )
 
+#define GET_EVENT(node) ((eb_event *) (node)->payload)
+
 #endif //ESP_EB_INTERNAL_H

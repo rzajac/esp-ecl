@@ -18,7 +18,9 @@
 #ifndef ESP_UTIL_H
 #define ESP_UTIL_H
 
+#include <user_interface.h>
 #include <c_types.h>
+#include <mem.h>
 
 
 // The register to read in a loop.

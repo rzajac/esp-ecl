@@ -18,9 +18,10 @@
 #ifndef ESP_NM_INTERNAL_H
 #define ESP_NM_INTERNAL_H
 
-
 #ifndef UNUSED
   #define UNUSED(x) ( (void)(x) )
 #endif
+
+#define ESP_NM_EV_GROUP 1
 
 #endif //ESP_NM_INTERNAL_H

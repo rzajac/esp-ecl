@@ -93,16 +93,8 @@ esp_nm_start(char *wifi_name,
 
   // Receive WiFi events.
   esp_eb_handle_wifi_events();
-  esp_eb_err err = esp_eb_attach(EVENT_STAMODE_CONNECTED, wifi_event_cb);
-  if (err != ESP_EB_ATTACH_OK) return ESP_NME_MEM;
-  err = esp_eb_attach(EVENT_STAMODE_DISCONNECTED, wifi_event_cb);
-  if (err != ESP_EB_ATTACH_OK) return wifi_events_detach(ESP_NME_MEM);
-  err = esp_eb_attach(EVENT_STAMODE_GOT_IP, wifi_event_cb);
-  if (err != ESP_EB_ATTACH_OK) return wifi_events_detach(ESP_NME_MEM);
-  err = esp_eb_attach(EVENT_STAMODE_DHCP_TIMEOUT, wifi_event_cb);
-  if (err != ESP_EB_ATTACH_OK) return wifi_events_detach(ESP_NME_MEM);
-  err = esp_eb_attach(EVENT_OPMODE_CHANGED, wifi_event_cb);
-  if (err != ESP_EB_ATTACH_OK) return wifi_events_detach(ESP_NME_MEM);
+  esp_eb_err err = esp_eb_attach_wifi_events(wifi_event_cb, ESP_NM_EV_GROUP);
+  if (err != ESP_EB_OK) return ESP_NME_MEM;
 
   suc = wifi_station_connect();
   if (!suc) return wifi_events_detach(ESP_NME_WIFI_CONNECT);
@@ -215,11 +207,7 @@ wifi_event_cb(uint16_t ev_code, void *arg)
 static esp_nm_err ICACHE_FLASH_ATTR
 wifi_events_detach(esp_nm_err err)
 {
-  esp_eb_detach(EVENT_STAMODE_CONNECTED, wifi_event_cb);
-  esp_eb_detach(EVENT_STAMODE_DISCONNECTED, wifi_event_cb);
-  esp_eb_detach(EVENT_STAMODE_GOT_IP, wifi_event_cb);
-  esp_eb_detach(EVENT_STAMODE_DHCP_TIMEOUT, wifi_event_cb);
-  esp_eb_detach(EVENT_OPMODE_CHANGED, wifi_event_cb);
+  esp_eb_remove_cb(wifi_event_cb);
   return err;
 }
 

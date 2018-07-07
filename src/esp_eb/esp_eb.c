@@ -18,45 +18,33 @@
 #include <mem.h>
 #include <user_interface.h>
 
-#include "esp_tim.h"
-#include "esp_util.h"
 #include "include/esp_eb.h"
 #include "esp_eb_internal.h"
-
 
 // Structure defining event.
 typedef struct {
   uint8_t group;        // The group, 0 - no group (1-128 reserved).
   uint16_t ev_code;     // Event code (0-1023 reserved for internal use).
-  esp_eb_cb *cb;        // Event callback function.
+  esp_eb_cb cb;        // Event callback function.
   uint32_t ctime_us;    // Last time callback was called.
   uint32_t throttle_us; // Throttle callback calls (0 - no throttle).
   // The minimum number of microseconds to wait between callback executions.
   void *payload;        // Passed to callback.
 } eb_event;
 
-// Linked list of attached events.
-typedef struct node {
-  eb_event *event;   // The event.
-  struct node *next; // The pointer to the next node on the list.
-  struct node *prev; // The pointer to the previous node on the list.
-} eb_node;
-
 // The linked list head node.
-static eb_node *head;
-// The linked list tail node.
-static eb_node *tail;
+static esp_dll_node *head;
 
 /**
  * Create new event structure.
  *
- * @param group       The group, 0 - no group (1-128 reserved).
  * @param ev_code     The event code (0-1023 reserved for internal use).
  * @param cb          The callback.
  * @param throttle_us Throttle callback calls (0 - no throttle).
+ * @param group       The group, 0 - no group (1-128 reserved).
  */
 static eb_event *ICACHE_FLASH_ATTR
-event_new(uint8_t group, uint16_t ev_code, esp_eb_cb *cb, uint32_t throttle_us)
+event_new(uint16_t ev_code, esp_eb_cb cb, uint32_t throttle_us, uint8_t group)
 {
   eb_event *new = os_zalloc(sizeof(eb_event));
   if (new == NULL) return NULL;
@@ -72,203 +60,145 @@ event_new(uint8_t group, uint16_t ev_code, esp_eb_cb *cb, uint32_t throttle_us)
 /**
  * Create new event list node.
  *
- * @param group       The group, 0 - no group (1-128 reserved).
  * @param ev_code     The event code (0-1023 reserved for internal use).
  * @param cb          The callback.
  * @param throttle_us Throttle callback calls (0 - no throttle).
+ * @param group       The group, 0 - no group (1-128 reserved).
  */
-static eb_node *ICACHE_FLASH_ATTR
-new_node(uint8_t group, uint16_t ev_code, esp_eb_cb *cb, uint32_t throttle_us)
+static esp_dll_node *ICACHE_FLASH_ATTR
+new_node(uint16_t ev_code, esp_eb_cb cb, uint32_t throttle_us, uint8_t group)
 {
-  eb_event *event = event_new(group, ev_code, cb, throttle_us);
+  eb_event *event = event_new(ev_code, cb, throttle_us, group);
   if (event == NULL) return NULL;
 
-  eb_node *new_node = os_zalloc(sizeof(eb_node));
-  if (new_node == NULL) {
+  esp_dll_node *node = esp_dll_new(event);
+  if (node == NULL) {
     os_free(event);
     return NULL;
   }
-  new_node->event = event;
 
-  return new_node;
-}
-
-static void ICACHE_FLASH_ATTR
-add_node(eb_node *node)
-{
-  // Empty list.
-  if (tail == NULL) {
-    head = node;
-    tail = node;
-    return;
-  }
-
-  tail->next = node;
-  tail = node;
-}
-
-static void ICACHE_FLASH_ATTR
-remove_node(eb_node *node)
-{
-  // Empty list.
-  if (tail == NULL) return;
-
-  // One element on the list.
-  if (tail == head && node == head) {
-    tail = NULL;
-    head = NULL;
-    return;
-  };
-
-  if (head == node) {
-    head = head->next;
-    return;
-  }
-
-  if (node == head) {
-    if (head == tail) {
-      head = NULL;
-      tail = NULL;
-    } else {
-      head = head->next;
-    }
-  }
+  return node;
 }
 
 /**
  * Find node on the list.
  *
- * Cases:
- *                ret,  prev
- *  - empty list: NULL, NULL
- *  - head:       head, NULL
- *  - not found:  NULL, tail
- *  - found:      node, prev
- *
  * @param ev_code The event code (0-1023 reserved for internal use).
  * @param cb      The event callback.
- * @param prev    The previous node to the found one.
  *
  * @return The found node or NULL
  */
-static eb_node *ICACHE_FLASH_ATTR
-find_node(uint16_t ev_code, esp_eb_cb *cb, eb_node **prev)
+static esp_dll_node *ICACHE_FLASH_ATTR
+find_node(uint16_t ev_code, esp_eb_cb cb)
 {
-  eb_node *curr = head;
-  if (prev != NULL && *prev != NULL) *prev = NULL;
-
-  // Empty list.
-  if (curr == NULL) return NULL;
-
-  while (curr) {
-    if (curr->event->ev_code == ev_code && curr->event->cb == cb) break;
-    if (prev != NULL) *prev = curr;
+  esp_dll_node *curr = head;
+  while (curr != NULL) {
+    if (GET_EVENT(curr)->ev_code == ev_code && GET_EVENT(curr)->cb == cb) break;
     curr = curr->next;
   }
-
   return curr;
 }
 
-esp_eb_err ICACHE_FLASH_ATTR
-esp_eb_attach_throttled(uint8_t group,
-                        uint16_t ev_code,
-                        esp_eb_cb *cb,
-                        uint32_t throttle_us)
+/**
+ * Remove node from linked list.
+ *
+ * @param node The node to remove.
+ *
+ * @return The next node.
+ */
+static esp_dll_node *ICACHE_FLASH_ATTR
+remove_node(esp_dll_node *node)
 {
-  eb_node *tail = NULL;
-  eb_node *node = find_node(ev_code, cb, &tail);
+  esp_dll_node *next = node->next;
+  esp_dll_remove(node);
 
-  // Empty list.
-  if (node == NULL && tail == NULL) {
-    head = new_node(group, ev_code, cb, throttle_us);
-    if (head == NULL) return ESP_EB_ATTACH_MEM;
-    ESP_EB_DEBUG("added head (%p) %d %d %p\n", head, ev_code, throttle_us, cb);
+  if (node == head) head = node->next;
 
-    return ESP_EB_ATTACH_OK;
-  }
+  os_free(GET_EVENT(node));
+  os_free(node);
 
-  // If node already exists we return.
-  if (node != NULL) return ESP_EB_ATTACH_EXISTED;
-
-  tail->next = new_node(group, ev_code, cb, throttle_us);
-  if (tail->next == NULL) return ESP_EB_ATTACH_MEM;
-
-  ESP_EB_DEBUG("added %d %d %p\n", ev_code, throttle_us, cb);
-  return ESP_EB_ATTACH_OK;
+  return next;
 }
 
 esp_eb_err ICACHE_FLASH_ATTR
-esp_eb_attach(uint8_t group, uint16_t ev_code, esp_eb_cb *cb)
+esp_eb_attach_throttled(uint16_t ev_code,
+                        esp_eb_cb cb,
+                        uint32_t throttle_us,
+                        uint8_t group)
 {
-  return esp_eb_attach_throttled(group, ev_code, cb, 0);
+  // Empty list.
+  if (head == NULL) {
+    head = new_node(ev_code, cb, throttle_us, group);
+    if (head == NULL) return ESP_EB_E_MEM;
+    ESP_EB_DEBUG("added head %d %p %d %d\n", ev_code, cb, throttle_us, group);
+
+    return ESP_EB_OK;
+  }
+
+  esp_dll_node *node = find_node(ev_code, cb);
+
+  // If node already exists we return.
+  if (node != NULL) {
+    if (GET_EVENT(node)->group != group) return ESP_EB_E_EXISTED_GROUP;
+    return ESP_EB_OK;
+  }
+
+  node = new_node(ev_code, cb, throttle_us, group);
+  if (node == NULL) return ESP_EB_E_MEM;
+
+  esp_dll_append(head, node);
+  ESP_EB_DEBUG("added %d %p %d %d\n", ev_code, cb, throttle_us, group);
+
+  return ESP_EB_OK;
+}
+
+esp_eb_err ICACHE_FLASH_ATTR
+esp_eb_attach(uint16_t ev_code, esp_eb_cb cb, uint8_t group)
+{
+  return esp_eb_attach_throttled(ev_code, cb, 0, group);
 }
 
 bool ICACHE_FLASH_ATTR
-esp_eb_detach(uint16_t ev_code, esp_eb_cb *cb)
+esp_eb_detach(uint16_t ev_code, esp_eb_cb cb)
 {
-  eb_node *prev = NULL;
-  eb_node *curr = find_node(ev_code, cb, &prev);
+  esp_dll_node *node = find_node(ev_code, cb);
 
   // Not found.
-  if (curr == NULL) return true;
-  if (prev != NULL) prev->next = curr->next;
-  if (curr == head) head = curr->next;
-  os_free(curr->event);
-  os_free(curr);
+  if (node == NULL) return true;
+
+  remove_node(node);
 
   ESP_EB_DEBUG("detached node %d %p\n", ev_code, cb);
   return true;
 }
 
 bool ICACHE_FLASH_ATTR
-esp_eb_remove_cb(esp_eb_cb *cb)
+esp_eb_remove_cb(esp_eb_cb cb)
 {
-  // TODO: this code is broken.
-  eb_node *prev = NULL;
-  eb_node *curr = head;
+  esp_dll_node *curr = head;
 
-  while (curr) {
-    if (curr->event->cb == cb) {
-      // TODO: remove node and search for next one.
+  while (curr != NULL) {
+    if (GET_EVENT(curr)->cb == cb) {
+      curr = remove_node(curr);
+      continue;
     }
-    prev = curr;
     curr = curr->next;
   }
-
-  // Node not found or empty list.
-  if (curr == NULL) return true;
-
-  if (prev) prev->next = curr->next;
-  if (curr == head) head = curr->next;
-  os_free(curr->event);
-  os_free(curr);
-
-  ESP_EB_DEBUG("detached node %d %p\n", curr->event->ev_code, curr->event->cb);
   return true;
 }
 
 bool ICACHE_FLASH_ATTR
 esp_eb_remove_group(uint8_t group)
 {
-  // TODO: this code is broken.
-  eb_node *prev = NULL;
-  eb_node *curr = head;
+  esp_dll_node *curr = head;
 
-  while (curr) {
-    if (curr->event->group == group) break;
-    prev = curr;
+  while (curr != NULL) {
+    if (GET_EVENT(curr)->group == group) {
+      curr = remove_node(curr);
+      continue;
+    }
     curr = curr->next;
   }
-
-  // Node not found or empty list.
-  if (curr == NULL) return true;
-
-  if (prev) prev->next = curr->next;
-  if (curr == head) head = curr->next;
-  os_free(curr->event);
-  os_free(curr);
-
-  ESP_EB_DEBUG("detached node %d %p\n", curr->event->ev_code, curr->event->cb);
   return true;
 }
 
@@ -284,20 +214,20 @@ timer_cb(void *arg)
   eb_event *event = timer->payload;
 
   // Event no longer exists.
-  eb_node *node = find_node(event->ev_code, event->cb, NULL);
+  esp_dll_node *node = find_node(event->ev_code, event->cb);
   if (node == NULL) {
     os_free(event);
     return;
   }
 
   uint32_t now = system_get_time();
-  uint32_t diff = now - node->event->ctime_us;
+  uint32_t diff = now - GET_EVENT(node)->ctime_us;
 
   if (event->throttle_us == 0) {
-    node->event->ctime_us = now;
+    GET_EVENT(node)->ctime_us = now;
     event->cb(event->ev_code, event->payload);
   } else if (event->throttle_us > 0 && diff >= event->throttle_us) {
-    node->event->ctime_us = now;
+    GET_EVENT(node)->ctime_us = now;
     event->cb(event->ev_code, event->payload);
   }
 
@@ -306,27 +236,28 @@ timer_cb(void *arg)
 }
 
 static esp_tim_timer *ICACHE_FLASH_ATTR
-timer_start(const eb_node *node, void *payload, uint32_t delay)
+timer_start(const esp_dll_node *node, void *payload, uint32_t delay)
 {
   // We are scheduling callback, by the time it is called
   // it is possible node will no longer exist.
-  eb_event *event = event_new(node->event->ev_code,
-                              node->event->cb,
-                              node->event->throttle_us);
+  eb_event *event = event_new(GET_EVENT(node)->ev_code,
+                              GET_EVENT(node)->cb,
+                              GET_EVENT(node)->throttle_us,
+                              GET_EVENT(node)->group);
   if (!event) return false;
   event->payload = payload;
 
-  ESP_EB_DEBUG("scheduling %d in %d ms\n", node->event->ev_code, delay);
+  ESP_EB_DEBUG("scheduling %d in %d ms\n", GET_EVENT(node)->ev_code, delay);
   return esp_tim_start_delay(timer_cb, event, delay);
 }
 
 void ICACHE_FLASH_ATTR
 esp_eb_trigger_delayed(uint16_t ev_code, uint32_t delay, void *arg)
 {
-  eb_node *curr = head;
+  esp_dll_node *curr = head;
 
   while (curr) {
-    if (curr->event->ev_code == ev_code) {
+    if (GET_EVENT(curr)->ev_code == ev_code) {
       if (timer_start(curr, arg, delay) == NULL) {
         ESP_EB_ERROR("error scheduling timer for %d\n", ev_code);
       }
@@ -345,9 +276,9 @@ void ICACHE_FLASH_ATTR
 esp_eb_print_list()
 {
   os_printf("list state:\n");
-  eb_node *node = head;
+  esp_dll_node *node = head;
   while (node != NULL) {
-    os_printf("    %d %p\n", node->event->ev_code, node->event->cb);
+    os_printf("    %d %p\n", GET_EVENT(node)->ev_code, GET_EVENT(node)->cb);
     node = node->next;
   }
 }
@@ -452,4 +383,45 @@ void ICACHE_FLASH_ATTR
 esp_eb_handle_wifi_events()
 {
   wifi_set_event_handler_cb(wifi_event_cb);
+}
+
+esp_eb_err ICACHE_FLASH_ATTR
+esp_eb_attach_wifi_events(esp_eb_cb cb, uint8_t group)
+{
+  esp_eb_err err;
+
+  err = esp_eb_attach(EVENT_STAMODE_CONNECTED, cb, group);
+  if (err) return ESP_EB_E_MEM;
+
+  err = esp_eb_attach(EVENT_STAMODE_DISCONNECTED, cb, group);
+  if (err) {
+    esp_eb_remove_cb(cb);
+    return ESP_EB_E_MEM;
+  }
+
+  err = esp_eb_attach(EVENT_STAMODE_AUTHMODE_CHANGE, cb, group);
+  if (err) {
+    esp_eb_remove_cb(cb);
+    return ESP_EB_E_MEM;
+  }
+
+  err = esp_eb_attach(EVENT_STAMODE_GOT_IP, cb, group);
+  if (err) {
+    esp_eb_remove_cb(cb);
+    return ESP_EB_E_MEM;
+  }
+
+  err = esp_eb_attach(EVENT_STAMODE_DHCP_TIMEOUT, cb, group);
+  if (err) {
+    esp_eb_remove_cb(cb);
+    return ESP_EB_E_MEM;
+  }
+
+  err = esp_eb_attach(EVENT_OPMODE_CHANGED, cb, group);
+  if (err) {
+    esp_eb_remove_cb(cb);
+    return ESP_EB_E_MEM;
+  }
+
+  return ESP_EB_OK;
 }
