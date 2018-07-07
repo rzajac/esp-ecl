@@ -38,6 +38,6 @@ esp_gen_lib(${PROJECT_NAME})
 
 install(
     FILES
-      ${ESP_LIB_BIN_DIR}/gen_aes.sh
+    ${ESP_LIB_BIN_DIR}/gen_aes.sh
     DESTINATION
-      ${CMAKE_INSTALL_BINDIR})
+    ${CMAKE_INSTALL_BINDIR})

@@ -26,22 +26,22 @@
 #include "esp_list.h"
 
 #ifndef ESP_EB_DEBUG_ON
-  #ifdef DEBUG_ON
-    #define ESP_EB_DEBUG_ON
-  #endif
+    #ifdef DEBUG_ON
+        #define ESP_EB_DEBUG_ON
+    #endif
 #endif
 
 // The number of milliseconds to use when arming the event callback timer.
 #define ESP_EB_TIMER_MS 10
 
 // The event callback prototype.
-typedef void (* esp_eb_cb)(uint16_t ev_code, void *arg);
+typedef void (*esp_eb_cb)(uint16_t ev_code, void *arg);
 
 // Event bus errors.
 typedef enum {
-  ESP_EB_OK,              // OK.
-  ESP_EB_E_MEM,           // Out of memory.
-  ESP_EB_E_EXISTED_GROUP, // Attach failed due to group conflict.
+    ESP_EB_OK,              // OK.
+    ESP_EB_E_MEM,           // Out of memory.
+    ESP_EB_E_EXISTED_GROUP, // Attach failed due to group conflict.
 } esp_eb_err;
 
 /**
@@ -134,6 +134,13 @@ esp_eb_handle_wifi_events();
 
 /**
  * Attach all station mode events to given callback.
+ *
+ * The esp_eb_handle_wifi_events must be called beforehand.
+ *
+ * The callback should be dedicated function for WiFi event
+ * handling because if one of the attach calls returns OOM
+ * the function before exiting will remove all events from
+ * given callback function.
  *
  * @param cb    The event callback.
  * @param group The group, 0 - no group (1-128 reserved).

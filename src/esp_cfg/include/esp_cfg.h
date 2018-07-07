@@ -23,26 +23,26 @@
 
 // The start address for configuration sectors.
 #ifndef ESP_CFG_START_SECTOR
-  #define ESP_CFG_START_SECTOR 0xC
+    #define ESP_CFG_START_SECTOR 0xC
 #endif
 
 // Defines the number of configuration sectors available.
 #ifndef ESP_CFG_NUMBER
-  #define ESP_CFG_NUMBER 4
+    #define ESP_CFG_NUMBER 4
 #endif
 
 // This has the same order as SpiFlashOpResult with additional result codes.
 // We do that so we can easily cast SpiFlashOpResult to esp_cfg_err.
 typedef enum {
-  ESP_CFG_OK,
-  ESP_CFG_ERR,
-  ESP_CFG_ERR_TIMEOUT,
+    ESP_CFG_OK,
+    ESP_CFG_ERR,
+    ESP_CFG_ERR_TIMEOUT,
 
-  // Additional results.
-  ESP_CFG_ERR_MEM = 200,    // Out of memory.
-  ESP_CFG_ERR_INIT,         // Configuration not initialized.
-  ESP_CFG_ERR_INIT_TWICE,   // Configuration already initialized.
-  ESP_CFG_ERR_NOT_SUPPORTED // Not supported configuration number.
+    // Additional results.
+        ESP_CFG_ERR_MEM = 200,    // Out of memory.
+    ESP_CFG_ERR_INIT,         // Configuration not initialized.
+    ESP_CFG_ERR_INIT_TWICE,   // Configuration already initialized.
+    ESP_CFG_ERR_NOT_SUPPORTED // Not supported configuration number.
 } esp_cfg_err;
 
 // Espressif SDK missing includes.

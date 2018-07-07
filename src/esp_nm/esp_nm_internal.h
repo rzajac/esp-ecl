@@ -19,9 +19,16 @@
 #define ESP_NM_INTERNAL_H
 
 #ifndef UNUSED
-  #define UNUSED(x) ( (void)(x) )
+    #define UNUSED(x) ( (void)(x) )
 #endif
 
 #define ESP_NM_EV_GROUP 1
+
+// Takes esp_dll_node* and returns its payload as esp_nm_conn*.
+#define get_conn(node) ((node) == NULL ? NULL : ((esp_nm_conn *) (node)->payload))
+
+// Takes struct espconn* and finds list node which has it as a payload.
+// Returns NULL or esp_nm_conn*.
+#define find_conn(esp) ((esp) == NULL ? NULL : get_conn(esp_dll_find(head, (esp))))
 
 #endif //ESP_NM_INTERNAL_H

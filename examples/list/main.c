@@ -26,68 +26,68 @@ esp_dll_node *head;
 void ICACHE_FLASH_ATTR
 sys_init_done(void)
 {
-  esp_dll_node *tmp;
-  esp_dll_node *next;
+    esp_dll_node *tmp;
+    esp_dll_node *next;
 
-  os_printf("heap size %d\n", system_get_free_heap_size());
-  os_printf("node size %d\n", sizeof(esp_dll_node));
+    os_printf("heap size %d\n", system_get_free_heap_size());
+    os_printf("node size %d\n", sizeof(esp_dll_node));
 
-  next = head = esp_dll_new((void *) 1);
+    next = head = esp_dll_new((void *) 1);
 
-  // Create 100 nodes.
-  for (int i = 2; i <= 20; i++) {
-    next = esp_dll_append(next, esp_dll_new((void *) i));
-  }
+    // Create 100 nodes.
+    for (int i = 2; i <= 20; i++) {
+        next = esp_dll_append(next, esp_dll_new((void *) i));
+    }
 
-  // Display 100 nodes.
-  next = head;
-  while (next != NULL) {
-    os_printf("node %p %d\n", next, (int) next->payload);
-    next = next->next;
-  }
+    // Display 100 nodes.
+    next = head;
+    while (next != NULL) {
+        os_printf("node %p %d\n", next, (int) next->payload);
+        next = next->next;
+    }
 
-  // Find specific node by payload.
-  tmp = esp_dll_find(head, (void *) 13);
-  os_printf("found node #13 %p %d\n", tmp, (int) tmp->payload);
+    // Find specific node by payload.
+    tmp = esp_dll_find(head, (void *) 13);
+    os_printf("found node #13 %p %d\n", tmp, (int) tmp->payload);
 
-  // Remove node #13
-  esp_dll_remove(tmp);
-  os_free(tmp);
+    // Remove node #13
+    esp_dll_remove(tmp);
+    os_free(tmp);
 
-  // Display 19 nodes.
-  next = head;
-  esp_dll_node *tail = head;
-  while (next != NULL) {
-    tail = next;
-    os_printf("node %p %d\n", next, (int) next->payload);
-    next = next->next;
-  }
+    // Display 19 nodes.
+    next = head;
+    esp_dll_node *tail = head;
+    while (next != NULL) {
+        tail = next;
+        os_printf("node %p %d\n", next, (int) next->payload);
+        next = next->next;
+    }
 
-  // Display 19 nodes backwards.
-  next = tail;
-  while (next != NULL) {
-    os_printf("node %p %d\n", next, (int) next->payload);
-    next = next->prev;
-  }
+    // Display 19 nodes backwards.
+    next = tail;
+    while (next != NULL) {
+        os_printf("node %p %d\n", next, (int) next->payload);
+        next = next->prev;
+    }
 
-  // Release memory for nodes.
-  next = head;
-  while (next != NULL) {
-    tmp = next->next;
-    os_free(next);
-    next = tmp;
-  }
+    // Release memory for nodes.
+    next = head;
+    while (next != NULL) {
+        tmp = next->next;
+        os_free(next);
+        next = tmp;
+    }
 
-  os_printf("heap size %d\n", system_get_free_heap_size());
+    os_printf("heap size %d\n", system_get_free_heap_size());
 }
 
 void ICACHE_FLASH_ATTR
 user_init()
 {
-  // No need for wifi for this example.
-  wifi_station_disconnect();
-  wifi_set_opmode_current(NULL_MODE);
+    // No need for wifi for this example.
+    wifi_station_disconnect();
+    wifi_set_opmode_current(NULL_MODE);
 
-  stdout_init(BIT_RATE_74880);
-  system_init_done_cb(sys_init_done);
+    stdout_init(BIT_RATE_74880);
+    system_init_done_cb(sys_init_done);
 }

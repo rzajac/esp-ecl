@@ -23,51 +23,51 @@
 
 
 typedef struct {
-  uint8_t val1;
-  int8_t val2;
+    uint8_t val1;
+    int8_t val2;
 } my_data;
 
 
 void ICACHE_FLASH_ATTR
 my_cb(void *arg)
 {
-  esp_tim_timer *timer = arg;
-  my_data *data = timer->payload;
+    esp_tim_timer *timer = arg;
+    my_data *data = timer->payload;
 
-  os_printf("Callback val1: %d, val2: %d\n", data->val1, data->val2);
+    os_printf("Callback val1: %d, val2: %d\n", data->val1, data->val2);
 
-  if (data->val1 == 8) {
-    os_printf("END\n");
-    esp_tim_stop(timer);
-    return;
-  }
+    if (data->val1 == 8) {
+        os_printf("END\n");
+        esp_tim_stop(timer);
+        return;
+    }
 
-  data->val1++;
-  data->val2--;
-  timer->delay *= 2;
+    data->val1++;
+    data->val2--;
+    timer->delay *= 2;
 
-  esp_tim_continue(timer);
+    esp_tim_continue(timer);
 }
 
 void ICACHE_FLASH_ATTR
 sys_init_done(void)
 {
-  my_data *data = os_zalloc(sizeof(my_data));
-  if (data == NULL) {
-    os_printf("No memory!\n");
-    return;
-  }
+    my_data *data = os_zalloc(sizeof(my_data));
+    if (data == NULL) {
+        os_printf("No memory!\n");
+        return;
+    }
 
-  esp_tim_start(my_cb, data);
+    esp_tim_start(my_cb, data);
 }
 
 void ICACHE_FLASH_ATTR
 user_init()
 {
-  // No need for wifi for this example.
-  wifi_station_disconnect();
-  wifi_set_opmode_current(NULL_MODE);
+    // No need for wifi for this example.
+    wifi_station_disconnect();
+    wifi_set_opmode_current(NULL_MODE);
 
-  stdout_init(BIT_RATE_74880);
-  system_init_done_cb(sys_init_done);
+    stdout_init(BIT_RATE_74880);
+    system_init_done_cb(sys_init_done);
 }

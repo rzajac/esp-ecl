@@ -21,9 +21,9 @@
 #include "esp_eb.h"
 
 #ifdef ESP_EB_DEBUG_ON
-  #define ESP_EB_DEBUG(format, ...) os_printf("EB DBG: " format, ## __VA_ARGS__ )
+    #define ESP_EB_DEBUG(format, ...) os_printf("EB DBG: " format, ## __VA_ARGS__ )
 #else
-  #define ESP_EB_DEBUG(format, ...) do {} while(0)
+    #define ESP_EB_DEBUG(format, ...) do {} while(0)
 #endif
 
 #define ESP_EB_ERROR(format, ...) os_printf("EB ERR: " format, ## __VA_ARGS__ )

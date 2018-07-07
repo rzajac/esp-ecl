@@ -15,9 +15,9 @@
 
 project(esp_nm C)
 
-set(SOURCE_FILES esp_nm.c esp_nm_list.c)
+set(SOURCE_FILES esp_nm.c)
 set(HEADER_FILES include/esp_nm.h)
-set(PRIVATE_HEADER_FILES esp_nm_internal.h esp_nm_list.h)
+set(PRIVATE_HEADER_FILES esp_nm_internal.h)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 
@@ -37,8 +37,8 @@ set_target_properties(
     PUBLIC_HEADER "${HEADER_FILES}"
     PRIVATE_HEADER "${PRIVATE_HEADER_FILES}")
 
-if(DEFINED ENV{ESP_NM_DEBUG_ON})
+if (DEFINED ENV{ESP_NM_DEBUG_ON})
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DESP_NM_DEBUG_ON")
-endif()
+endif ()
 
 esp_gen_lib(${PROJECT_NAME})

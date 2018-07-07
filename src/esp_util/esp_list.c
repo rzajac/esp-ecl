@@ -20,51 +20,57 @@
 esp_dll_node *ICACHE_FLASH_ATTR
 esp_dll_new(void *payload)
 {
-  esp_dll_node *n = os_zalloc(sizeof(esp_dll_node));
-  if (n == NULL) return NULL;
-  n->payload = payload;
-  return n;
+    esp_dll_node *n = os_zalloc(sizeof(esp_dll_node));
+    if (n == NULL)
+        return NULL;
+    n->payload = payload;
+    return n;
 }
 
 esp_dll_node *ICACHE_FLASH_ATTR
 esp_dll_append(esp_dll_node *n1, esp_dll_node *n2)
 {
-  n2->next = n1->next;
-  n2->prev = n1;
+    n2->next = n1->next;
+    n2->prev = n1;
 
-  if (n1->next != NULL) n1->next->prev = n2;
-  n1->next = n2;
+    if (n1->next != NULL)
+        n1->next->prev = n2;
+    n1->next = n2;
 
-  return n2;
+    return n2;
 }
 
 esp_dll_node *ICACHE_FLASH_ATTR
 esp_dll_prepend(esp_dll_node *n1, esp_dll_node *n2)
 {
-  n2->prev = n1->prev;
-  n2->next = n1;
+    n2->prev = n1->prev;
+    n2->next = n1;
 
-  if (n1->prev != NULL) n1->prev->next = n2;
-  n1->prev = n2;
+    if (n1->prev != NULL)
+        n1->prev->next = n2;
+    n1->prev = n2;
 
-  return n2;
+    return n2;
 }
 
 esp_dll_node *ICACHE_FLASH_ATTR
 esp_dll_remove(esp_dll_node *n)
 {
-  if (n->prev != NULL) n->prev->next = n->next;
-  if (n->next != NULL) n->next->prev = n->prev;
+    if (n->prev != NULL)
+        n->prev->next = n->next;
+    if (n->next != NULL)
+        n->next->prev = n->prev;
 
-  return n;
+    return n;
 }
 
 esp_dll_node *ICACHE_FLASH_ATTR
 esp_dll_find(esp_dll_node *start, void *payload)
 {
-  while (start != NULL) {
-    if (start->payload == payload) return start;
-    start = start->next;
-  }
-  return NULL;
+    while (start != NULL) {
+        if (start->payload == payload)
+            return start;
+        start = start->next;
+    }
+    return NULL;
 }

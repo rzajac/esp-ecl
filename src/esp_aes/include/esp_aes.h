@@ -41,7 +41,8 @@ typedef uint8_t state_t[4][4];
  *
  * @return The encrypted data length in bytes.
  */
-uint32_t esp_aes_encrypt(uint8_t *output, uint8_t *input, uint32_t length, const uint8_t *key, const uint8_t *iv);
+uint32_t esp_aes_encrypt(uint8_t *output, uint8_t *input, uint32_t length,
+                         const uint8_t *key, const uint8_t *iv);
 
 /**
  * AES decrypt.
@@ -54,6 +55,7 @@ uint32_t esp_aes_encrypt(uint8_t *output, uint8_t *input, uint32_t length, const
  *
  * @return The decrypted data length in bytes.
  */
-uint32_t esp_aes_decrypt(uint8_t *output, uint8_t *input, uint32_t length, const uint8_t *key, const uint8_t *iv);
+uint32_t esp_aes_decrypt(uint8_t *output, uint8_t *input, uint32_t length,
+                         const uint8_t *key, const uint8_t *iv);
 
 #endif //ESP_AES_H

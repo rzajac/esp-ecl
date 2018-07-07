@@ -26,26 +26,26 @@
 
 
 #ifdef ESP_NM_DEBUG_ON
-  #define ESP_NM_DEBUG(format, ...) os_printf("NM DBG: " format, ## __VA_ARGS__ )
+    #define ESP_NM_DEBUG(format, ...) os_printf("NM DBG: " format, ## __VA_ARGS__ )
 #else
-  #define ESP_NM_DEBUG(format, ...) do {} while(0)
+    #define ESP_NM_DEBUG(format, ...) do {} while(0)
 #endif
 
 #define ESP_NM_ERROR(format, ...) os_printf("NM ERR: " format, ## __VA_ARGS__ )
 
 // Network manager errors.
 typedef enum {
-  ESP_NM_OK,            // OK.
-  ESP_NME_MEM,          // Out of memory.
-  ESP_NME_INITIALIZED,  // Network manager already initialized.
-  ESP_NME_MODE,         // Error changing current opmode.
-  ESP_NME_DHCP_STOP,    //
-  ESP_NME_DHCP_START,   //
-  ESP_NME_STATIC_IP,    //
-  ESP_NME_POLICY,       //
-  ESP_NME_WIFI_CFG,     //
-  ESP_NME_WIFI_CONNECT, //
-  ESP_NME_KEEPALIVE,    // Error setting keep alive on the connection.
+    ESP_NM_OK,             // OK.
+    ESP_NM_E_MEM,          // Out of memory.
+    ESP_NM_E_STATUS,       // Network manager already initialized.
+    ESP_NM_E_MODE,         // Error changing current opmode.
+    ESP_NM_E_DHCP_STOP,    //
+    ESP_NM_E_DHCP_START,   //
+    ESP_NM_E_STATIC_IP,    //
+    ESP_NM_E_POLICY,       //
+    ESP_NM_E_WIFI_CFG,     //
+    ESP_NM_E_WIFI_CONNECT, //
+    ESP_NME_KEEPALIVE,     // Error setting keep alive on the connection.
 } esp_nm_err;
 
 struct esp_nmc_;
@@ -62,17 +62,17 @@ typedef void (*esp_nm_cb)(struct esp_nmc_ *);
 
 // Represents managed connection.
 typedef struct esp_nmc_ {
-  struct espconn *esp;    // The connection.
-  bool ssl;               // Use SSL for the connection.
-  uint8_t recon_max;      // Maximum number of reconnection retries.
-  uint8_t recon_cnt;      // Number of reconnection retries.
-  int ka_idle;            // Keep alive idle.
-  int ka_intvl;           // Keep alive interval.
-  int ka_cnt;             // Keep alive count.
-  esp_nm_cb ready_cb;     // Ready callback.
-  esp_nm_cb send_cb;      // Sent callback.
-  esp_nm_recv_cb recv_cb; // Receive callback.
-  esp_nm_err_cb err_cb;   // Fatal error callback.
+    struct espconn *esp;    // The connection.
+    bool ssl;               // Use SSL for the connection.
+    uint8_t recon_max;      // Maximum number of reconnection retries.
+    uint8_t recon_cnt;      // Number of reconnection retries.
+    int ka_idle;            // Keep alive idle.
+    int ka_intvl;           // Keep alive interval.
+    int ka_cnt;             // Keep alive count.
+    esp_nm_cb ready_cb;     // Ready callback.
+    esp_nm_cb send_cb;      // Sent callback.
+    esp_nm_recv_cb recv_cb; // Receive callback.
+    esp_nm_err_cb err_cb;   // Fatal error callback.
 } esp_nm_conn;
 
 esp_nm_err ICACHE_FLASH_ATTR
@@ -82,6 +82,9 @@ esp_nm_start(char *wifi_name,
              uint32_t static_ip,
              uint32_t static_netmask,
              uint32_t static_gw);
+
+esp_nm_err ICACHE_FLASH_ATTR
+esp_nm_stop();
 
 esp_nm_err ICACHE_FLASH_ATTR
 esp_nm_client(esp_nm_conn *conn, char *host, int port, bool ssl);
@@ -97,10 +100,10 @@ esp_nm_set_callbacks(esp_nm_conn *conn,
                      esp_nm_err_cb err_cb);
 
 void ICACHE_FLASH_ATTR
-esp_nm_reconnect(esp_nm_conn *conn, uint8_t recon_max);
+esp_nm_set_reconnect(esp_nm_conn *conn, uint8_t recon_max);
 
 void ICACHE_FLASH_ATTR
-esp_nm_cleanup(esp_nm_conn *conn);
+esp_nm_remove(esp_nm_conn *conn);
 
 sint8 ICACHE_FLASH_ATTR
 esp_nm_send(esp_nm_conn *conn, uint8_t *data, size_t len);

@@ -25,13 +25,13 @@
 void ICACHE_FLASH_ATTR
 sys_init_done(void)
 {
-  os_printf("USER: system initialized\n");
+    os_printf("USER: system initialized\n");
 
-  esp_nm_start("TestHive", "xqfiricw2g", true, 0, 0, 0);
+    esp_nm_start("TestHive", "xqfiricw2g", true, 0, 0, 0);
 }
 
 void ICACHE_FLASH_ATTR user_init()
 {
-  stdout_init(BIT_RATE_74880);
-  system_init_done_cb(sys_init_done);
+    stdout_init(BIT_RATE_74880);
+    system_init_done_cb(sys_init_done);
 }

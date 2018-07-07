@@ -27,10 +27,10 @@
 
 // The structure wrapping timer data.
 typedef struct {
-  os_timer_func_t *os_timer_cb; // System timer callback.
-  os_timer_t *_os_timer;        // System timer. Don't touch it.
-  uint32_t delay;               // The timer delay in milliseconds.
-  void *payload;                // The payload.
+    os_timer_func_t *os_timer_cb; // System timer callback.
+    os_timer_t *_os_timer;        // System timer. Don't touch it.
+    uint32_t delay;               // The timer delay in milliseconds.
+    void *payload;                // The payload.
 } esp_tim_timer;
 
 

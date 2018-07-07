@@ -32,84 +32,84 @@ uint32_t arg1, arg2;
 void ICACHE_FLASH_ATTR
 my_event1_cb(uint16_t ev_code, void *arg)
 {
-  os_printf("event1 %d handled with arg: %d\n", ev_code, *(uint32_t *) arg);
+    os_printf("event1 %d handled with arg: %d\n", ev_code, *(uint32_t *) arg);
 }
 
 void ICACHE_FLASH_ATTR
 my_event2_cb(uint16_t ev_code, void *arg)
 {
-  os_printf("event2 %d handled with arg: %d\n", ev_code, *(uint32_t *) arg);
+    os_printf("event2 %d handled with arg: %d\n", ev_code, *(uint32_t *) arg);
 }
 
 void ICACHE_FLASH_ATTR
 my_event_throttled_cb(uint16_t ev_code, void *arg)
 {
-  os_printf("event throttled %d handled with arg: %d\n", ev_code,
-            *(uint32_t *) arg);
+    os_printf("event throttled %d handled with arg: %d\n", ev_code,
+              *(uint32_t *) arg);
 }
 
 void ICACHE_FLASH_ATTR
 sys_init_done(void)
 {
-  arg1 = 123;
-  arg2 = 321;
+    arg1 = 123;
+    arg2 = 321;
 
-  os_printf("system initialized\n");
-  os_printf("callback pointers:\n event1: %p\n event2: %p\n", my_event1_cb,
-            my_event2_cb);
+    os_printf("system initialized\n");
+    os_printf("callback pointers:\n event1: %p\n event2: %p\n", my_event1_cb,
+              my_event2_cb);
 
-  // Add two subscribers to batteryLow event.
-  esp_eb_attach(EVENT_BATTERY_LOW, my_event1_cb, EVENT_GROUP);
-  esp_eb_attach(EVENT_BATTERY_LOW, my_event2_cb, EVENT_GROUP);
+    // Add two subscribers to batteryLow event.
+    esp_eb_attach(EVENT_BATTERY_LOW, my_event1_cb, EVENT_GROUP);
+    esp_eb_attach(EVENT_BATTERY_LOW, my_event2_cb, EVENT_GROUP);
 
-  // Adding already existing subscriber will not do anything.
-  esp_eb_attach(EVENT_BATTERY_LOW, my_event2_cb, EVENT_GROUP);
+    // Adding already existing subscriber will not do anything.
+    esp_eb_attach(EVENT_BATTERY_LOW, my_event2_cb, EVENT_GROUP);
 
-  // List should have two entries.
-  os_printf("\n");
-  esp_eb_print_list();
+    // List should have two entries.
+    os_printf("\n");
+    esp_eb_print_list();
 
-  // Stop subscribing to batteryLow event.
-  esp_eb_detach(EVENT_BATTERY_LOW, my_event1_cb);
+    // Stop subscribing to batteryLow event.
+    esp_eb_detach(EVENT_BATTERY_LOW, my_event1_cb);
 
-  // Un-subscribing not existing is OK.
-  esp_eb_detach(EVENT_BATTERY_FULL, my_event1_cb);
+    // Un-subscribing not existing is OK.
+    esp_eb_detach(EVENT_BATTERY_FULL, my_event1_cb);
 
-  // Add batteryFull subscriber.
-  esp_eb_attach(EVENT_BATTERY_FULL, my_event2_cb, EVENT_GROUP);
+    // Add batteryFull subscriber.
+    esp_eb_attach(EVENT_BATTERY_FULL, my_event2_cb, EVENT_GROUP);
 
-  // List should have one batteryLow and batteryFull subscriber.
-  os_printf("\n");
-  esp_eb_print_list();
+    // List should have one batteryLow and batteryFull subscriber.
+    os_printf("\n");
+    esp_eb_print_list();
 
-  // Trigger events.
-  esp_eb_trigger(EVENT_BATTERY_LOW, &arg1);
-  esp_eb_trigger(EVENT_BATTERY_FULL, &arg2);
-  esp_eb_trigger_delayed(EVENT_BATTERY_FULL, 5000, &arg2);
+    // Trigger events.
+    esp_eb_trigger(EVENT_BATTERY_LOW, &arg1);
+    esp_eb_trigger(EVENT_BATTERY_FULL, &arg2);
+    esp_eb_trigger_delayed(EVENT_BATTERY_FULL, 5000, &arg2);
 
-  os_printf("\n");
-  esp_eb_attach_throttled(EVENT_THROTTLED,
-                          my_event_throttled_cb,
-                          40000,
-                          EVENT_GROUP);
+    os_printf("\n");
+    esp_eb_attach_throttled(EVENT_THROTTLED,
+                            my_event_throttled_cb,
+                            40000,
+                            EVENT_GROUP);
 
-  esp_eb_trigger(EVENT_THROTTLED, &arg1);
-  esp_eb_trigger(EVENT_THROTTLED, &arg1);
-  esp_eb_trigger(EVENT_THROTTLED, &arg1);
-  esp_eb_trigger(EVENT_THROTTLED, &arg1);
-  os_delay_us(40000);
-  esp_eb_trigger(EVENT_THROTTLED, &arg1);
+    esp_eb_trigger(EVENT_THROTTLED, &arg1);
+    esp_eb_trigger(EVENT_THROTTLED, &arg1);
+    esp_eb_trigger(EVENT_THROTTLED, &arg1);
+    esp_eb_trigger(EVENT_THROTTLED, &arg1);
+    os_delay_us(40000);
+    esp_eb_trigger(EVENT_THROTTLED, &arg1);
 
-  esp_eb_print_list();
+    esp_eb_print_list();
 }
 
 void ICACHE_FLASH_ATTR
 user_init()
 {
-  // No need for wifi for this example.
-  wifi_station_disconnect();
-  wifi_set_opmode_current(NULL_MODE);
+    // No need for wifi for this example.
+    wifi_station_disconnect();
+    wifi_set_opmode_current(NULL_MODE);
 
-  stdout_init(BIT_RATE_74880);
-  system_init_done_cb(sys_init_done);
+    stdout_init(BIT_RATE_74880);
+    system_init_done_cb(sys_init_done);
 }

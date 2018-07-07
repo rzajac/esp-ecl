@@ -22,9 +22,9 @@
 
 // Double linked list.
 typedef struct esp_dll_node_ {
-  void *payload;              // The list payload.
-  struct esp_dll_node_ *next; // The pointer to the next list node.
-  struct esp_dll_node_ *prev; // The pointer to the previous list node.
+    void *payload;              // The list payload.
+    struct esp_dll_node_ *next; // The pointer to the next list node.
+    struct esp_dll_node_ *prev; // The pointer to the previous list node.
 } esp_dll_node;
 
 
@@ -46,7 +46,7 @@ esp_dll_new(void *payload);
  *
  * @return n2
  */
-esp_dll_node * ICACHE_FLASH_ATTR
+esp_dll_node *ICACHE_FLASH_ATTR
 esp_dll_append(esp_dll_node *n1, esp_dll_node *n2);
 
 /**
@@ -57,7 +57,7 @@ esp_dll_append(esp_dll_node *n1, esp_dll_node *n2);
  *
  * @return n2
  */
-esp_dll_node * ICACHE_FLASH_ATTR
+esp_dll_node *ICACHE_FLASH_ATTR
 esp_dll_prepend(esp_dll_node *n1, esp_dll_node *n2);
 
 /**
@@ -67,7 +67,7 @@ esp_dll_prepend(esp_dll_node *n1, esp_dll_node *n2);
  *
  * @return n
  */
-esp_dll_node * ICACHE_FLASH_ATTR
+esp_dll_node *ICACHE_FLASH_ATTR
 esp_dll_remove(esp_dll_node *n);
 
 /**
@@ -79,6 +79,6 @@ esp_dll_remove(esp_dll_node *n);
  * @return Returns pointer to node with payload or NULL.
  */
 esp_dll_node *ICACHE_FLASH_ATTR
-esp_dll_find(esp_dll_node *start, void* payload);
+esp_dll_find(esp_dll_node *start, void *payload);
 
 #endif //ESP_LIST_H

@@ -29,24 +29,27 @@ uint16_t esp_gpio_mux[17] = {0x834, 0x818, 0x838, 0x814,
 void ICACHE_FLASH_ATTR
 esp_gpio_setup(uint8_t gpio_num, uint8_t mode)
 {
-  // Set pin as GPIO. It resets all MUX bits to 0 except [8] and [5:4].
-  GPIO_MUX(gpio_num) = GPIO_FUNC(GPIO_FUNC_NUM(gpio_num));
+    // Set pin as GPIO. It resets all MUX bits to 0 except [8] and [5:4].
+    GPIO_MUX(gpio_num) = GPIO_FUNC(GPIO_FUNC_NUM(gpio_num));
 
-  if (mode == GPIO_MODE_OUTPUT || mode == GPIO_MODE_OUTPUT_OPEN_DRAIN) {
-    // Reset all the bits except bits [10:7].
-    GPIO_CFG(gpio_num) = (GPIO_CFG(gpio_num) & (0xF << GPIO_CFG_ITR_TYPE));
+    if (mode == GPIO_MODE_OUTPUT || mode == GPIO_MODE_OUTPUT_OPEN_DRAIN) {
+        // Reset all the bits except bits [10:7].
+        GPIO_CFG(gpio_num) = (GPIO_CFG(gpio_num) & (0xF << GPIO_CFG_ITR_TYPE));
 
-    // Set open drain bit.
-    if (mode == GPIO_MODE_OUTPUT_OPEN_DRAIN) GPIO_CFG(gpio_num) |= (0x1 << GPIO_CFG_DRV);
+        // Set open drain bit.
+        if (mode == GPIO_MODE_OUTPUT_OPEN_DRAIN)
+            GPIO_CFG(gpio_num) |= (0x1 << GPIO_CFG_DRV);
 
-    // Set output.
-    GPIO_OUT_MAKE(gpio_num);
-  } else if (mode == GPIO_MODE_INPUT || mode == GPIO_MODE_INPUT_PULLUP) {
-    // Set as input.
-    GPIO_IN_MAKE(gpio_num);
+        // Set output.
+        GPIO_OUT_MAKE(gpio_num);
+    } else if (mode == GPIO_MODE_INPUT || mode == GPIO_MODE_INPUT_PULLUP) {
+        // Set as input.
+        GPIO_IN_MAKE(gpio_num);
 
-    // Reset all the bits except bits [10:7] and set bit [2].
-    GPIO_CFG(gpio_num) = (GPIO_CFG(gpio_num) & (0xF << GPIO_CFG_ITR_TYPE)) | (0x1 << GPIO_CFG_DRV);
-    if (mode == GPIO_MODE_INPUT_PULLUP) GPIO_MUX(gpio_num) |= (0x1 << GPIO_MUX_PUU);
-  }
+        // Reset all the bits except bits [10:7] and set bit [2].
+        GPIO_CFG(gpio_num) = (GPIO_CFG(gpio_num) & (0xF << GPIO_CFG_ITR_TYPE)) |
+                             (0x1 << GPIO_CFG_DRV);
+        if (mode == GPIO_MODE_INPUT_PULLUP)
+            GPIO_MUX(gpio_num) |= (0x1 << GPIO_MUX_PUU);
+    }
 }

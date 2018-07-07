@@ -23,49 +23,50 @@
 esp_tim_timer *ICACHE_FLASH_ATTR
 esp_tim_start_delay(os_timer_func_t *cb, void *payload, uint32_t delay)
 {
-  esp_tim_timer *timer = os_zalloc(sizeof(esp_tim_timer));
-  if (timer == NULL) return NULL;
+    esp_tim_timer *timer = os_zalloc(sizeof(esp_tim_timer));
+    if (timer == NULL)
+        return NULL;
 
-  timer->_os_timer = os_zalloc(sizeof(os_timer_t));
-  if (timer->_os_timer == NULL) {
-    os_free(timer);
-    return NULL;
-  }
+    timer->_os_timer = os_zalloc(sizeof(os_timer_t));
+    if (timer->_os_timer == NULL) {
+        os_free(timer);
+        return NULL;
+    }
 
-  timer->os_timer_cb = cb;
-  timer->delay = delay;
-  timer->payload = payload;
+    timer->os_timer_cb = cb;
+    timer->delay = delay;
+    timer->payload = payload;
 
-  os_timer_setfn(timer->_os_timer, timer->os_timer_cb, (void *) timer);
-  os_timer_arm(timer->_os_timer, delay, false);
+    os_timer_setfn(timer->_os_timer, timer->os_timer_cb, (void *) timer);
+    os_timer_arm(timer->_os_timer, delay, false);
 
-  return timer;
+    return timer;
 }
 
 esp_tim_timer *ICACHE_FLASH_ATTR
 esp_tim_start(os_timer_func_t *cb, void *payload)
 {
-  return esp_tim_start_delay(cb, payload, ESP_TIM_DELAY_DEF);
+    return esp_tim_start_delay(cb, payload, ESP_TIM_DELAY_DEF);
 }
 
 void ICACHE_FLASH_ATTR
 esp_tim_disarm(esp_tim_timer *timer)
 {
-  os_timer_disarm(timer->_os_timer);
+    os_timer_disarm(timer->_os_timer);
 }
 
 void ICACHE_FLASH_ATTR
 esp_tim_stop(esp_tim_timer *timer)
 {
-  os_timer_disarm(timer->_os_timer);
-  os_free(timer->_os_timer);
-  os_free(timer);
+    os_timer_disarm(timer->_os_timer);
+    os_free(timer->_os_timer);
+    os_free(timer);
 }
 
 void ICACHE_FLASH_ATTR
 esp_tim_continue(esp_tim_timer *timer)
 {
-  os_timer_disarm(timer->_os_timer);
-  os_timer_setfn(timer->_os_timer, timer->os_timer_cb, (void *) timer);
-  os_timer_arm(timer->_os_timer, timer->delay, false);
+    os_timer_disarm(timer->_os_timer);
+    os_timer_setfn(timer->_os_timer, timer->os_timer_cb, (void *) timer);
+    os_timer_arm(timer->_os_timer, timer->delay, false);
 }

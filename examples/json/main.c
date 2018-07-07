@@ -27,47 +27,47 @@
 void ICACHE_FLASH_ATTR
 print_success_json()
 {
-  cJSON *resp = cJSON_CreateObject();
-  cJSON_AddItemToObject(resp, "success", cJSON_CreateBool(1));
-  cJSON_AddItemToObject(resp, "code", cJSON_CreateNumber((double) 0));
-  cJSON_AddItemToObject(resp, "error", cJSON_CreateString(""));
+    cJSON *resp = cJSON_CreateObject();
+    cJSON_AddItemToObject(resp, "success", cJSON_CreateBool(1));
+    cJSON_AddItemToObject(resp, "code", cJSON_CreateNumber((double) 0));
+    cJSON_AddItemToObject(resp, "error", cJSON_CreateString(""));
 
-  char *json = cJSON_PrintUnformatted(resp);
-  os_printf("Success message: %s\n", json);
+    char *json = cJSON_PrintUnformatted(resp);
+    os_printf("Success message: %s\n", json);
 
-  cJSON_Delete(resp);
-  os_free(json);
+    cJSON_Delete(resp);
+    os_free(json);
 }
 
 void ICACHE_FLASH_ATTR
 parse_example_json()
 {
-  cJSON *json = cJSON_Parse(EXAMPLE_JSON);
+    cJSON *json = cJSON_Parse(EXAMPLE_JSON);
 
-  char *cmd = cJSON_GetObjectItem(json, "cmd")->valuestring;
-  int code = cJSON_GetObjectItem(json, "code")->valueint;
-  int fast = cJSON_GetObjectItem(json, "fast")->valueint;
+    char *cmd = cJSON_GetObjectItem(json, "cmd")->valuestring;
+    int code = cJSON_GetObjectItem(json, "code")->valueint;
+    int fast = cJSON_GetObjectItem(json, "fast")->valueint;
 
-  os_printf("Parsed message: cmd: %s, code: %d, fast: %d\n", cmd, code, fast);
+    os_printf("Parsed message: cmd: %s, code: %d, fast: %d\n", cmd, code, fast);
 
-  cJSON_Delete(json);
+    cJSON_Delete(json);
 }
 
 void ICACHE_FLASH_ATTR
 sys_init_done(void)
 {
-  os_printf("System initialized.\n");
+    os_printf("System initialized.\n");
 
-  print_success_json();
-  parse_example_json();
+    print_success_json();
+    parse_example_json();
 }
 
 void ICACHE_FLASH_ATTR user_init()
 {
-  // No need for wifi for this example.
-  wifi_station_disconnect();
-  wifi_set_opmode_current(NULL_MODE);
+    // No need for wifi for this example.
+    wifi_station_disconnect();
+    wifi_set_opmode_current(NULL_MODE);
 
-  stdout_init(BIT_RATE_74880);
-  system_init_done_cb(sys_init_done);
+    stdout_init(BIT_RATE_74880);
+    system_init_done_cb(sys_init_done);
 }

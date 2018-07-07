@@ -34,13 +34,13 @@ find_package(esp_util REQUIRED)
 
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(esp_eb
-        DEFAULT_MSG
-        esp_eb_LIBRARY
-        esp_eb_INCLUDE_DIR
-        esp_tim_LIBRARIES
-        esp_tim_INCLUDE_DIRS
-        esp_util_LIBRARIES
-        esp_util_INCLUDE_DIRS)
+    DEFAULT_MSG
+    esp_eb_LIBRARY
+    esp_eb_INCLUDE_DIR
+    esp_tim_LIBRARIES
+    esp_tim_INCLUDE_DIRS
+    esp_util_LIBRARIES
+    esp_util_INCLUDE_DIRS)
 
 set(esp_eb_INCLUDE_DIRS
     ${esp_eb_INCLUDE_DIR}
