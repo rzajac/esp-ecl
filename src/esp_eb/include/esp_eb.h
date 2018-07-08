@@ -25,7 +25,7 @@
 #include "esp_util.h"
 #include "esp_list.h"
 
-#ifndef ESP_EB_DEBUG_ON
+#ifndef ESP_EB_DEBUG_ON // TODO: use the same approach as in nm
     #ifdef DEBUG_ON
         #define ESP_EB_DEBUG_ON
     #endif

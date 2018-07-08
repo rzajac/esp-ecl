@@ -54,7 +54,7 @@ nm_tcp_release_espconn(nm_tcp *conn)
     os_free(conn->esp);
     conn->esp = NULL;
 
-    NM_DEBUG("espconn released for %p\n", conn);
+    NM_DEBUG("espconn released for %p", conn);
 }
 
 sint8 ICACHE_FLASH_ATTR
@@ -62,17 +62,17 @@ nm_tcp_set_conn_cb(nm_tcp *conn)
 {
     sint8 err = espconn_regist_connectcb(conn->esp, tcp_connect_cb);
     if (err != 0) {
-        NM_ERROR("nm_tcp_set_conn_cb error %d\n", err);
+        NM_ERROR("nm_tcp_set_conn_cb error %d", err);
         return err;
     }
 
     err = espconn_regist_reconcb(conn->esp, tcp_error_cb);
     if (err != 0) {
-        NM_ERROR("nm_tcp_set_conn_cb error %d\n", err);
+        NM_ERROR("nm_tcp_set_conn_cb error %d", err);
         return err;
     }
 
-    return NM_OK;
+    return ESP_OK;
 }
 
 void ICACHE_FLASH_ATTR
@@ -112,9 +112,10 @@ tcp_disc_cb(void *arg)
     nm_tcp *conn = find_conn(esp);
 
     if (conn == NULL) {
-        NM_ERROR("tcp_disc_cb on not managed connection %p\n", conn);
+        NM_ERROR("tcp_disc_cb on not managed connection %p", conn);
         return;
     }
+    sint8
 }
 
 static void ICACHE_FLASH_ATTR
@@ -123,7 +124,7 @@ tcp_receive_cb(void *arg, char *data, unsigned short len)
     struct espconn *esp = (struct espconn *) arg;
     nm_tcp *conn = find_conn(esp);
     if (conn == NULL) {
-        NM_ERROR("tcp_receive_cb on not managed connection %p\n", conn);
+        NM_ERROR("tcp_receive_cb on not managed connection %p", conn);
         return;
     }
 
@@ -136,7 +137,7 @@ tcp_error_cb(void *arg, sint8 errCode)
     struct espconn *esp = (struct espconn *) arg;
     nm_tcp *conn = find_conn(esp);
     if (conn == NULL) {
-        NM_ERROR("tcp_error_cb on not managed connection %p\n", conn);
+        NM_ERROR("tcp_error_cb on not managed connection %p", conn);
         return;
     }
 
@@ -149,7 +150,7 @@ tcp_sent_cb(void *arg)
     struct espconn *esp = (struct espconn *) arg;
     nm_tcp *conn = find_conn(esp);
     if (conn == NULL) {
-        NM_ERROR("tcp_sent_cb on not managed connection %p\n", conn);
+        NM_ERROR("tcp_sent_cb on not managed connection %p", conn);
         return;
     }
 }
@@ -161,13 +162,13 @@ tcp_connect_cb(void *arg)
     nm_tcp *conn = find_conn(esp);
 
     if (conn == NULL) {
-        NM_ERROR("tcp_connect_cb on not managed connection %p\n", conn);
+        NM_ERROR("tcp_connect_cb on not managed connection %p", conn);
         return;
     }
 
     sint8 err = espconn_set_opt(conn->esp, ESPCONN_REUSEADDR);
     if (err != 0) {
-        NM_ERROR("espconn_set_opt error %d\n", err);
+        NM_ERROR("espconn_set_opt error %d", err);
         conn->err_cb(conn, NM_E_TCP_CONNECT, err);
         return;
     }

@@ -18,20 +18,19 @@
 #ifndef NM_INTERNAL_H
 #define NM_INTERNAL_H
 
+#include <esp.h>
+
 #include "nm_wifi.h"
 #include "nm_tcp.h"
+#include "esp_eb.h"
 
 #if defined(NM_DEBUG_ON) || defined(DEBUG_ON)
-    #define NM_DEBUG(format, ...) os_printf("NM DBG: " format, ## __VA_ARGS__ )
+    #define NM_DEBUG(format, ...) os_printf("NM DBG: " format "\n", ## __VA_ARGS__ )
 #else
     #define NM_DEBUG(format, ...) do {} while(0)
 #endif
 
-#define NM_ERROR(format, ...) os_printf("NM ERR: " format, ## __VA_ARGS__ )
-
-#ifndef UNUSED
-    #define UNUSED(x) ( (void)(x) )
-#endif
+#define NM_ERROR(format, ...) os_printf("NM ERR: " format "\n", ## __VA_ARGS__ )
 
 #define EV_GROUP 1
 

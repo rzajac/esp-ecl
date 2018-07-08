@@ -118,7 +118,7 @@ sint8 ICACHE_FLASH_ATTR
 nm_send(nm_tcp *conn, uint8_t *data, size_t len)
 {
     sint8 err = espconn_send(conn->esp, data, (uint16) len);
-    NM_ERROR("nm_send error %d\n", err);
+    NM_ERROR("nm_send error %d", err);
     return err;
 }
 
@@ -126,6 +126,6 @@ sint8 ICACHE_FLASH_ATTR
 nm_client_connect(nm_tcp *conn)
 {
     sint8 err = espconn_connect(conn->esp);
-    NM_ERROR("nm_client_connect error %d\n", err);
+    NM_ERROR("nm_client_connect error %d", err);
     return err;
 }

@@ -16,10 +16,12 @@
 project(nm C)
 
 set(SOURCE_FILES nm.c nm_tcp.c nm_wifi.c)
-set(HEADER_FILES include/nm.h)
+set(HEADER_FILES include/nm.h ${ESP_HEADER})
 set(PRIVATE_HEADER_FILES internal.h nm_tcp.h nm_wifi.h)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
+
+message("aa: ${esp_util_INCLUDE_DIRS}")
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -29,7 +31,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${esp_util_INCLUDE_DIRS}
     ${ESP_USER_CONFIG_DIR})
 
-target_link_libraries(${PROJECT_NAME} esp_sdo esp_eb esp_util)
+#target_link_libraries(${PROJECT_NAME} esp_sdo esp_eb esp_util)
+target_link_libraries(${PROJECT_NAME} esp_sdo)
 
 set_target_properties(
     ${PROJECT_NAME}

@@ -23,30 +23,14 @@
 
 #include <esp_eb.h>
 #include <esp_util.h>
+#include <user_config.h>
 
-// Network manager errors.
-typedef enum {
-    NM_OK = 0,         // OK.
-    NM_E_MEM = 100,    // Out of memory.
-    NM_E_STATUS,       //
-    NM_E_MODE,         // Error changing current opmode.
-    NM_E_DHCP_STOP,    //
-    NM_E_DHCP_START,   //
-    NM_E_STATIC_IP,    //
-    NM_E_POLICY,       //
-    NM_E_WIFI_STARTED, // WiFi
-    NM_E_WIFI_CFG,     //
-    NM_E_WIFI_CONNECT, //
-    NM_E_TCP_CONFIG,   // Error configuring TCP client or server.
-    NM_E_TCP_CONNECT,  //
-    NM_E_TCP_STATE,    // Function called in bad TCP state.
-    ESP_NME_KEEPALIVE, // Error setting keep alive on the connection.
-} nm_err;
+#include <esp.h>
 
 struct nm_tcp_;
 
 // The fatal error callback prototype.
-typedef void (*nm_err_cb)(struct nm_tcp_ *, nm_err err, sint8 err_sdk);
+typedef void (*nm_err_cb)(struct nm_tcp_ *, sint8 err, sint8 err_sdk);
 
 // The receive callback prototype.
 typedef void (*nm_recv_cb)(struct nm_tcp_ *, uint8_t *data, size_t len);
@@ -103,12 +87,11 @@ typedef struct nm_tcp_ {
  * @param wifi
  * @param name
  * @param pass
- * @param err_cb
  *
  * @return Error code.
  */
-nm_err ICACHE_FLASH_ATTR
-nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb);
+sint8 ICACHE_FLASH_ATTR
+nm_wifi_start(nm_wifi *wifi, char *name, char *pass);
 
 /**
  * Stop network manager.
@@ -122,7 +105,7 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb);
  *
  * @return Error code.
  */
-nm_err ICACHE_FLASH_ATTR
+sint8 ICACHE_FLASH_ATTR
 nm_stop();
 
 /**
@@ -146,7 +129,7 @@ nm_stop();
  * @param ssl
  * @return
  */
-nm_err ICACHE_FLASH_ATTR
+sint8 ICACHE_FLASH_ATTR
 nm_client(nm_tcp *conn, char *host, int port, bool ssl);
 
 /**
@@ -187,11 +170,11 @@ nm_set_keepalive(nm_tcp *conn, int idle, int intvl, int cnt);
  */
 void ICACHE_FLASH_ATTR
 nm_set_callbacks(nm_tcp *conn,
-                     nm_cb ready_cb,
-                     nm_cb disc_cb,
-                     nm_cb sent_cb,
-                     nm_recv_cb recv_cb,
-                     nm_err_cb err_cb);
+                 nm_cb ready_cb,
+                 nm_cb disc_cb,
+                 nm_cb sent_cb,
+                 nm_recv_cb recv_cb,
+                 nm_err_cb err_cb);
 
 void ICACHE_FLASH_ATTR
 nm_set_reconnect(nm_tcp *conn, uint8_t recon_max);
