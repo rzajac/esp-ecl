@@ -54,7 +54,7 @@ write_config(uint8_t cfg_num)
 }
 
 void ICACHE_FLASH_ATTR
-sys_init_done(void)
+use_dhcp(void)
 {
     bool restart = false;
     esp_cfg_err init_err;
@@ -138,5 +138,5 @@ user_init()
     wifi_set_opmode_current(NULL_MODE);
 
     stdout_init(BIT_RATE_74880);
-    system_init_done_cb(sys_init_done);
+    system_init_done_cb(use_dhcp);
 }

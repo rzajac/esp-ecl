@@ -24,7 +24,7 @@
 esp_dll_node *head;
 
 void ICACHE_FLASH_ATTR
-sys_init_done(void)
+use_dhcp(void)
 {
     esp_dll_node *tmp;
     esp_dll_node *next;
@@ -89,5 +89,5 @@ user_init()
     wifi_set_opmode_current(NULL_MODE);
 
     stdout_init(BIT_RATE_74880);
-    system_init_done_cb(sys_init_done);
+    system_init_done_cb(use_dhcp);
 }

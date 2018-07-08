@@ -33,7 +33,7 @@ static const uint8_t AES_KEY[] = AES_KEY_INIT;
 static const uint8_t AES_VI[] = AES_VI_INIT;
 
 void ICACHE_FLASH_ATTR
-sys_init_done(void)
+use_dhcp(void)
 {
     uint32_t enc_len; // Number of bytes in ciphertext.
 
@@ -72,6 +72,6 @@ user_init()
     wifi_station_disconnect();
     wifi_set_opmode_current(NULL_MODE);
 
-    system_init_done_cb(sys_init_done);
+    system_init_done_cb(use_dhcp);
     stdout_init(BIT_RATE_74880);
 }

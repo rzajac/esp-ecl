@@ -269,7 +269,10 @@ timer_start(const esp_dll_node *node, void *payload, uint32_t delay)
 
     event->payload = payload;
 
-    ESP_EB_DEBUG("scheduling %d in %d ms\n", GET_EVENT(node)->ev_code, delay);
+    ESP_EB_DEBUG("scheduling ev#%d in %d ms\n",
+                 GET_EVENT(node)->ev_code,
+                 delay);
+
     return esp_tim_start_delay(timer_cb, event, delay);
 }
 

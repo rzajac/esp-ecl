@@ -13,11 +13,11 @@
 # under the License.
 
 
-project(esp_nm C)
+project(nm C)
 
-set(SOURCE_FILES esp_nm.c)
-set(HEADER_FILES include/esp_nm.h)
-set(PRIVATE_HEADER_FILES esp_nm_internal.h)
+set(SOURCE_FILES nm.c nm_tcp.c nm_wifi.c)
+set(HEADER_FILES include/nm.h)
+set(PRIVATE_HEADER_FILES internal.h nm_tcp.h nm_wifi.h)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 
@@ -26,9 +26,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     $<INSTALL_INTERFACE:include>
     ${esp_sdo_INCLUDE_DIRS}
     ${esp_eb_INCLUDE_DIRS}
+    ${esp_util_INCLUDE_DIRS}
     ${ESP_USER_CONFIG_DIR})
 
-target_link_libraries(${PROJECT_NAME} esp_sdo esp_eb)
+target_link_libraries(${PROJECT_NAME} esp_sdo esp_eb esp_util)
 
 set_target_properties(
     ${PROJECT_NAME}
@@ -37,8 +38,8 @@ set_target_properties(
     PUBLIC_HEADER "${HEADER_FILES}"
     PRIVATE_HEADER "${PRIVATE_HEADER_FILES}")
 
-if (DEFINED ENV{ESP_NM_DEBUG_ON})
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DESP_NM_DEBUG_ON")
+if (DEFINED ENV{NM_DEBUG_ON})
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DNM_DEBUG_ON")
 endif ()
 
 esp_gen_lib(${PROJECT_NAME})

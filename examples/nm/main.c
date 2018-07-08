@@ -17,21 +17,48 @@
 
 #include <user_interface.h>
 #include <osapi.h>
-#include <mem.h>
 
 #include "esp_sdo.h"
-#include "esp_nm.h"
+#include "nm.h"
+#include "callbacks.h"
 
 void ICACHE_FLASH_ATTR
-sys_init_done(void)
+use_dhcp(void)
 {
     os_printf("USER: system initialized\n");
 
-    esp_nm_start("TestHive", "xqfiricw2g", true, 0, 0, 0);
+    nm_wifi wifi;
+    memset(&wifi, 0, sizeof(nm_wifi));
+
+    wifi.recon_max = 10;
+    wifi.err_cb = err_cb;
+
+
+
+
+    nm_err err = nm_wifi_start("TestHive", "xqfiricw2g", true, 0, 0, 0);
+    if (err != NM_OK) {
+        os_printf("USER: esp_nm_start error %d!\n", err);
+        return;
+    }
+
+    nm_tcp *conn = os_zalloc(sizeof(nm_tcp));
+    if (conn == NULL) {
+        os_printf("USER: OOM!\n");
+        nm_stop();
+    }
+
+    err = nm_client(conn, "192.168.1.149", 3333, false);
+    if (err != NM_OK) {
+        os_printf("USER: esp_nm_client error %d\n", err);
+        nm_stop();
+    }
+
+    nm_set_callbacks(conn, ready_cb, disc_cb, sent_cb, recv_cb, err_cb);
 }
 
 void ICACHE_FLASH_ATTR user_init()
 {
     stdout_init(BIT_RATE_74880);
-    system_init_done_cb(sys_init_done);
+    system_init_done_cb(use_dhcp);
 }

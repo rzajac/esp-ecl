@@ -49,7 +49,7 @@ my_event_throttled_cb(uint16_t ev_code, void *arg)
 }
 
 void ICACHE_FLASH_ATTR
-sys_init_done(void)
+use_dhcp(void)
 {
     arg1 = 123;
     arg2 = 321;
@@ -111,5 +111,5 @@ user_init()
     wifi_set_opmode_current(NULL_MODE);
 
     stdout_init(BIT_RATE_74880);
-    system_init_done_cb(sys_init_done);
+    system_init_done_cb(use_dhcp);
 }

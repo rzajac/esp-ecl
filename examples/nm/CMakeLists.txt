@@ -16,7 +16,18 @@
 # The example doesn't use cmake find_package() function because we want
 # local libraries not the ones installed in $ESPROOT.
 
-add_executable(nm_ex main.c ${ESP_USER_CONFIG})
-target_include_directories(nm_ex PUBLIC ${ESP_USER_CONFIG_DIR})
-target_link_libraries(nm_ex esp_sdo esp_nm)
-esp_gen_exec_targets(nm_ex)
+project(nm_ex C)
+
+set(SOURCE_FILES main.c callbacks.c)
+set(HEADER_FILES callbacks.h)
+
+add_executable(${PROJECT_NAME}
+    ${SOURCE_FILES}
+    ${HEADER_FILES}
+    ${ESP_USER_CONFIG})
+
+target_include_directories(${PROJECT_NAME} PUBLIC ${ESP_USER_CONFIG_DIR})
+
+target_link_libraries(${PROJECT_NAME} esp_sdo nm)
+
+esp_gen_exec_targets(${PROJECT_NAME})
