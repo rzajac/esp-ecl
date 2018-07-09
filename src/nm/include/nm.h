@@ -20,16 +20,22 @@
 #include <user_interface.h>
 #include <espconn.h>
 #include <mem.h>
-
-#include <esp_eb.h>
-#include <esp_util.h>
-#include <user_config.h>
-
 #include <esp.h>
+
+#include "esp_eb.h"
+#include "esp_util.h"
+#include "user_config.h"
+
 
 struct nm_tcp_;
 
-// The fatal error callback prototype.
+/**
+ * The fatal error callback prototype.
+ *
+ * Receiving this callback means:
+ * - the connection is disconnected with error.
+ * - the disc_cb will not be called.
+ */
 typedef void (*nm_err_cb)(struct nm_tcp_ *, sint8 err, sint8 err_sdk);
 
 // The receive callback prototype.
@@ -158,10 +164,6 @@ nm_set_keepalive(nm_tcp *conn, int idle, int intvl, int cnt);
  *
  * - recv_cb  - Called when client received the data.
  *
- * - err_cb   - Called on fatal error.
- *              Means the connection is disconnected with error.
- *              The disc_cb will not be called.
- *
  * @param conn
  * @param ready_cb
  * @param sent_cb
@@ -173,8 +175,7 @@ nm_set_callbacks(nm_tcp *conn,
                  nm_cb ready_cb,
                  nm_cb disc_cb,
                  nm_cb sent_cb,
-                 nm_recv_cb recv_cb,
-                 nm_err_cb err_cb);
+                 nm_recv_cb recv_cb);
 
 void ICACHE_FLASH_ATTR
 nm_set_reconnect(nm_tcp *conn, uint8_t recon_max);

@@ -33,15 +33,14 @@ use_dhcp(void)
     wifi.recon_max = 10;
     wifi.err_cb = err_cb;
 
-    nm_err err = nm_wifi_start(wifi, "TestHive", "xqfiricw2g");
-    if (err != NM_OK) {
+    sint8 err = nm_wifi_start(wifi, "TestHive", "xqfiricw2g");
+    if (err != ESP_OK) {
         os_printf("USER: nm_wifi_start error %d!\n", err);
         return;
     }
 
     nm_tcp client;
     memset(&client, 0, sizeof(client));
-
 
     nm_tcp *conn = os_zalloc(sizeof(nm_tcp));
     if (conn == NULL) {

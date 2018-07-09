@@ -34,6 +34,6 @@ void ICACHE_FLASH_ATTR
 recv_cb(nm_tcp *conn, uint8_t *data, size_t len);
 
 void ICACHE_FLASH_ATTR
-err_cb(nm_tcp *conn, nm_err err, sint8 err2);
+err_cb(nm_tcp *conn, sint8 err, sint8 aux);
 
 #endif //ESP_EX_CALLBACKS_H

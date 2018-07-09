@@ -30,7 +30,7 @@ connect_all();
 /////////////////////////////////////////////////////////////////////////////
 
 
-nm_err ICACHE_FLASH_ATTR
+sint8 ICACHE_FLASH_ATTR
 nm_stop()
 {
     // Remove WiFi callbacks.
@@ -39,23 +39,24 @@ nm_stop()
     wifi_station_disconnect();
     wifi_set_opmode(NULL_MODE);
 
-    return NM_OK;
+    return ESP_OK;
 }
 
-nm_err ICACHE_FLASH_ATTR
+sint8 ICACHE_FLASH_ATTR
 nm_client(nm_tcp *conn, char *host, int port, bool ssl)
 {
     conn->esp = os_zalloc(sizeof(struct espconn));
-    if (conn->esp == NULL)
-        return NM_E_MEM;
+    if (conn->esp == NULL) {
+        nm_tcp_release_espconn(conn);
+        return ESP_E_MEM;
+    }
 
     conn->esp->proto.tcp = os_zalloc(sizeof(esp_tcp));
     if (conn->esp->proto.tcp == NULL) {
         nm_tcp_release_espconn(conn);
-        return NM_E_MEM;
+        return ESP_E_MEM;
     }
 
-    conn->ssl = ssl;
 
     // Configure TCP/IP connection.
     conn->esp->type = ESPCONN_TCP;
@@ -63,13 +64,16 @@ nm_client(nm_tcp *conn, char *host, int port, bool ssl)
     os_memcpy(conn->esp->proto.tcp->remote_ip, &ip, 4);
     conn->esp->proto.tcp->local_port = espconn_port();
     conn->esp->proto.tcp->remote_port = port;
+    conn->ssl = ssl;
 
     // Register callbacks for successful connection or error.
     sint8 err = nm_tcp_set_conn_cb(conn);
-    if (err != 0)
-        return NM_E_TCP_CONFIG;
+    if (err != ESP_OK) {
+        nm_tcp_release_espconn(conn);
+        return err;
+    }
 
-    return NM_OK;
+    return ESP_OK;
 }
 
 void ICACHE_FLASH_ATTR
@@ -97,14 +101,12 @@ nm_set_callbacks(nm_tcp *conn,
                      nm_cb ready_cb,
                      nm_cb disc_cb,
                      nm_cb sent_cb,
-                     nm_recv_cb recv_cb,
-                     nm_err_cb err_cb)
+                     nm_recv_cb recv_cb)
 {
     conn->ready_cb = ready_cb;
     conn->ready_cb = disc_cb;
     conn->sent_cb = sent_cb;
     conn->recv_cb = recv_cb;
-    conn->err_cb = err_cb;
 }
 
 void ICACHE_FLASH_ATTR

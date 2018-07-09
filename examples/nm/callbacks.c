@@ -41,7 +41,7 @@ recv_cb(nm_tcp *conn, uint8_t *data, size_t len)
 }
 
 void ICACHE_FLASH_ATTR
-err_cb(nm_tcp *conn, nm_err err, sint8 err2)
+err_cb(nm_tcp *conn, sint8 err, sint8 aux)
 {
-    os_printf("USER: err_cb called %d %d\n", err, err2);
+    os_printf("USER: err_cb called %d %d\n", err, aux);
 }
