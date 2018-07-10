@@ -52,9 +52,6 @@ typedef struct {
     // Current WiFi connection retries.
     uint8_t recon_cnt;
 
-    // Fatal error callback. Must return as soon as possible.
-    nm_err_cb err_cb; // TODO: check if not NULL.
-
     // Static IP, network mask and gateway.
     uint32_t ip, netmask, gw;
 } nm_wifi;
@@ -66,6 +63,23 @@ typedef struct nm_tcp_ {
 
     // Use SSL for the connection.
     bool ssl;
+
+    // Maximum number of reconnection retries.
+    // If set to zero then no limit.
+    uint8_t recon_max;
+
+    // Number of reconnection retries.
+    // Current number of connection retries.
+    uint8_t recon_cnt;
+
+    // Keep alive idle.
+    int ka_idle;
+
+    // Keep alive interval.
+    int ka_intvl;
+
+    // Keep alive count.
+    int ka_cnt;
 
     // Ready callback.
     // Called when WiFi is connected and IP is available.
@@ -79,6 +93,9 @@ typedef struct nm_tcp_ {
 
     // Receive callback.
     nm_recv_cb recv_cb; // TODO: check if not NULL.
+
+    // Non fatal error callback.
+    nm_err_cb err_cb;
 } nm_tcp;
 
 
@@ -93,11 +110,12 @@ typedef struct nm_tcp_ {
  * @param wifi
  * @param name
  * @param pass
+ * @param err_cb
  *
  * @return Error code.
  */
 sint8 ICACHE_FLASH_ATTR
-nm_wifi_start(nm_wifi *wifi, char *name, char *pass);
+nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb);
 
 /**
  * Stop network manager.
@@ -158,7 +176,8 @@ nm_set_keepalive(nm_tcp *conn, int idle, int intvl, int cnt);
  *
  * - disc_cb  - Called when client has been disconnected from a server.
  *              After this call sending data will return error.
- *              Sending will be possible again after ready_cb callback.
+ *              Sending will be possible again after receiving
+ *              ready_cb callback.
  *
  * - sent_cb  - Called when clien successfully sent data.
  *
@@ -166,6 +185,7 @@ nm_set_keepalive(nm_tcp *conn, int idle, int intvl, int cnt);
  *
  * @param conn
  * @param ready_cb
+ * @param disc_cb
  * @param sent_cb
  * @param recv_cb
  * @param err_cb
@@ -175,10 +195,14 @@ nm_set_callbacks(nm_tcp *conn,
                  nm_cb ready_cb,
                  nm_cb disc_cb,
                  nm_cb sent_cb,
-                 nm_recv_cb recv_cb);
+                 nm_recv_cb recv_cb,
+                 nm_err_cb err_cb);
 
 void ICACHE_FLASH_ATTR
 nm_set_reconnect(nm_tcp *conn, uint8_t recon_max);
+
+sint8 ICACHE_FLASH_ATTR
+nm_disconnect(nm_tcp *conn);
 
 void ICACHE_FLASH_ATTR
 nm_abort(nm_tcp *conn);

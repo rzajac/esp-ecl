@@ -31,16 +31,12 @@ use_dhcp(void)
     memset(&wifi, 0, sizeof(nm_wifi));
 
     wifi.recon_max = 10;
-    wifi.err_cb = err_cb;
 
-    sint8 err = nm_wifi_start(wifi, "TestHive", "xqfiricw2g");
+    sint8 err = nm_wifi_start(&wifi, "TestHive", "xqfiricw2g", err_cb);
     if (err != ESP_OK) {
         os_printf("USER: nm_wifi_start error %d!\n", err);
         return;
     }
-
-    nm_tcp client;
-    memset(&client, 0, sizeof(client));
 
     nm_tcp *conn = os_zalloc(sizeof(nm_tcp));
     if (conn == NULL) {
@@ -49,7 +45,7 @@ use_dhcp(void)
     }
 
     err = nm_client(conn, "192.168.1.149", 3333, false);
-    if (err != NM_OK) {
+    if (err != ESP_OK) {
         os_printf("USER: esp_nm_client error %d\n", err);
         nm_stop();
     }

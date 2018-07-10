@@ -20,7 +20,7 @@
 static nm_wifi *g_wifi; // TODO: release it at some point.
 
 sint8 ICACHE_FLASH_ATTR
-nm_wifi_start(nm_wifi *wifi, char *name, char *pass)
+nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
 {
     if (g_wifi != NULL) {
         NM_ERROR("g_wifi already set");
@@ -33,8 +33,8 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass)
         return ESP_E_LOG;
     }
 
-    if (wifi->err_cb == NULL) {
-        NM_ERROR("nm_wifi.err_cb must be set");
+    if (err_cb == NULL) {
+        NM_ERROR("err_cb must be set");
         return ESP_E_ARG;
     }
 
@@ -50,7 +50,6 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass)
             NM_ERROR("DHCP start");
             return ESP_E_SYS;
         }
-
     } else {
         if (wifi_station_dhcpc_stop() != true) {
             NM_ERROR("DHCP stop");
@@ -98,10 +97,12 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass)
     if (g_wifi == NULL)
         return ESP_E_MEM;
 
+    // Set global error callback.
+    nm_g_fatal_err = err_cb;
+
     // Configure wifi structure.
     g_wifi->recon_max = wifi->recon_max;
     g_wifi->recon_cnt = wifi->recon_cnt;
-    g_wifi->err_cb = wifi->err_cb;
     g_wifi->ip = wifi->ip;
     g_wifi->netmask = wifi->netmask;
     g_wifi->gw = wifi->gw;

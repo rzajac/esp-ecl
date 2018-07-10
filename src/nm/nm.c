@@ -29,6 +29,8 @@ connect_all();
 // Code.
 /////////////////////////////////////////////////////////////////////////////
 
+// Global fatal error callback. Must return as soon as possible.
+nm_err_cb nm_g_fatal_err; // TODO: check if not NULL.
 
 sint8 ICACHE_FLASH_ATTR
 nm_stop()
@@ -76,6 +78,16 @@ nm_client(nm_tcp *conn, char *host, int port, bool ssl)
     return ESP_OK;
 }
 
+sint8 ICACHE_FLASH_ATTR
+nm_disconnect(nm_tcp *conn)
+{
+    sint8 err = espconn_disconnect(conn->esp);
+    if (err != ESPCONN_OK) {
+        NM_ERROR("espconn_disconnect error %d [%p]", err, conn);
+    }
+    return err;
+}
+
 void ICACHE_FLASH_ATTR
 nm_abort(nm_tcp *conn)
 {
@@ -91,36 +103,41 @@ nm_abort(nm_tcp *conn)
 void ICACHE_FLASH_ATTR
 nm_set_keepalive(nm_tcp *conn, int idle, int intvl, int cnt)
 {
-    // conn->ka_idle = idle;
-    // conn->ka_intvl = intvl;
-    // conn->ka_cnt = cnt;
+    conn->ka_idle = idle;
+    conn->ka_intvl = intvl;
+    conn->ka_cnt = cnt;
 }
 
 void ICACHE_FLASH_ATTR
 nm_set_callbacks(nm_tcp *conn,
-                     nm_cb ready_cb,
-                     nm_cb disc_cb,
-                     nm_cb sent_cb,
-                     nm_recv_cb recv_cb)
+                 nm_cb ready_cb,
+                 nm_cb disc_cb,
+                 nm_cb sent_cb,
+                 nm_recv_cb recv_cb,
+                 nm_err_cb err_cb)
 {
     conn->ready_cb = ready_cb;
     conn->ready_cb = disc_cb;
     conn->sent_cb = sent_cb;
     conn->recv_cb = recv_cb;
+    conn->err_cb = err_cb;
 }
 
 void ICACHE_FLASH_ATTR
 nm_set_reconnect(nm_tcp *conn, uint8_t recon_max)
 {
-    // conn->recon_max = recon_max;
-    // conn->recon_cnt = 0;
+    conn->recon_max = recon_max;
+    conn->recon_cnt = 0;
 }
 
 sint8 ICACHE_FLASH_ATTR
 nm_send(nm_tcp *conn, uint8_t *data, size_t len)
 {
     sint8 err = espconn_send(conn->esp, data, (uint16) len);
-    NM_ERROR("nm_send error %d", err);
+    if (err != ESPCONN_OK) {
+        NM_ERROR("nm_send error %d [%p]", err, conn);
+        conn->err_cb(conn, ESP_E_NET, err);
+    }
     return err;
 }
 
@@ -128,6 +145,9 @@ sint8 ICACHE_FLASH_ATTR
 nm_client_connect(nm_tcp *conn)
 {
     sint8 err = espconn_connect(conn->esp);
-    NM_ERROR("nm_client_connect error %d", err);
+    if (err != ESPCONN_OK) {
+        NM_ERROR("espconn_connect error %d [%p]", err, conn);
+        conn->err_cb(conn, ESP_E_NET, err);
+    }
     return err;
 }

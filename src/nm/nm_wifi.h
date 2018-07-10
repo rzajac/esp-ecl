@@ -23,6 +23,8 @@
 #include "internal.h"
 #include "nm_tcp.h"
 
+extern nm_err_cb nm_g_fatal_err;
+
 /**
  * Handles all WiFi events.
  *

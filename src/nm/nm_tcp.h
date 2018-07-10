@@ -22,6 +22,8 @@
 #include "nm.h"
 #include "internal.h"
 
+extern nm_err_cb nm_g_fatal_err;
+
 /**
  * Release espconn memory.
  *
