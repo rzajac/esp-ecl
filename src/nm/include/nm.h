@@ -36,7 +36,7 @@ struct nm_tcp_;
  * - the connection is disconnected with error.
  * - the disc_cb will not be called.
  */
-typedef void (*nm_err_cb)(struct nm_tcp_ *, sint8 err, sint8 err_sdk);
+typedef void (*nm_err_cb)(struct nm_tcp_ *, sint8 err, sint16 err_sdk);
 
 // The receive callback prototype.
 typedef void (*nm_recv_cb)(struct nm_tcp_ *, uint8_t *data, size_t len);

@@ -59,7 +59,6 @@ nm_client(nm_tcp *conn, char *host, int port, bool ssl)
         return ESP_E_MEM;
     }
 
-
     // Configure TCP/IP connection.
     conn->esp->type = ESPCONN_TCP;
     uint32_t ip = ipaddr_addr(host);

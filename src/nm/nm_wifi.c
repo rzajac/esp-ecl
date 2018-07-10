@@ -119,26 +119,50 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
 void ICACHE_FLASH_ATTR
 nm_wifi_event_cb(uint16_t ev_code, void *arg)
 {
-    // System_Event_t *ev = arg;
+    System_Event_t *ev = arg;
 
     switch (ev_code) {
         case EVENT_STAMODE_CONNECTED:
+            NM_DEBUG("EVENT_STAMODE_CONNECTED");
             break;
 
         case EVENT_STAMODE_DISCONNECTED:
+            NM_DEBUG("EVENT_STAMODE_DISCONNECTED");
+
+            // CHeck if we reached reconnect max.
+            if (g_wifi->recon_cnt > g_wifi->recon_max) {
+                esp_eb_remove_group(EV_GROUP);
+
+                bool suc = wifi_station_disconnect();
+                if (!suc)
+                    NM_ERROR("wifi_station_disconnect error");
+
+                suc = wifi_set_opmode(NULL_MODE);
+                if (!suc)
+                    NM_ERROR("wifi_set_opmode error");
+
+                nm_g_fatal_err(NULL, ESP_E_WIF, ev->event_info.disconnected.reason);
+                return;
+            }
+            g_wifi->recon_cnt++;
             break;
 
         case EVENT_STAMODE_AUTHMODE_CHANGE:
+            NM_DEBUG("EVENT_STAMODE_AUTHMODE_CHANGE");
             break;
 
         case EVENT_STAMODE_GOT_IP:
-            nm_tcp_conn_all();
+            NM_DEBUG("EVENT_STAMODE_GOT_IP");
+            g_wifi->recon_cnt = 0;
+            // nm_tcp_conn_all();
             break;
 
         case EVENT_STAMODE_DHCP_TIMEOUT:
+            NM_DEBUG("EVENT_STAMODE_DHCP_TIMEOUT");
             break;
 
         case EVENT_OPMODE_CHANGED:
+            NM_DEBUG("EVENT_OPMODE_CHANGED");
             break;
 
         default:

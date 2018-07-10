@@ -19,29 +19,30 @@
 void ICACHE_FLASH_ATTR
 ready_cb(nm_tcp *conn)
 {
-    os_printf("USER: ready_cb called\n");
+    os_printf("USER: ready_cb called [%p]\n", conn);
 }
 
 void ICACHE_FLASH_ATTR
 disc_cb(nm_tcp *conn)
 {
-    os_printf("USER: disc_cb called\n");
+    os_printf("USER: disc_cb called [%p]\n", conn);
 }
 
 void ICACHE_FLASH_ATTR
 sent_cb(nm_tcp *conn)
 {
-    os_printf("USER: sent_cb called\n");
+    os_printf("USER: sent_cb called [%p]\n", conn);
 }
 
 void ICACHE_FLASH_ATTR
 recv_cb(nm_tcp *conn, uint8_t *data, size_t len)
 {
-    os_printf("USER: recv_cb called\n");
+    os_printf("USER: recv_cb called [%p]\n", conn);
+
 }
 
 void ICACHE_FLASH_ATTR
-err_cb(nm_tcp *conn, sint8 err, sint8 aux)
+err_cb(nm_tcp *conn, sint8 err, sint16 err_sdk)
 {
-    os_printf("USER: err_cb called %d %d\n", err, aux);
+    os_printf("USER: err_cb called esp:%d sdk:%d [%p]\n", err, err_sdk, conn);
 }
