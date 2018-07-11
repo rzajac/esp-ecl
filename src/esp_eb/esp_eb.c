@@ -39,9 +39,6 @@ typedef struct {
     // The minimum number of microseconds to wait between callback executions.
     uint32_t throttle_us;
 
-    // Set to true if event is already scheduled.
-    bool scheduled;
-
     // Passed to callback.
     void *payload;
 } eb_event;
@@ -271,7 +268,6 @@ timer_start(const esp_dll_node *node, void *payload, uint32_t delay)
     if (!event)
         return false;
 
-    event->scheduled = true;
     event->payload = payload;
 
     ESP_EB_DEBUG("scheduling ev#%d in %d ms\n",
@@ -288,7 +284,7 @@ esp_eb_trigger_delayed(uint16_t ev_code, uint32_t delay, void *arg)
 
     while (curr) {
         // Check if we have this event code attached.
-        if (GET_EVENT(curr)->ev_code == ev_code && !GET_EVENT(curr)->scheduled) {
+        if (GET_EVENT(curr)->ev_code == ev_code) {
             if (timer_start(curr, arg, delay) == NULL) {
                 ESP_EB_ERROR("error scheduling timer for %d\n", ev_code);
             }

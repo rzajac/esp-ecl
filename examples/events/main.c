@@ -84,6 +84,7 @@ use_dhcp(void)
 
     // Trigger events.
     esp_eb_trigger(EVENT_BATTERY_LOW, &arg1);
+    esp_eb_trigger(EVENT_BATTERY_LOW, &arg1);
     esp_eb_trigger(EVENT_BATTERY_FULL, &arg2);
     esp_eb_trigger_delayed(EVENT_BATTERY_FULL, 5000, &arg2);
 
