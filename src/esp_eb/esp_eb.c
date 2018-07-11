@@ -288,7 +288,7 @@ esp_eb_trigger_delayed(uint16_t ev_code, uint32_t delay, void *arg)
 
     while (curr) {
         // Check if we have this event code attached.
-        if (GET_EVENT(curr)->ev_code == ev_code) {
+        if (GET_EVENT(curr)->ev_code == ev_code && !GET_EVENT(curr)->scheduled) {
             if (timer_start(curr, arg, delay) == NULL) {
                 ESP_EB_ERROR("error scheduling timer for %d\n", ev_code);
             }
