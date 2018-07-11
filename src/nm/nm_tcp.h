@@ -44,11 +44,25 @@ nm_tcp_release_espconn(nm_tcp *conn);
 sint8 ICACHE_FLASH_ATTR
 nm_tcp_set_conn_cb(nm_tcp *conn);
 
+/**
+ * Manage new connection.
+ *
+ * @param conn The connection to manage.
+ *
+ * @return Error code.
+ */
+sint8 ICACHE_FLASH_ATTR
+nm_tcp_add_conn(nm_tcp *conn);
+
 /** Connect all not connected clients. */
 void ICACHE_FLASH_ATTR
 nm_tcp_conn_all();
 
-/** Abort all managed connections. */
+/**
+ * Abort all managed connections.
+ *
+ * Abort will not send any
+ */
 void ICACHE_FLASH_ATTR
 nm_tcp_abort_all();
 

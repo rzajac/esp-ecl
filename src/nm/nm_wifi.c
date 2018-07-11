@@ -129,7 +129,7 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
         case EVENT_STAMODE_DISCONNECTED:
             NM_DEBUG("EVENT_STAMODE_DISCONNECTED");
 
-            // CHeck if we reached reconnect max.
+            // Check if we reached reconnect max.
             if (g_wifi->recon_cnt > g_wifi->recon_max) {
                 esp_eb_remove_group(EV_GROUP);
 
@@ -154,7 +154,7 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
         case EVENT_STAMODE_GOT_IP:
             NM_DEBUG("EVENT_STAMODE_GOT_IP");
             g_wifi->recon_cnt = 0;
-            // nm_tcp_conn_all();
+            nm_tcp_conn_all();
             break;
 
         case EVENT_STAMODE_DHCP_TIMEOUT:

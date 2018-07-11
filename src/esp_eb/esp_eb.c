@@ -39,6 +39,9 @@ typedef struct {
     // The minimum number of microseconds to wait between callback executions.
     uint32_t throttle_us;
 
+    // Set to true if event is already scheduled.
+    bool scheduled;
+
     // Passed to callback.
     void *payload;
 } eb_event;
@@ -146,6 +149,7 @@ esp_eb_attach_throttled(uint16_t ev_code,
         head = new_node(ev_code, cb, throttle_us, group);
         if (head == NULL)
             return ESP_EB_E_MEM;
+
         ESP_EB_DEBUG("added head %d %p %d %d\n", ev_code, cb, throttle_us,
                      group);
 
@@ -267,6 +271,7 @@ timer_start(const esp_dll_node *node, void *payload, uint32_t delay)
     if (!event)
         return false;
 
+    event->scheduled = true;
     event->payload = payload;
 
     ESP_EB_DEBUG("scheduling ev#%d in %d ms\n",
@@ -282,6 +287,7 @@ esp_eb_trigger_delayed(uint16_t ev_code, uint32_t delay, void *arg)
     esp_dll_node *curr = head;
 
     while (curr) {
+        // Check if we have this event code attached.
         if (GET_EVENT(curr)->ev_code == ev_code) {
             if (timer_start(curr, arg, delay) == NULL) {
                 ESP_EB_ERROR("error scheduling timer for %d\n", ev_code);
@@ -330,7 +336,7 @@ wifi_event_cb(System_Event_t *e)
             break;
 
         case EVENT_STAMODE_DISCONNECTED:
-            ESP_EB_DEBUG("WIFI: EVENT_STAMODE_DISCONNECTED reason\n");
+            ESP_EB_DEBUG("WIFI: EVENT_STAMODE_DISCONNECTED\n");
             ESP_EB_DEBUG("      ssid   %s\n",
                          e->event_info.disconnected.ssid);
             ESP_EB_DEBUG("      bssid  "

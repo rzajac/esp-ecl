@@ -129,23 +129,19 @@ nm_set_reconnect(nm_tcp *conn, uint8_t recon_max)
     conn->recon_cnt = 0;
 }
 
+
+sint8 ICACHE_FLASH_ATTR
+nm_client_connect(nm_tcp *conn)
+{
+    return nm_tcp_add_conn(conn);
+}
+
 sint8 ICACHE_FLASH_ATTR
 nm_send(nm_tcp *conn, uint8_t *data, size_t len)
 {
     sint8 err = espconn_send(conn->esp, data, (uint16) len);
     if (err != ESPCONN_OK) {
         NM_ERROR("nm_send error %d [%p]", err, conn);
-        conn->err_cb(conn, ESP_E_NET, err);
-    }
-    return err;
-}
-
-sint8 ICACHE_FLASH_ATTR
-nm_client_connect(nm_tcp *conn)
-{
-    sint8 err = espconn_connect(conn->esp);
-    if (err != ESPCONN_OK) {
-        NM_ERROR("espconn_connect error %d [%p]", err, conn);
         conn->err_cb(conn, ESP_E_NET, err);
     }
     return err;

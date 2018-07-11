@@ -75,19 +75,38 @@ nm_tcp_set_conn_cb(nm_tcp *conn)
     return ESP_OK;
 }
 
+sint8 ICACHE_FLASH_ATTR
+nm_tcp_add_conn(nm_tcp *conn)
+{
+    esp_dll_node *node = esp_dll_new(conn);
+    if (node == NULL)
+        return ESP_E_MEM;
+
+    if (head == NULL) {
+        head = node;
+        return ESP_EB_OK;
+    }
+
+    esp_dll_append(head, node);
+
+    return ESP_OK;
+}
+
 void ICACHE_FLASH_ATTR
 nm_tcp_conn_all()
 {
     sint8 err;
-
     nm_tcp *conn;
+
     esp_dll_node *curr = head;
     while (curr != NULL) {
         conn = get_conn(curr);
-        err = espconn_connect(conn->esp);
-        if (err != 0) {
-            NM_ERROR("nm_tcp_conn_all error %d [%p]", err, curr);
-            nm_g_fatal_err(conn, ESP_E_NET, err);
+        if (is_conn_ready(conn) || is_conn_closed(conn)) {
+            err = espconn_connect(conn->esp);
+            if (err != 0) {
+                NM_ERROR("nm_tcp_conn_all error %d [%p]", err, curr);
+                nm_g_fatal_err(conn, ESP_E_NET, err);
+            }
         }
         curr = curr->next;
     }
@@ -97,9 +116,12 @@ void ICACHE_FLASH_ATTR
 nm_tcp_abort_all()
 {
     esp_dll_node *curr = head;
+    esp_dll_node *next = NULL;
     while (curr != NULL) {
+        next = curr->next;
         nm_abort(get_conn(curr));
-        curr = curr->next;
+        esp_dll_remove(curr);
+        curr = next;
     }
 }
 

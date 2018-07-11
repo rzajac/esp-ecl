@@ -201,6 +201,16 @@ nm_set_callbacks(nm_tcp *conn,
 void ICACHE_FLASH_ATTR
 nm_set_reconnect(nm_tcp *conn, uint8_t recon_max);
 
+/**
+ * Connect client.
+ *
+ * @param conn The connection to manage.
+ *
+ * @return Erorr code.
+ */
+sint8 ICACHE_FLASH_ATTR
+nm_client_connect(nm_tcp *conn);
+
 sint8 ICACHE_FLASH_ATTR
 nm_disconnect(nm_tcp *conn);
 

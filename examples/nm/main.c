@@ -29,7 +29,6 @@ use_dhcp(void)
 
     nm_wifi wifi;
     memset(&wifi, 0, sizeof(nm_wifi));
-
     wifi.recon_max = 10;
 
     sint8 err = nm_wifi_start(&wifi, "TestHive", "xqfiricw2g", err_cb);
@@ -51,6 +50,11 @@ use_dhcp(void)
     }
 
     nm_set_callbacks(conn, ready_cb, disc_cb, sent_cb, recv_cb, err_cb);
+    err = nm_client_connect(conn);
+    if (err != ESP_OK) {
+        os_printf("USER: nm_client_connect error %d\n", err);
+        nm_stop();
+    }
 }
 
 void ICACHE_FLASH_ATTR user_init()
