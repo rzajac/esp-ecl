@@ -31,9 +31,9 @@ use_dhcp(void)
     memset(&wifi, 0, sizeof(nm_wifi));
     wifi.recon_max = 10;
 
-    wifi.ip = ipaddr_addr("192.168.2.101");
-    wifi.netmask = ipaddr_addr("255.255.255.0");
-    wifi.gw = ipaddr_addr("192.168.2.100");
+    // wifi.ip = ipaddr_addr("192.168.2.101");
+    // wifi.netmask = ipaddr_addr("255.255.255.0");
+    // wifi.gw = ipaddr_addr("192.168.2.100");
 
     sint8 err = nm_wifi_start(&wifi, "TestHive", "xqfiricw2g", err_cb);
     if (err != ESP_OK) {

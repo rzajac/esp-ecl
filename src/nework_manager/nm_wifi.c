@@ -50,12 +50,14 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
             NM_ERROR("DHCP start");
             return ESP_E_SYS;
         }
+        NM_DEBUG("DHCP started");
     } else {
         if (wifi_station_dhcpc_stop() != true) {
             NM_ERROR("DHCP stop");
             return ESP_E_SYS;
         }
 
+        NM_DEBUG("using static IP");
         struct ip_info info;
         info.ip.addr = wifi->ip;
         info.netmask.addr = wifi->netmask;
@@ -124,6 +126,11 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
     switch (ev_code) {
         case EVENT_STAMODE_CONNECTED:
             NM_DEBUG("EVENT_STAMODE_CONNECTED");
+            if (g_wifi->ip == 0 || g_wifi->netmask == 0 || g_wifi->gw == 0) {
+                if (wifi_station_dhcpc_set_maxtry(3) != true) {
+                    nm_g_fatal_err(NULL, ESP_E_NET, 0); // TODO: 0 is bad code
+                }
+            }
             break;
 
         case EVENT_STAMODE_DISCONNECTED:
@@ -157,6 +164,7 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
 
         case EVENT_STAMODE_DHCP_TIMEOUT:
             NM_DEBUG("EVENT_STAMODE_DHCP_TIMEOUT");
+            // TODO: handle reconnect counter ?
             break;
 
         case EVENT_OPMODE_CHANGED:

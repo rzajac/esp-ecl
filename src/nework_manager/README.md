@@ -20,3 +20,5 @@ The `nm_wifi_start` will set `nm_wifi->recon_max` to 1 if 0 is passed.
 After successful connection the NM will call `nm_err_cb` function given to 
 `nm_wifi_start` with `ESP_OK` and 0. This is the only case when this function
 is called with success error code.
+
+##### Successful WiFi connection with DHCP client on but no DHCP server.
