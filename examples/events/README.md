@@ -2,6 +2,7 @@
 
 Demonstrates how to:
 - subscribe to events,
+- throttled subscriptions to events,
 - trigger events,
 - un-subscribe from events,
 - trigger delayed events.

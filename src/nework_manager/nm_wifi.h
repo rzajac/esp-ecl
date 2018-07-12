@@ -20,7 +20,7 @@
 
 #include <user_interface.h>
 
-#include "internal.h"
+#include "nm_internal.h"
 #include "nm_tcp.h"
 
 extern nm_err_cb nm_g_fatal_err;

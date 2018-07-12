@@ -129,11 +129,24 @@ nm_tcp_abort_all()
 // Static methods.
 /////////////////////////////////////////////////////////////////////////////
 
-void ICACHE_FLASH_ATTR
+static nm_tcp *ICACHE_FLASH_ATTR
+tcp_find_by_esp(struct espconn *esp)
+{
+    nm_tcp *conn;
+    esp_dll_node *curr = head;
+    while (curr != NULL) {
+        conn = get_conn(curr);
+        if (conn->esp == esp) return conn;
+        curr = curr->next;
+    }
+    return NULL;
+}
+
+static void ICACHE_FLASH_ATTR
 tcp_disc_cb(void *arg)
 {
     struct espconn *esp = (struct espconn *) arg;
-    nm_tcp *conn = find_conn(esp);
+    nm_tcp *conn = tcp_find_by_esp(esp);
 
     if (conn == NULL) {
         NM_ERROR("tcp_disc_cb unknown connection [%p]", conn);
@@ -152,7 +165,7 @@ static void ICACHE_FLASH_ATTR
 tcp_receive_cb(void *arg, char *data, unsigned short len)
 {
     struct espconn *esp = (struct espconn *) arg;
-    nm_tcp *conn = find_conn(esp);
+    nm_tcp *conn = tcp_find_by_esp(esp);
     if (conn == NULL) {
         NM_ERROR("tcp_receive_cb unknown connection [%p]", conn);
         return;
@@ -166,7 +179,7 @@ static void ICACHE_FLASH_ATTR
 tcp_error_cb(void *arg, sint8 errCode)
 {
     struct espconn *esp = (struct espconn *) arg;
-    nm_tcp *conn = find_conn(esp);
+    nm_tcp *conn = tcp_find_by_esp(esp);
     if (conn == NULL) {
         NM_ERROR("tcp_error_cb unknown connection [%p]", conn);
         return;
@@ -180,7 +193,7 @@ static void ICACHE_FLASH_ATTR
 tcp_sent_cb(void *arg)
 {
     struct espconn *esp = (struct espconn *) arg;
-    nm_tcp *conn = find_conn(esp);
+    nm_tcp *conn = tcp_find_by_esp(esp);
     if (conn == NULL) {
         NM_ERROR("tcp_sent_cb unknown connection [%p]", conn);
         return;
@@ -193,7 +206,7 @@ static void ICACHE_FLASH_ATTR
 tcp_connect_cb(void *arg)
 {
     struct espconn *esp = (struct espconn *) arg;
-    nm_tcp *conn = find_conn(esp);
+    nm_tcp *conn = tcp_find_by_esp(esp);
 
     if (conn == NULL) {
         NM_ERROR("tcp_connect_cb unknown connection [%p]", conn);
