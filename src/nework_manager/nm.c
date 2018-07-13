@@ -112,13 +112,13 @@ nm_set_callbacks(nm_tcp *conn,
                  nm_cb ready_cb,
                  nm_cb disc_cb,
                  nm_cb sent_cb,
-                 nm_recv_cb recv_cb,
+                 nm_rcv_cb rcv_cb,
                  nm_err_cb err_cb)
 {
     conn->ready_cb = ready_cb;
     conn->ready_cb = disc_cb;
     conn->sent_cb = sent_cb;
-    conn->recv_cb = recv_cb;
+    conn->recv_cb = rcv_cb;
     conn->err_cb = err_cb;
 }
 

@@ -23,6 +23,10 @@
 #include "nm_internal.h"
 #include "nm_tcp.h"
 
+#define WIFI_WAS_CONECTED 0b00000001
+
+#define use_static_ip(w) ((w)->ip == 0 || (w)->netmask == 0 || (w)->gw == 0)
+
 extern nm_err_cb nm_g_fatal_err;
 
 /**

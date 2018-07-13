@@ -26,7 +26,6 @@
 #include "esp_util.h"
 #include "user_config.h"
 
-
 struct nm_tcp_;
 
 /**
@@ -35,11 +34,13 @@ struct nm_tcp_;
  * Receiving this callback means:
  * - the connection is disconnected with error.
  * - the disc_cb will not be called.
+ *
+ * If there is no err_sdk available the 0 will be passed.
  */
 typedef void (*nm_err_cb)(struct nm_tcp_ *, sint8 err, sint16 err_sdk);
 
 // The receive callback prototype.
-typedef void (*nm_recv_cb)(struct nm_tcp_ *, uint8_t *data, size_t len);
+typedef void (*nm_rcv_cb)(struct nm_tcp_ *, uint8_t *data, size_t len);
 
 // The send callback prototype.
 typedef void (*nm_cb)(struct nm_tcp_ *);
@@ -54,6 +55,9 @@ typedef struct {
 
     // Static IP, network mask and gateway.
     uint32_t ip, netmask, gw;
+
+    // Set to true if wifi was connected at some point.
+    uint8_t status;
 } nm_wifi;
 
 // Represents managed TCP connection.
@@ -92,7 +96,7 @@ typedef struct nm_tcp_ {
     nm_cb sent_cb; // TODO: check if not NULL.
 
     // Receive callback.
-    nm_recv_cb recv_cb; // TODO: check if not NULL.
+    nm_rcv_cb recv_cb; // TODO: check if not NULL.
 
     // Non fatal error callback.
     nm_err_cb err_cb;
@@ -181,13 +185,13 @@ nm_set_keepalive(nm_tcp *conn, int idle, int intvl, int cnt);
  *
  * - sent_cb  - Called when clien successfully sent data.
  *
- * - recv_cb  - Called when client received the data.
+ * - rcv_cb  - Called when client received the data.
  *
  * @param conn
  * @param ready_cb
  * @param disc_cb
  * @param sent_cb
- * @param recv_cb
+ * @param rcv_cb
  * @param err_cb
  */
 void ICACHE_FLASH_ATTR
@@ -195,7 +199,7 @@ nm_set_callbacks(nm_tcp *conn,
                  nm_cb ready_cb,
                  nm_cb disc_cb,
                  nm_cb sent_cb,
-                 nm_recv_cb recv_cb,
+                 nm_rcv_cb rcv_cb,
                  nm_err_cb err_cb);
 
 void ICACHE_FLASH_ATTR
