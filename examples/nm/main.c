@@ -35,30 +35,32 @@ use_dhcp(void)
     wifi.netmask = ipaddr_addr("255.255.255.0");
     wifi.gw = ipaddr_addr("192.168.2.100");
 
-    sint8 err = nm_wifi_start(&wifi, "TestHive", "xqfiricw2g", err_cb);
+    sint8 err = nm_wifi_start(&wifi, "TestHive", "xqfiricw2g", fatal_cb);
     if (err != ESP_OK) {
         os_printf("USER: nm_wifi_start error %d!\n", err);
         return;
     }
 
+    // The client connection can be scheduled right away.
     nm_tcp *conn = os_zalloc(sizeof(nm_tcp));
     if (conn == NULL) {
         os_printf("USER: OOM!\n");
         nm_stop();
     }
 
-    // err = nm_client(conn, "192.168.1.149", 3333, false);
-    // if (err != ESP_OK) {
-    //     os_printf("USER: esp_nm_client error %d\n", err);
-    //     nm_stop();
-    // }
-    //
-    // nm_set_callbacks(conn, ready_cb, disc_cb, sent_cb, recv_cb, err_cb);
-    // err = nm_client_connect(conn);
-    // if (err != ESP_OK) {
-    //     os_printf("USER: nm_client_connect error %d\n", err);
-    //     nm_stop();
-    // }
+    err = nm_client(conn, "192.168.1.149", 3333, false);
+    if (err != ESP_OK) {
+        os_printf("USER: esp_nm_client error %d\n", err);
+        nm_stop();
+    }
+
+    nm_set_callbacks(conn, ready_cb, disc_cb, sent_cb, recv_cb, err_cb);
+
+    err = nm_client_connect(conn);
+    if (err != ESP_OK) {
+        os_printf("USER: nm_client_connect error %d\n", err);
+        nm_stop();
+    }
 }
 
 void ICACHE_FLASH_ATTR user_init()

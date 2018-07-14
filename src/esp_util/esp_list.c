@@ -56,10 +56,15 @@ esp_dll_prepend(esp_dll_node *n1, esp_dll_node *n2)
 esp_dll_node *ICACHE_FLASH_ATTR
 esp_dll_remove(esp_dll_node *n)
 {
-    if (n->prev != NULL)
+    if (n->prev != NULL) {
         n->prev->next = n->next;
-    if (n->next != NULL)
+        n->prev = NULL;
+    }
+    if (n->next != NULL) {
         n->next->prev = n->prev;
+        n->next = NULL;
+    }
+    os_free(n);
 
     return n;
 }

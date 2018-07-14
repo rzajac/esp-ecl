@@ -88,8 +88,47 @@ nm_tcp_add_conn(nm_tcp *conn)
     }
 
     esp_dll_append(head, node);
+    NM_DEBUG("managing [%p]", conn);
 
     return ESP_OK;
+}
+
+sint8 ICACHE_FLASH_ATTR
+nm_tcp_remove_conn(nm_tcp *conn)
+{
+    esp_dll_node *node = esp_dll_find(head, conn);
+    if (node == NULL) {
+        NM_ERROR("nm_tcp_remove_conn not found [%p]", conn);
+        return ESP_E_ARG;
+    }
+
+    NM_DEBUG("removing [%p]", conn);
+    esp_dll_remove(node);
+    return ESP_OK;
+}
+
+sint8 ICACHE_FLASH_ATTR
+nm_tcp_connect(nm_tcp *conn)
+{
+    sint8 err;
+
+    NM_DEBUG("connecting [%p]", conn);
+    if (is_conn_ready(conn) || is_conn_closed(conn)) {
+        err = espconn_connect(conn->esp);
+        if (err != 0) {
+            NM_ERROR("nm_tcp_connect error %d [%p]", err, conn);
+            nm_tcp_remove_conn(conn);
+
+            // TODO: remove callbacks?
+
+            conn->err_cb(conn, ESP_E_NET, err);
+            return err;
+        }
+        return ESPCONN_OK;
+    }
+    NM_ERROR("nm_tcp_connect wrong state %d [%p]", conn->esp->state, conn);
+
+    return ESPCONN_ARG;
 }
 
 void ICACHE_FLASH_ATTR
@@ -101,14 +140,11 @@ nm_tcp_conn_all()
     esp_dll_node *curr = head;
     while (curr != NULL) {
         conn = get_conn(curr);
-        if (is_conn_ready(conn) || is_conn_closed(conn)) {
-            err = espconn_connect(conn->esp);
-            if (err != 0) {
-                NM_ERROR("nm_tcp_conn_all error %d [%p]", err, curr);
-                nm_g_fatal_err(conn, ESP_E_NET, err);
-            }
+        err = nm_tcp_connect(conn);
+        if (err != 0) {
+            NM_ERROR("nm_tcp_conn_all error %d [%p]", err, curr);
+            conn->err_cb(conn, ESP_E_NET, err);
         }
-        curr = curr->next;
     }
 }
 
@@ -136,7 +172,8 @@ tcp_find_by_esp(struct espconn *esp)
     esp_dll_node *curr = head;
     while (curr != NULL) {
         conn = get_conn(curr);
-        if (conn->esp == esp) return conn;
+        if (conn->esp == esp)
+            return conn;
         curr = curr->next;
     }
     return NULL;

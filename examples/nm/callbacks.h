@@ -19,6 +19,7 @@
 
 #include <user_interface.h>
 
+#include <esp.h>
 #include "nm.h"
 
 void ICACHE_FLASH_ATTR
@@ -35,5 +36,8 @@ recv_cb(nm_tcp *conn, uint8_t *data, size_t len);
 
 void ICACHE_FLASH_ATTR
 err_cb(nm_tcp *conn, sint8 err, sint16 aux);
+
+void ICACHE_FLASH_ATTR
+fatal_cb(nm_tcp *conn, sint8 err, sint16 aux);
 
 #endif //ESP_EX_CALLBACKS_H

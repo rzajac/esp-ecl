@@ -74,6 +74,7 @@ nm_client(nm_tcp *conn, char *host, int port, bool ssl)
         return err;
     }
 
+    NM_DEBUG("configured [%p]", conn);
     return ESP_OK;
 }
 
@@ -120,6 +121,8 @@ nm_set_callbacks(nm_tcp *conn,
     conn->sent_cb = sent_cb;
     conn->recv_cb = rcv_cb;
     conn->err_cb = err_cb;
+
+    NM_DEBUG("set callbacks for [%p]", conn);
 }
 
 void ICACHE_FLASH_ATTR
@@ -132,7 +135,13 @@ nm_set_reconnect(nm_tcp *conn, uint8_t recon_max)
 sint8 ICACHE_FLASH_ATTR
 nm_client_connect(nm_tcp *conn)
 {
-    return nm_tcp_add_conn(conn);
+    sint8 err = nm_tcp_add_conn(conn);
+    if (err != ESPCONN_OK) {
+        return err;
+    }
+
+    NM_DEBUG("wifi_station_get_connect_status: %d", wifi_station_get_connect_status());
+    return nm_tcp_connect(conn);
 }
 
 sint8 ICACHE_FLASH_ATTR

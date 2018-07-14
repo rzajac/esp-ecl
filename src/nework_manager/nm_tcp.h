@@ -54,6 +54,26 @@ nm_tcp_set_conn_cb(nm_tcp *conn);
 sint8 ICACHE_FLASH_ATTR
 nm_tcp_add_conn(nm_tcp *conn);
 
+/**
+ * Stop managing the connection.
+ *
+ * @param conn The managed connection.
+ *
+ * @return Error code.
+ */
+sint8 ICACHE_FLASH_ATTR
+nm_tcp_remove_conn(nm_tcp *conn);
+
+/**
+ * Connect to a server.
+ *
+ * @param conn The managed connection.
+ *
+ * @return ESPCONN_* error code.
+ */
+sint8 ICACHE_FLASH_ATTR
+nm_tcp_connect(nm_tcp *conn);
+
 /** Connect all not connected clients. */
 void ICACHE_FLASH_ATTR
 nm_tcp_conn_all();

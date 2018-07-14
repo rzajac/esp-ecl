@@ -63,6 +63,8 @@ esp_dll_prepend(esp_dll_node *n1, esp_dll_node *n2);
 /**
  * Remove node from double linked list.
  *
+ * The memory associated with node will be released.
+ *
  * @param n The double link list node.
  *
  * @return n
