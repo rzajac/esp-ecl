@@ -36,9 +36,12 @@ sint8 ICACHE_FLASH_ATTR
 nm_stop()
 {
     // Remove WiFi callbacks.
+    NM_DEBUG("nm_stop: removing NM group callbacks");
     esp_eb_remove_group(EV_GROUP);
     nm_tcp_abort_all();
+    NM_DEBUG("nm_stop: station disconnect");
     wifi_station_disconnect();
+    NM_DEBUG("nm_stop: set NULL opmode");
     wifi_set_opmode(NULL_MODE);
 
     return ESP_OK;
@@ -91,6 +94,8 @@ nm_disconnect(nm_tcp *conn)
 void ICACHE_FLASH_ATTR
 nm_abort(nm_tcp *conn)
 {
+    NM_DEBUG("aborting [%p]", conn);
+
     // Prevent callbacks after call to espconn_abort.
     espconn_regist_reconcb(conn->esp, NULL);
     espconn_regist_disconcb(conn->esp, NULL);
@@ -98,6 +103,8 @@ nm_abort(nm_tcp *conn)
     // Abort and release memory.
     espconn_abort(conn->esp);
     nm_tcp_release_espconn(conn);
+    nm_tcp_remove_conn(conn);
+    NM_DEBUG("aborting - done [%p]", conn);
 }
 
 void ICACHE_FLASH_ATTR

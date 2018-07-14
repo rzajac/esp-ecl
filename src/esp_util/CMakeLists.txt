@@ -16,7 +16,7 @@
 project(esp_util C)
 
 set(SOURCE_FILES esp_util.c esp_list.c)
-set(HEADER_FILES include/esp_util.h include/esp_list.h)
+set(HEADER_FILES include/esp_util.h include/esp_list.h esp_list_internal.h)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 

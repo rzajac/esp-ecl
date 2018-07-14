@@ -15,6 +15,7 @@
  */
 
 #include "include/esp_list.h"
+#include "esp_list_internal.h"
 
 
 esp_dll_node *ICACHE_FLASH_ATTR
@@ -24,6 +25,7 @@ esp_dll_new(void *payload)
     if (n == NULL)
         return NULL;
     n->payload = payload;
+    DLL_DEBUG("created node [%p]", n);
     return n;
 }
 
@@ -36,6 +38,7 @@ esp_dll_append(esp_dll_node *n1, esp_dll_node *n2)
     if (n1->next != NULL)
         n1->next->prev = n2;
     n1->next = n2;
+    DLL_DEBUG("added [%p] after [%p]", n1, n2);
 
     return n2;
 }
@@ -49,6 +52,7 @@ esp_dll_prepend(esp_dll_node *n1, esp_dll_node *n2)
     if (n1->prev != NULL)
         n1->prev->next = n2;
     n1->prev = n2;
+    DLL_DEBUG("added [%p] before [%p]", n2, n1);
 
     return n2;
 }
@@ -56,6 +60,8 @@ esp_dll_prepend(esp_dll_node *n1, esp_dll_node *n2)
 esp_dll_node *ICACHE_FLASH_ATTR
 esp_dll_remove(esp_dll_node *n)
 {
+    DLL_DEBUG("removing [%p]", n);
+
     if (n->prev != NULL) {
         n->prev->next = n->next;
         n->prev = NULL;
@@ -72,10 +78,11 @@ esp_dll_remove(esp_dll_node *n)
 esp_dll_node *ICACHE_FLASH_ATTR
 esp_dll_find(esp_dll_node *start, void *payload)
 {
-    while (start != NULL) {
-        if (start->payload == payload)
-            return start;
-        start = start->next;
+    esp_dll_node *curr = start;
+    while (curr != NULL) {
+        if (curr->payload == payload)
+            return curr;
+        curr = curr->next;
     }
     return NULL;
 }

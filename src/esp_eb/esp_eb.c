@@ -124,13 +124,12 @@ static esp_dll_node *ICACHE_FLASH_ATTR
 remove_node(esp_dll_node *node)
 {
     esp_dll_node *next = node->next;
-    esp_dll_remove(node);
 
     if (node == head)
         head = node->next;
 
     os_free(GET_EVENT(node));
-    os_free(node);
+    esp_dll_remove(node);
 
     return next;
 }

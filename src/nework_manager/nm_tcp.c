@@ -96,14 +96,19 @@ nm_tcp_add_conn(nm_tcp *conn)
 sint8 ICACHE_FLASH_ATTR
 nm_tcp_remove_conn(nm_tcp *conn)
 {
+    NM_DEBUG("stop managing [%p]", conn);
     esp_dll_node *node = esp_dll_find(head, conn);
     if (node == NULL) {
         NM_ERROR("nm_tcp_remove_conn not found [%p]", conn);
         return ESP_E_ARG;
     }
 
-    NM_DEBUG("removing [%p]", conn);
+    if (node == head) {
+        head = NULL;
+    }
+
     esp_dll_remove(node);
+    NM_DEBUG("stop managing - done [%p]", conn);
     return ESP_OK;
 }
 
@@ -151,12 +156,12 @@ nm_tcp_conn_all()
 void ICACHE_FLASH_ATTR
 nm_tcp_abort_all()
 {
+    NM_DEBUG("nm_tcp_abort_all");
     esp_dll_node *curr = head;
     esp_dll_node *next = NULL;
     while (curr != NULL) {
         next = curr->next;
         nm_abort(get_conn(curr));
-        esp_dll_remove(curr);
         curr = next;
     }
 }

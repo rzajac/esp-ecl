@@ -34,12 +34,12 @@ use_dhcp(void)
 
     next = head = esp_dll_new((void *) 1);
 
-    // Create 100 nodes.
+    // Create 19 nodes.
     for (int i = 2; i <= 20; i++) {
         next = esp_dll_append(next, esp_dll_new((void *) i));
     }
 
-    // Display 100 nodes.
+    // Display 19 nodes.
     next = head;
     while (next != NULL) {
         os_printf("node %p %d\n", next, (int) next->payload);
@@ -52,9 +52,8 @@ use_dhcp(void)
 
     // Remove node #13
     esp_dll_remove(tmp);
-    os_free(tmp);
 
-    // Display 19 nodes.
+    // Display 18 nodes.
     next = head;
     esp_dll_node *tail = head;
     while (next != NULL) {
@@ -63,7 +62,7 @@ use_dhcp(void)
         next = next->next;
     }
 
-    // Display 19 nodes backwards.
+    // Display 18 nodes backwards.
     next = tail;
     while (next != NULL) {
         os_printf("node %p %d\n", next, (int) next->payload);
@@ -74,7 +73,7 @@ use_dhcp(void)
     next = head;
     while (next != NULL) {
         tmp = next->next;
-        os_free(next);
+        esp_dll_remove(next);
         next = tmp;
     }
 

@@ -14,20 +14,15 @@
  * under the License.
  */
 
+#ifndef ESP_LIST_INTERNAL_H
+#define ESP_LIST_INTERNAL_H
 
-#ifndef ESP_EB_INTERNAL_H
-#define ESP_EB_INTERNAL_H
+#include <osapi.h>
 
-#include "esp_eb.h"
-
-#ifdef ESP_EB_DEBUG_ON
-    #define ESP_EB_DEBUG(format, ...) os_printf("EB  DBG: " format, ## __VA_ARGS__ )
+#if defined(DLL_DEBUG_ON) || defined(DEBUG_ON)
+    #define DLL_DEBUG(format, ...) os_printf("DLL DBG: " format "\n", ## __VA_ARGS__ )
 #else
-    #define ESP_EB_DEBUG(format, ...) do {} while(0)
+    #define DLL_DEBUG(format, ...) do {} while(0)
 #endif
 
-#define ESP_EB_ERROR(format, ...) os_printf("EB  ERR: " format, ## __VA_ARGS__ )
-
-#define GET_EVENT(node) ((eb_event *) (node)->payload)
-
-#endif //ESP_EB_INTERNAL_H
+#endif //ESP_LIST_INTERNAL_H
