@@ -20,6 +20,9 @@
 // Declarations.
 /////////////////////////////////////////////////////////////////////////////
 
+static nm_tcp *ICACHE_FLASH_ATTR
+tcp_find_by_esp(struct espconn *esp);
+
 static void ICACHE_FLASH_ATTR
 tcp_disc_cb(void *arg);
 
@@ -78,6 +81,11 @@ nm_tcp_set_conn_cb(nm_tcp *conn)
 sint8 ICACHE_FLASH_ATTR
 nm_tcp_add_conn(nm_tcp *conn)
 {
+    // Prevent adding the same connection twice.
+    if (tcp_find_by_esp(conn->esp) != NULL) {
+        return ESP_E_ARG;
+    }
+
     esp_dll_node *node = esp_dll_new(conn);
     if (node == NULL)
         return ESP_E_MEM;
@@ -150,6 +158,7 @@ nm_tcp_conn_all()
             NM_ERROR("nm_tcp_conn_all error %d [%p]", err, curr);
             conn->err_cb(conn, ESP_E_NET, err);
         }
+        curr = curr->next;
     }
 }
 
@@ -214,7 +223,7 @@ tcp_receive_cb(void *arg, char *data, unsigned short len)
     }
 
     NM_DEBUG_CONN("tcp_receive_cb", conn);
-    conn->recv_cb(conn, (uint8_t *) data, len);
+    conn->rcv_cb(conn, (uint8_t *) data, len);
 }
 
 static void ICACHE_FLASH_ATTR
@@ -274,4 +283,5 @@ tcp_connect_cb(void *arg)
     espconn_regist_sentcb(conn->esp, tcp_sent_cb);
 
     NM_DEBUG_CONN("tcp_connect_cb", conn);
+    conn->ready_cb(conn);
 }

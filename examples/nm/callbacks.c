@@ -37,7 +37,7 @@ sent_cb(nm_tcp *conn)
 void ICACHE_FLASH_ATTR
 recv_cb(nm_tcp *conn, uint8_t *data, size_t len)
 {
-    os_printf("USR: recv_cb [%p]\n", conn);
+    os_printf("USR: rcv_cb len:%d [%p]\n", len, conn);
 
 }
 
@@ -45,6 +45,7 @@ void ICACHE_FLASH_ATTR
 err_cb(nm_tcp *conn, sint8 err, sint16 err_sdk)
 {
     os_printf("USER: err_cb err:%d err_sdk:%d [%p]\n", err, err_sdk, conn);
+    nm_client_release(conn);
 }
 
 void ICACHE_FLASH_ATTR
@@ -66,7 +67,7 @@ fatal_cb(nm_tcp *conn, sint8 err, sint16 err_sdk)
     //         nm_stop();
     //     }
     //
-    //     nm_set_callbacks(conn, ready_cb, disc_cb, sent_cb, recv_cb, err_cb);
+    //     nm_set_callbacks(conn, ready_cb, disc_cb, sent_cb, rcv_cb, err_cb);
     //
     //     err = nm_client_connect(conn);
     //     if (err != ESP_OK) {

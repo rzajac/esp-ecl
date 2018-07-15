@@ -104,7 +104,6 @@ nm_abort(nm_tcp *conn)
     espconn_abort(conn->esp);
     nm_tcp_release_espconn(conn);
     nm_tcp_remove_conn(conn);
-    NM_DEBUG("aborting - done [%p]", conn);
 }
 
 void ICACHE_FLASH_ATTR
@@ -124,9 +123,9 @@ nm_set_callbacks(nm_tcp *conn,
                  nm_err_cb err_cb)
 {
     conn->ready_cb = ready_cb;
-    conn->ready_cb = disc_cb;
+    conn->disc_cb = disc_cb;
     conn->sent_cb = sent_cb;
-    conn->recv_cb = rcv_cb;
+    conn->rcv_cb = rcv_cb;
     conn->err_cb = err_cb;
 
     NM_DEBUG("set callbacks for [%p]", conn);
@@ -147,8 +146,33 @@ nm_client_connect(nm_tcp *conn)
         return err;
     }
 
-    NM_DEBUG("wifi_station_get_connect_status: %d", wifi_station_get_connect_status());
-    return nm_tcp_connect(conn);
+    if (wifi_station_get_connect_status() == STATION_GOT_IP) {
+        return nm_tcp_connect(conn);
+    }
+
+    NM_DEBUG("connection scheduled [%p] ", conn);
+    return ESP_OK;
+}
+
+sint8 ICACHE_FLASH_ATTR
+nm_client_release(nm_tcp *conn)
+{
+    NM_DEBUG("nm_client_release [%p] ", conn);
+
+    if (conn->esp->state != ESPCONN_CLOSE) {
+        nm_abort(conn);
+        return ESP_OK;
+    }
+
+    // Prevent callbacks.
+    espconn_regist_reconcb(conn->esp, NULL);
+    espconn_regist_disconcb(conn->esp, NULL);
+    espconn_regist_recvcb(conn->esp, NULL);
+    espconn_regist_sentcb(conn->esp, NULL);
+    nm_tcp_release_espconn(conn);
+    os_free(conn);
+
+    return ESP_OK;
 }
 
 sint8 ICACHE_FLASH_ATTR

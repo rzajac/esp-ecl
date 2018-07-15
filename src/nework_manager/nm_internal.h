@@ -26,11 +26,10 @@
 
 #if defined(NM_DEBUG_ON) || defined(DEBUG_ON)
     #define NM_DEBUG(format, ...) os_printf("NM  DBG: " format "\n", ## __VA_ARGS__ )
-    #define NM_DEBUG_CONN(header, conn) ({ os_printf("NM TCP: %s\n", (header)); \
-                                           os_printf("        conn      %p\n", (conn)); \
-                                           os_printf("        state     %d\n", (conn)->esp->state); \
-                                           os_printf("        link_cnt  %d\n", (conn)->esp->link_cnt); \
-                                           os_printf("        reverse   %p\n", (conn)->esp->reverse); \
+    #define NM_DEBUG_CONN(header, conn) ({ os_printf("NM  TCP: %s [%p]\n", (header), (conn)); \
+                                           os_printf("         state     %d\n", (conn)->esp->state); \
+                                           os_printf("         link_cnt  %d\n", (conn)->esp->link_cnt); \
+                                           os_printf("         reverse   %p\n", (conn)->esp->reverse); \
                                         })
 #else
     #define NM_DEBUG(format, ...) do {} while(0)

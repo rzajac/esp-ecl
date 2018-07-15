@@ -96,7 +96,7 @@ typedef struct nm_tcp_ {
     nm_cb sent_cb; // TODO: check if not NULL.
 
     // Receive callback.
-    nm_rcv_cb recv_cb; // TODO: check if not NULL.
+    nm_rcv_cb rcv_cb; // TODO: check if not NULL.
 
     // Non fatal error callback.
     nm_err_cb err_cb;
@@ -214,6 +214,9 @@ nm_set_reconnect(nm_tcp *conn, uint8_t recon_max);
  */
 sint8 ICACHE_FLASH_ATTR
 nm_client_connect(nm_tcp *conn);
+
+sint8 ICACHE_FLASH_ATTR
+nm_client_release(nm_tcp *conn);
 
 sint8 ICACHE_FLASH_ATTR
 nm_disconnect(nm_tcp *conn);
