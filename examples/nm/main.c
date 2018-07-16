@@ -25,7 +25,7 @@
 void ICACHE_FLASH_ATTR
 use_dhcp(void)
 {
-    os_printf("USER: system initialized\n");
+    os_printf("USR: system initialized\n");
 
     nm_wifi wifi;
     memset(&wifi, 0, sizeof(nm_wifi));

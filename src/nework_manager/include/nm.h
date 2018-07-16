@@ -26,6 +26,11 @@
 #include "esp_util.h"
 #include "user_config.h"
 
+// Default keep alive values.
+#define NM_DEFAULT_KA_IDLE 3
+#define NM_DEFAULT_KA_ITVL 5
+#define NM_DEFAULT_KA_CNT 4
+
 struct nm_tcp_;
 
 /**
@@ -68,19 +73,11 @@ typedef struct nm_tcp_ {
     // Use SSL for the connection.
     bool ssl;
 
-    // Maximum number of reconnection retries.
-    // If set to zero then no limit.
-    uint8_t recon_max;
-
-    // Number of reconnection retries.
-    // Current number of connection retries.
-    uint8_t recon_cnt;
-
     // Keep alive idle.
     int ka_idle;
 
     // Keep alive interval.
-    int ka_intvl;
+    int ka_itvl;
 
     // Keep alive count.
     int ka_cnt;
@@ -201,9 +198,6 @@ nm_set_callbacks(nm_tcp *conn,
                  nm_cb sent_cb,
                  nm_rcv_cb rcv_cb,
                  nm_err_cb err_cb);
-
-void ICACHE_FLASH_ATTR
-nm_set_reconnect(nm_tcp *conn, uint8_t recon_max);
 
 /**
  * Connect client.

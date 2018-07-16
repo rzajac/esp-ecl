@@ -131,9 +131,6 @@ nm_tcp_connect(nm_tcp *conn)
         if (err != 0) {
             NM_ERROR("nm_tcp_connect error %d [%p]", err, conn);
             nm_tcp_remove_conn(conn);
-
-            // TODO: remove callbacks?
-
             conn->err_cb(conn, ESP_E_NET, err);
             return err;
         }
@@ -206,8 +203,6 @@ tcp_disc_cb(void *arg)
 
     NM_DEBUG_CONN("tcp_disc_cb", conn);
 
-    // TODO: what about reconnect?
-    // TODO: disconnect due to error or planed?
     conn->disc_cb(conn);
     nm_tcp_release_espconn(conn);
 }
@@ -251,6 +246,7 @@ tcp_sent_cb(void *arg)
     }
 
     NM_DEBUG_CONN("tcp_sent_cb", conn);
+    conn->sent_cb(conn);
 }
 
 static void ICACHE_FLASH_ATTR
@@ -271,12 +267,22 @@ tcp_connect_cb(void *arg)
         return;
     }
 
-    if (conn->ka_idle && conn->ka_intvl && conn->ka_cnt) {
-        espconn_set_opt(conn->esp, ESPCONN_KEEPALIVE);
-        espconn_set_keepalive(conn->esp, ESPCONN_KEEPIDLE, &conn->ka_idle);
-        espconn_set_keepalive(conn->esp, ESPCONN_KEEPINTVL, &conn->ka_intvl);
-        espconn_set_keepalive(conn->esp, ESPCONN_KEEPCNT, &conn->ka_cnt);
+    // Set default keep alive configuration.
+    // Send keep alive packet every 3 seconds. If sending
+    // fails ESP8266 will try to send 4 keep alive packets
+    // every 5 seconds. If after that time (3s + 4 * 5s = 23s) there
+    // is no response err_cb will be called on the connection with
+    // ESP_NET and `SPCONN_ABRT` error codes.
+    if (!use_ka(conn)) {
+        conn->ka_idle = NM_DEFAULT_KA_IDLE;
+        conn->ka_itvl = NM_DEFAULT_KA_ITVL;
+        conn->ka_cnt = NM_DEFAULT_KA_CNT;
     }
+
+    espconn_set_opt(conn->esp, ESPCONN_KEEPALIVE);
+    espconn_set_keepalive(conn->esp, ESPCONN_KEEPIDLE, &conn->ka_idle);
+    espconn_set_keepalive(conn->esp, ESPCONN_KEEPINTVL, &conn->ka_itvl);
+    espconn_set_keepalive(conn->esp, ESPCONN_KEEPCNT, &conn->ka_cnt);
 
     espconn_regist_disconcb(conn->esp, tcp_disc_cb);
     espconn_regist_recvcb(conn->esp, tcp_receive_cb);

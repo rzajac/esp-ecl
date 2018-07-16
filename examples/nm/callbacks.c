@@ -20,6 +20,7 @@ void ICACHE_FLASH_ATTR
 ready_cb(nm_tcp *conn)
 {
     os_printf("USR: ready_cb [%p]\n", conn);
+    nm_send(conn, (uint8 *) "HELLO", 5);
 }
 
 void ICACHE_FLASH_ATTR
@@ -38,7 +39,7 @@ void ICACHE_FLASH_ATTR
 recv_cb(nm_tcp *conn, uint8_t *data, size_t len)
 {
     os_printf("USR: rcv_cb len:%d [%p]\n", len, conn);
-
+    nm_send(conn, (uint8 *) "HELLO", 5);
 }
 
 void ICACHE_FLASH_ATTR

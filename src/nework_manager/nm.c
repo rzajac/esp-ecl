@@ -22,15 +22,28 @@
 // Declarations.
 /////////////////////////////////////////////////////////////////////////////
 
-static void ICACHE_FLASH_ATTR
-connect_all();
-
 /////////////////////////////////////////////////////////////////////////////
 // Code.
 /////////////////////////////////////////////////////////////////////////////
 
+/** NOOP error function */
+void ICACHE_FLASH_ATTR
+nm_err_noop(nm_tcp *conn, sint8 err, sint16 err_sdk)
+{}
+
+/** NOOP receive function */
+void ICACHE_FLASH_ATTR
+nm_rcv_noop(nm_tcp *conn, uint8_t *data, size_t len)
+{}
+
+
+/** NOOP callback function */
+void ICACHE_FLASH_ATTR
+nm_cb_noop(nm_tcp *conn)
+{}
+
 // Global fatal error callback. Must return as soon as possible.
-nm_err_cb nm_g_fatal_err; // TODO: check if not NULL.
+nm_err_cb nm_g_fatal_err = nm_err_noop;
 
 sint8 ICACHE_FLASH_ATTR
 nm_stop()
@@ -77,6 +90,12 @@ nm_client(nm_tcp *conn, char *host, int port, bool ssl)
         return err;
     }
 
+    conn->ready_cb = nm_cb_noop;
+    conn->disc_cb = nm_cb_noop;
+    conn->sent_cb = nm_cb_noop;
+    conn->rcv_cb = nm_rcv_noop;
+    conn->err_cb = nm_err_noop;
+
     NM_DEBUG("configured [%p]", conn);
     return ESP_OK;
 }
@@ -110,7 +129,7 @@ void ICACHE_FLASH_ATTR
 nm_set_keepalive(nm_tcp *conn, int idle, int intvl, int cnt)
 {
     conn->ka_idle = idle;
-    conn->ka_intvl = intvl;
+    conn->ka_itvl = intvl;
     conn->ka_cnt = cnt;
 }
 
@@ -129,13 +148,6 @@ nm_set_callbacks(nm_tcp *conn,
     conn->err_cb = err_cb;
 
     NM_DEBUG("set callbacks for [%p]", conn);
-}
-
-void ICACHE_FLASH_ATTR
-nm_set_reconnect(nm_tcp *conn, uint8_t recon_max)
-{
-    conn->recon_max = recon_max;
-    conn->recon_cnt = 0;
 }
 
 sint8 ICACHE_FLASH_ATTR

@@ -24,6 +24,8 @@
 
 extern nm_err_cb nm_g_fatal_err;
 
+#define use_ka(c) ((c)->ka_idle != 0 && (c)->ka_itvl == 0 && (c)->ka_cnt == 0)
+
 /**
  * Release espconn memory.
  *
