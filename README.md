@@ -4,17 +4,17 @@ Repository is a collection of small but useful libraries I use in many of my
 projects gathered in one place. Each of the libraries has a documentation  
 `README.md` file as well as very well documented header file. 
  
-Library name                         | Description
--------------------------------------|-------------
-[esp_aes](src/esp_aes)               | AES CBC encryption / decryption.
-[esp_cfg](src/esp_cfg)               | Read / write custom configuration structures from / to flash.
-[event_bus](src/event_bus)           | Simple event bus.
-[esp_gpio](src/esp_gpio)             | Fast GPIO manipulation library.
-[esp_gpio_debug](src/esp_gpio_debug) | GPIO debugging library.
-[esp_json](src/esp_jsonh)            | Easier JSON manipulation.
-[esp_sdo](src/esp_sdo)               | Use RX pin as the GPIO3.
-[timers](src/timers)                 | Collection of helpers to deal with timers and delays.
-[esp_util](src/esp_utilh)            | Utility functions.
+Library name                   | Description
+-------------------------------|-------------
+[esp_aes](src/esp_aes)         | AES CBC encryption / decryption.
+[config](src/config)           | Read / write custom configuration structures from / to flash.
+[event_bus](src/event_bus)     | Simple event bus.
+[gpio_helper](src/gpio_helper) | Fast GPIO manipulation library.
+[gpio_debug](src/gpio_debug)   | GPIO debugging library.
+[esp_json](src/esp_json)       | Easier JSON manipulation.
+[esp_sdo](src/esp_sdo)         | Use RX pin as the GPIO3.
+[timers](src/timers)           | Collection of helpers to deal with timers and delays.
+[utils](src/utils)             | Utility functions.
 
 ## Build environment.
 
@@ -27,8 +27,8 @@ environment setup as described at https://github.com/rzajac/esp-dev-env.
 - [AES Encrypt/Decrypt](examples/aes)
 - [Blink LED](examples/blink)
 - [Conditional LED blink](examples/blink_cond)
-- [Custom config](examples/cfg)
-- [Evens](examples/events)
+- [Custom config](examples/config)
+- [Evens](examples/event_bus)
 - [JSON](examples/json)
 - [Timer](examples/timers)
 

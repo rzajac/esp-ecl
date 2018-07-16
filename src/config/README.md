@@ -1,4 +1,4 @@
-## esp_cfg
+## Config
 
 Library gives simple interface to store/retrieve data on flash to for example
 keep your application state between resets.  
@@ -19,7 +19,7 @@ The library by default gives you 4 slots each 4096 bytes:
 - slot 4 starting at sector `0xF` (flash address `0xF000`) 
 
 You can customize where the library stores your data with 
-`ESP_CFG_START_SECTOR` and `ESP_CFG_NUMBER` in `esp_config.h` file.
+`CONFIG_START_SECTOR` and `CONFIG_NUMBER` in `esp_config.h` file.
 
-See [example program](../../examples/cfg) and library documentation in 
-[esp_cfg.h](include/esp_cfg.h) header file for more details.
+See [example program](../../examples/config) and library documentation in 
+[config.h](include/config.h) header file for more details.

@@ -17,8 +17,9 @@
 
 #include <osapi.h>
 #include <user_interface.h>
+
 #include "esp_sdo.h"
-#include "esp_cfg.h"
+#include "config.h"
 
 
 // The my_config0 magic number.
@@ -39,12 +40,12 @@ struct STORE_ATTR {
 } my_config1;
 
 
-esp_cfg_err ICACHE_FLASH_ATTR
+sint8 ICACHE_FLASH_ATTR
 write_config(uint8_t cfg_num)
 {
-    esp_cfg_err result = esp_cfg_write(cfg_num);
+    sint8 result = config_write(cfg_num);
 
-    if (result == ESP_CFG_OK) {
+    if (result == ESP_OK) {
         os_printf("Config %d written.\n", cfg_num);
     } else {
         os_printf("Config %d write error: %d.\n", cfg_num, result);
@@ -57,26 +58,26 @@ void ICACHE_FLASH_ATTR
 use_dhcp(void)
 {
     bool restart = false;
-    esp_cfg_err init_err;
+    sint8 init_err;
 
     os_printf("Initializing configs.\n");
-    init_err = esp_cfg_init(0, &my_config0, sizeof(my_config0));
-    if (init_err != ESP_CFG_OK) {
+    init_err = config_init(0, &my_config0, sizeof(my_config0));
+    if (init_err != ESP_OK) {
         os_printf("my_config0 initialization error %d\n", init_err);
         return;
     }
 
-    init_err = esp_cfg_init(1, &my_config1, sizeof(my_config1));
-    if (init_err != ESP_CFG_OK) {
+    init_err = config_init(1, &my_config1, sizeof(my_config1));
+    if (init_err != ESP_OK) {
         os_printf("my_config1 initialization error %d\n", init_err);
         return;
     }
 
     os_printf("Reading configs.\n");
-    esp_cfg_err result0 = esp_cfg_read(0);
-    esp_cfg_err result1 = esp_cfg_read(1);
+    sint8 result0 = config_read(0);
+    sint8 result1 = config_read(1);
 
-    if (result0 != ESP_CFG_OK || result1 != ESP_CFG_OK) {
+    if (result0 != ESP_OK || result1 != ESP_OK) {
         os_printf("Config read error. my_config0: %d, my_config1: %d\n",
                   result0, result1);
         return;
@@ -117,13 +118,13 @@ use_dhcp(void)
 
     os_printf("Writing new config values.\n");
 
-    result0 = esp_cfg_write(0);
-    if (result0 != ESP_CFG_OK) {
+    result0 = config_write(0);
+    if (result0 != ESP_OK) {
         os_printf("Error writing my_config0 (%d)\n", result0);
     }
 
-    result1 = esp_cfg_write(1);
-    if (result0 != ESP_CFG_OK) {
+    result1 = config_write(1);
+    if (result0 != ESP_OK) {
         os_printf("Error writing my_config1 (%d)\n", result1);
     }
 

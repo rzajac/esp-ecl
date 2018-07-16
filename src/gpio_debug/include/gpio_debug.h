@@ -15,11 +15,14 @@
  */
 
 
-#ifndef ESP_GPIO_DEBUG_H
-#define ESP_GPIO_DEBUG_H
+#ifndef GPIO_DEBUG_H
+#define GPIO_DEBUG_H
 
 #include <c_types.h>
+#include <osapi.h>
 
+#include "gpio_helper.h"
+#include "utils.h"
 
 /**
  * Dump MUX register address for given GPIO number.
@@ -27,7 +30,7 @@
  * @param gpio_num The GPIO pin number.
  */
 void ICACHE_FLASH_ATTR
-esp_gpiod_dump_mux_addr(uint8_t gpio_num);
+gpiod_dump_mux_addr(uint8_t gpio_num);
 
 /**
  * Dump binary representation of GPIO register.
@@ -35,7 +38,7 @@ esp_gpiod_dump_mux_addr(uint8_t gpio_num);
  * @param reg_addr The register address.
  */
 void ICACHE_FLASH_ATTR
-esp_gpiod_dump_reg(uint32_t reg_addr);
+gpiod_dump_reg(uint32_t reg_addr);
 
 /**
  * Dump binary representation of GPIO MUX register for given GPIO number.
@@ -43,18 +46,18 @@ esp_gpiod_dump_reg(uint32_t reg_addr);
  * @param gpio_num The GPIO pin number.
  */
 void ICACHE_FLASH_ATTR
-esp_gpiod_dump_mux_reg(uint8_t gpio_num);
+gpiod_dump_mux_reg(uint8_t gpio_num);
 
 /** Dump binary representation of GPIO_ENABLE register */
 void ICACHE_FLASH_ATTR
-esp_gpiod_dump_en();
+gpiod_dump_en();
 
 /** Dump binary representation of GPIO_OUT register */
 void ICACHE_FLASH_ATTR
-esp_gpiod_dump_out();
+gpiod_dump_out();
 
 /** Dump binary representation of GPIO_IN register */
 void ICACHE_FLASH_ATTR
-esp_gpiod_dump_in();
+gpiod_dump_in();
 
-#endif //ESP_GPIO_DEBUG_H
+#endif // GPIO_DEBUG_H

@@ -15,9 +15,10 @@
  */
 
 
-#ifndef ESP_GPIO_H
-#define ESP_GPIO_H
+#ifndef GPIO_HELPER_H
+#define GPIO_HELPER_H
 
+#include <osapi.h>
 #include <c_types.h>
 
 #define ESP_REG(addr) *((volatile uint32_t *)(0x60000000+(addr)))
@@ -216,6 +217,6 @@ extern uint16_t esp_gpio_mux[17];
  * @param mode     One of GPIO_MODE_* defines.
  */
 void ICACHE_FLASH_ATTR
-esp_gpio_setup(uint8_t gpio_num, uint8_t mode);
+gpioh_setup(uint8_t gpio_num, uint8_t mode);
 
-#endif //ESP_GPIO_H
+#endif // GPIO_HELPER_H

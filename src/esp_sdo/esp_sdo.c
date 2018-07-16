@@ -8,7 +8,7 @@
  *
  * Stupid bit of code that does the bare minimum to make os_printf work.
  *
- * The source was modified to use esp_gpio library.
+ * The source was modified to use gpio_helper library.
  */
 
 #include <user_interface.h>

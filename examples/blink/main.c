@@ -17,8 +17,10 @@
 
 #include <user_interface.h>
 #include <osapi.h>
+
+#include <esp.h>
 #include "esp_sdo.h"
-#include "esp_gpio.h"
+#include "gpio_helper.h"
 
 
 static os_timer_t timer;
@@ -27,6 +29,8 @@ static os_timer_t timer;
 void ICACHE_FLASH_ATTR
 blink(void *arg)
 {
+    UNUSED(arg);
+
     bool state = GPIO_VALUE(GPIO2);
 
     os_printf("LED state: %d\n", state);
@@ -36,8 +40,8 @@ blink(void *arg)
 void ICACHE_FLASH_ATTR
 use_dhcp()
 {
-    esp_gpio_setup(GPIO2, GPIO_MODE_OUTPUT);
-    esp_gpio_setup(GPIO3, GPIO_MODE_INPUT);
+    gpioh_setup(GPIO2, GPIO_MODE_OUTPUT);
+    gpioh_setup(GPIO3, GPIO_MODE_INPUT);
 
     //Setup timer to call our callback in 1 second intervals.
     os_timer_disarm(&timer);

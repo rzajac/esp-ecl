@@ -13,19 +13,21 @@
 # under the License.
 
 
-project(esp_cfg C)
+project(gpio_debug C)
 
-set(SOURCE_FILES esp_cfg.c)
-set(HEADER_FILES include/esp_cfg.h)
+set(SOURCE_FILES gpio_debug.c)
+set(HEADER_FILES include/gpio_debug.h)
 
-add_library(${PROJECT_NAME} STATIC
-    ${SOURCE_FILES}
-    ${HEADER_FILES})
+add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    ${ESP_USER_CONFIG_DIR})
+    ${ESP_USER_CONFIG_DIR}
+    ${gpio_helper_INCLUDE_DIRS}
+    ${utils_INCLUDE_DIRS})
+
+target_link_libraries(${PROJECT_NAME} gpio_helper utils)
 
 set_target_properties(
     ${PROJECT_NAME}

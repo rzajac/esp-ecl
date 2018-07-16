@@ -15,8 +15,7 @@
  */
 
 
-#include <osapi.h>
-#include "include/esp_gpio.h"
+#include "include/gpio_helper.h"
 
 
 // GPIO MUX register address offsets.
@@ -27,7 +26,7 @@ uint16_t esp_gpio_mux[17] = {0x834, 0x818, 0x838, 0x814,
                              0x7A0};
 
 void ICACHE_FLASH_ATTR
-esp_gpio_setup(uint8_t gpio_num, uint8_t mode)
+gpioh_setup(uint8_t gpio_num, uint8_t mode)
 {
     // Set pin as GPIO. It resets all MUX bits to 0 except [8] and [5:4].
     GPIO_MUX(gpio_num) = GPIO_FUNC(GPIO_FUNC_NUM(gpio_num));

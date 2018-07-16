@@ -14,13 +14,13 @@
 
 
 add_subdirectory(esp_aes)
-add_subdirectory(esp_cfg)
-add_subdirectory(esp_gpio)
-add_subdirectory(esp_gpio_debug)
 add_subdirectory(esp_json)
 add_subdirectory(esp_sdo)
 
+add_subdirectory(config)
 add_subdirectory(event_bus)
+add_subdirectory(gpio_helper)
+add_subdirectory(gpio_debug)
 add_subdirectory(nework_manager)
 add_subdirectory(timers)
 add_subdirectory(utils)

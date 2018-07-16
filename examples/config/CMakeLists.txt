@@ -13,23 +13,12 @@
 # under the License.
 
 
-project(esp_gpio C)
+# The example doesn't use cmake find_package() function because we want
+# local libraries not the ones installed in $ESPROOT.
 
-set(SOURCE_FILES esp_gpio.c)
-set(HEADER_FILES include/esp_gpio.h)
+project(config_ex C)
 
-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
-
-target_include_directories(${PROJECT_NAME} PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:include>
-    ${ESP_USER_CONFIG_DIR})
-
-set_target_properties(
-    ${PROJECT_NAME}
-    PROPERTIES
-    FRAMEWORK ON
-    PUBLIC_HEADER "${HEADER_FILES}"
-    PRIVATE_HEADER "${PRIVATE_HEADER_FILES}")
-
-esp_gen_lib(${PROJECT_NAME})
+add_executable(${PROJECT_NAME} main.c ${ESP_USER_CONFIG})
+target_include_directories(${PROJECT_NAME} PUBLIC ${ESP_USER_CONFIG_DIR})
+target_link_libraries(${PROJECT_NAME} esp_sdo config)
+esp_gen_exec_targets(${PROJECT_NAME})
