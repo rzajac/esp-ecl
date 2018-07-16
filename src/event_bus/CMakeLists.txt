@@ -29,7 +29,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${utils_INCLUDE_DIRS}
     ${ESP_USER_CONFIG_DIR})
 
-target_link_libraries(${PROJECT_NAME} timers utils)
+target_link_libraries(${PROJECT_NAME} timers utils lists)
 
 set_target_properties(
     ${PROJECT_NAME}

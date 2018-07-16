@@ -1,4 +1,4 @@
-## esp_gpio 
+## GPIO helper.
 
 Provides GPIO pin manipulation macros operating on registers which is 
 faster then SDK provided functions.

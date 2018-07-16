@@ -19,8 +19,8 @@
 #include <osapi.h>
 #include <mem.h>
 
-#include "list.h"
-#include "esp_sdo.h"
+#include "lists.h"
+#include "stdout.h"
 
 lst_node *head;
 

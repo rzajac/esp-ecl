@@ -29,7 +29,7 @@
 find_path(gpio_debug_INCLUDE_DIR gpio_debug.h)
 find_library(gpio_debug_LIBRARY NAMES gpio_debug)
 
-find_package(esp_gpio REQUIRED)
+find_package(gpio_helper REQUIRED)
 find_package(utils REQUIRED)
 
 include(FindPackageHandleStandardArgs)
@@ -37,17 +37,17 @@ FIND_PACKAGE_HANDLE_STANDARD_ARGS(gpio_debug
     DEFAULT_MSG
     gpio_debug_LIBRARY
     gpio_debug_INCLUDE_DIR
-    esp_gpio_LIBRARIES
-    esp_gpio_INCLUDE_DIRS
+    gpio_helper_LIBRARIES
+    gpio_helper_INCLUDE_DIRS
     utils_LIBRARIES
     utils_INCLUDE_DIRS)
 
 set(gpio_debug_INCLUDE_DIRS
     ${gpio_debug_INCLUDE_DIR}
-    ${esp_gpio_INCLUDE_DIRS}
+    ${gpio_helper_INCLUDE_DIRS}
     ${utils_INCLUDE_DIRS})
 
 set(gpio_debug_LIBRARIES
     ${gpio_debug_LIBRARY}
-    ${esp_gpio_LIBRARIES}
+    ${gpio_helper_LIBRARIES}
     ${utils_LIBRARIES})

@@ -11,10 +11,12 @@
  * The source was modified to use gpio_helper library.
  */
 
-#ifndef ESP_SDO_H
-#define ESP_SDO_H
+#ifndef STDOUT_H
+#define STDOUT_H
 
 #include <c_types.h>
+#include <user_interface.h>
+#include <osapi.h>
 
 #define UART0   0
 #define UART1   1
@@ -78,4 +80,4 @@ typedef enum {
 void ICACHE_FLASH_ATTR
 stdout_init(uart_baud_rate br);
 
-#endif //ESP_SDO_H
+#endif // STDOUT_H

@@ -16,7 +16,9 @@
 # The example doesn't use cmake find_package() function because we want
 # local libraries not the ones installed in $ESPROOT.
 
-add_executable(json_ex main.c ${ESP_USER_CONFIG})
-target_include_directories(json_ex PUBLIC ${ESP_USER_CONFIG_DIR})
-target_link_libraries(json_ex esp_sdo esp_json)
-esp_gen_exec_targets(json_ex)
+project(json_ex C)
+
+add_executable(${PROJECT_NAME} main.c ${ESP_USER_CONFIG})
+target_include_directories(${PROJECT_NAME} PUBLIC ${ESP_USER_CONFIG_DIR})
+target_link_libraries(${PROJECT_NAME} stdout esp_json)
+esp_gen_exec_targets(${PROJECT_NAME})

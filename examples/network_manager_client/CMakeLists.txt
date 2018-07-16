@@ -28,6 +28,6 @@ add_executable(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${ESP_USER_CONFIG_DIR})
 
-target_link_libraries(${PROJECT_NAME} esp_sdo network_manager)
+target_link_libraries(${PROJECT_NAME} stdout event_bus network_manager)
 
 esp_gen_exec_targets(${PROJECT_NAME})

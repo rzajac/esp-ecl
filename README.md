@@ -12,7 +12,7 @@ Library name                   | Description
 [gpio_helper](src/gpio_helper) | Fast GPIO manipulation library.
 [gpio_debug](src/gpio_debug)   | GPIO debugging library.
 [esp_json](src/esp_json)       | Easier JSON manipulation.
-[esp_sdo](src/esp_sdo)         | Use RX pin as the GPIO3.
+[stdout](src/stdout)           | Use RX pin as the GPIO3.
 [timers](src/timers)           | Collection of helpers to deal with timers and delays.
 [utils](src/utils)             | Utility functions.
 

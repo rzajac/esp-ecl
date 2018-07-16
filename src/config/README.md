@@ -19,7 +19,7 @@ The library by default gives you 4 slots each 4096 bytes:
 - slot 4 starting at sector `0xF` (flash address `0xF000`) 
 
 You can customize where the library stores your data with 
-`CONFIG_START_SECTOR` and `CONFIG_NUMBER` in `esp_config.h` file.
+`CONFIG_START_SECTOR` and `CONFIG_NUMBER` in `config.h` file.
 
 See [example program](../../examples/config) and library documentation in 
 [config.h](include/config.h) header file for more details.

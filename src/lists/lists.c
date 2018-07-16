@@ -14,8 +14,8 @@
  * under the License.
  */
 
-#include "list.h"
-#include "utils_internal.h"
+#include "lists.h"
+#include "lists_internal.h"
 
 
 lst_node *ICACHE_FLASH_ATTR

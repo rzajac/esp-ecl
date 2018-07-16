@@ -13,10 +13,10 @@
 # under the License.
 
 
-project(esp_sdo C)
+project(stdout C)
 
-set(SOURCE_FILES esp_sdo.c)
-set(HEADER_FILES include/esp_sdo.h)
+set(SOURCE_FILES stdout.c)
+set(HEADER_FILES include/stdout.h)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
 

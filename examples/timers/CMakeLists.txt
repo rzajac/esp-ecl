@@ -20,5 +20,5 @@ project(timers_ex C)
 
 add_executable(${PROJECT_NAME} main.c ${ESP_USER_CONFIG})
 target_include_directories(${PROJECT_NAME} PUBLIC ${ESP_USER_CONFIG_DIR})
-target_link_libraries(${PROJECT_NAME} esp_sdo timers)
+target_link_libraries(${PROJECT_NAME} stdout timers)
 esp_gen_exec_targets(${PROJECT_NAME})

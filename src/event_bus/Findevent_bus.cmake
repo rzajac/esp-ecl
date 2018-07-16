@@ -31,6 +31,7 @@ find_library(event_bus_LIBRARY NAMES event_bus)
 
 find_package(timers REQUIRED)
 find_package(utils REQUIRED)
+find_package(lists REQUIRED)
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(event_bus
@@ -40,14 +41,18 @@ find_package_handle_standard_args(event_bus
     timers_LIBRARIES
     timers_INCLUDE_DIRS
     utils_LIBRARIES
-    utils_INCLUDE_DIRS)
+    utils_INCLUDE_DIRS
+    lists_LIBRARIES
+    lists_INCLUDE_DIRS)
 
 set(event_bus_INCLUDE_DIRS
     ${event_bus_INCLUDE_DIR}
     ${timers_INCLUDE_DIRS}
-    ${utils_INCLUDE_DIRS})
+    ${utils_INCLUDE_DIRS}
+    ${lists_INCLUDE_DIRS})
 
 set(event_bus_LIBRARIES
     ${event_bus_LIBRARY}
     ${timers_LIBRARIES}
-    ${utils_LIBRARIES})
+    ${utils_LIBRARIES}
+    ${lists_LIBRARIES})

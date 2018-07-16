@@ -13,19 +13,25 @@
 # under the License.
 
 
-# The example doesn't use cmake find_package() function because we want
-# local libraries not the ones installed in $ESPROOT.
+project(lists C)
 
-project(event_bus_ex C)
+set(SOURCE_FILES lists.c)
+set(HEADER_FILES include/lists.h)
+set(PRIVATE_HEADER_FILES lists_internal.h)
 
-add_executable(${PROJECT_NAME} main.c ${ESP_USER_CONFIG})
+add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES} ${PRIVATE_HEADER_FILES})
 
-target_include_directories(${PROJECT_NAME} BEFORE PUBLIC
-    ${stdout_SOURCE_DIR}/include
-    ${event_bus_SOURCE_DIR}/include
+target_include_directories(${PROJECT_NAME} PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
     ${utils_SOURCE_DIR}/include
     ${ESP_USER_CONFIG_DIR})
 
-target_link_libraries(${PROJECT_NAME} stdout event_bus utils)
+set_target_properties(
+    ${PROJECT_NAME}
+    PROPERTIES
+    FRAMEWORK ON
+    PUBLIC_HEADER "${HEADER_FILES}"
+    PRIVATE_HEADER "${PRIVATE_HEADER_FILES}")
 
-esp_gen_exec_targets(${PROJECT_NAME})
+esp_gen_lib(${PROJECT_NAME})

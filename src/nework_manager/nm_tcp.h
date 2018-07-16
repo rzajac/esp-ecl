@@ -19,7 +19,7 @@
 
 #include <user_interface.h>
 
-#include "list.h"
+#include "lists.h"
 #include "include/network_manager.h"
 #include "nm_internal.h"
 

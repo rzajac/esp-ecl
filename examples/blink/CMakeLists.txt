@@ -20,5 +20,5 @@ project(blink_ex C)
 
 add_executable(${PROJECT_NAME} main.c ${ESP_USER_CONFIG})
 target_include_directories(${PROJECT_NAME} PUBLIC ${ESP_USER_CONFIG_DIR})
-target_link_libraries(${PROJECT_NAME} esp_sdo gpio_helper)
+target_link_libraries(${PROJECT_NAME} stdout gpio_helper)
 esp_gen_exec_targets(${PROJECT_NAME})

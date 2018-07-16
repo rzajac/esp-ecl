@@ -23,12 +23,12 @@ add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES} ${PRIVATE_HEA
 
 target_include_directories(${PROJECT_NAME} BEFORE PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    ${esp_sdo_SOURCE_DIR}/include
+    ${stdout_SOURCE_DIR}/include
     ${event_bus_SOURCE_DIR}/include
     ${utils_SOURCE_DIR}/include
     ${ESP_USER_CONFIG_DIR})
 
-target_link_libraries(${PROJECT_NAME} esp_sdo event_bus utils)
+target_link_libraries(${PROJECT_NAME} stdout event_bus utils lists)
 
 set_target_properties(
     ${PROJECT_NAME}

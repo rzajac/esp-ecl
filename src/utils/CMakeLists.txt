@@ -15,8 +15,8 @@
 
 project(utils C)
 
-set(SOURCE_FILES utils.c list.c)
-set(HEADER_FILES include/utils.h include/list.h)
+set(SOURCE_FILES utils.c)
+set(HEADER_FILES include/utils.h)
 set(PRIVATE_HEADER_FILES utils_internal.h)
 
 add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES} ${PRIVATE_HEADER_FILES})

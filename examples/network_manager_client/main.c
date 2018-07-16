@@ -18,7 +18,7 @@
 #include <user_interface.h>
 #include <osapi.h>
 
-#include "esp_sdo.h"
+#include "stdout.h"
 #include "network_manager.h"
 #include "callbacks.h"
 
@@ -50,7 +50,7 @@ use_dhcp(void)
 
     err = nm_client(conn, "192.168.1.149", 3333, false);
     if (err != ESP_OK) {
-        os_printf("USR: esp_nm_client error %d\n", err);
+        os_printf("USR: nm_client error %d\n", err);
         // TODO: release memory.
         nm_stop(); // TODO: releasing already freed memory!
         return;

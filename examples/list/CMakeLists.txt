@@ -19,5 +19,5 @@
 project(list_ex C)
 add_executable(${PROJECT_NAME} main.c ${ESP_USER_CONFIG})
 target_include_directories(${PROJECT_NAME} PUBLIC ${ESP_USER_CONFIG_DIR})
-target_link_libraries(${PROJECT_NAME} utils esp_sdo)
+target_link_libraries(${PROJECT_NAME} utils stdout lists)
 esp_gen_exec_targets(${PROJECT_NAME})
