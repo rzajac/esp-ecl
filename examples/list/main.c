@@ -18,25 +18,26 @@
 #include <user_interface.h>
 #include <osapi.h>
 #include <mem.h>
-#include <esp_list.h>
+
+#include "list.h"
 #include "esp_sdo.h"
 
-esp_dll_node *head;
+lst_node *head;
 
 void ICACHE_FLASH_ATTR
 use_dhcp(void)
 {
-    esp_dll_node *tmp;
-    esp_dll_node *next;
+    lst_node *tmp;
+    lst_node *next;
 
     os_printf("heap size %d\n", system_get_free_heap_size());
-    os_printf("node size %d\n", sizeof(esp_dll_node));
+    os_printf("node size %d\n", sizeof(lst_node));
 
-    next = head = esp_dll_new((void *) 1);
+    next = head = lst_new((void *) 1);
 
     // Create 19 nodes.
     for (int i = 2; i <= 20; i++) {
-        next = esp_dll_append(next, esp_dll_new((void *) i));
+        next = lst_append(next, lst_new((void *) i));
     }
 
     // Display 19 nodes.
@@ -47,15 +48,15 @@ use_dhcp(void)
     }
 
     // Find specific node by payload.
-    tmp = esp_dll_find(head, (void *) 13);
+    tmp = lst_find(head, (void *) 13);
     os_printf("found node #13 %p %d\n", tmp, (int) tmp->payload);
 
     // Remove node #13
-    esp_dll_remove(tmp);
+    lst_remove(tmp);
 
     // Display 18 nodes.
     next = head;
-    esp_dll_node *tail = head;
+    lst_node *tail = head;
     while (next != NULL) {
         tail = next;
         os_printf("node %p %d\n", next, (int) next->payload);
@@ -73,7 +74,7 @@ use_dhcp(void)
     next = head;
     while (next != NULL) {
         tmp = next->next;
-        esp_dll_remove(next);
+        lst_remove(next);
         next = tmp;
     }
 

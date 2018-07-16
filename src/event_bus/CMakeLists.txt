@@ -13,21 +13,23 @@
 # under the License.
 
 
-project(esp_gpio_debug C)
+project(event_bus C)
 
-set(SOURCE_FILES esp_gpio_debug.c)
-set(HEADER_FILES include/esp_gpio_debug.h)
+set(SOURCE_FILES event_bus.c)
+set(HEADER_FILES include/event_bus.h)
+set(PRIVATE_HEADER_FILES event_bus_internal.h)
 
-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
+add_library(${PROJECT_NAME} STATIC
+    ${SOURCE_FILES} ${HEADER_FILES} ${PRIVATE_HEADER_FILES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    ${ESP_USER_CONFIG_DIR}
-    ${esp_gpio_INCLUDE_DIRS}
-    ${utils_INCLUDE_DIRS})
+    ${timers_INCLUDE_DIRS}
+    ${utils_INCLUDE_DIRS}
+    ${ESP_USER_CONFIG_DIR})
 
-target_link_libraries(${PROJECT_NAME} utils)
+target_link_libraries(${PROJECT_NAME} timers utils)
 
 set_target_properties(
     ${PROJECT_NAME}
@@ -35,5 +37,9 @@ set_target_properties(
     FRAMEWORK ON
     PUBLIC_HEADER "${HEADER_FILES}"
     PRIVATE_HEADER "${PRIVATE_HEADER_FILES}")
+
+if (DEFINED ENV{EB_DEBUG_ON})
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DEB_DEBUG_ON")
+endif ()
 
 esp_gen_lib(${PROJECT_NAME})

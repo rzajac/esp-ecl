@@ -16,8 +16,9 @@
 # The example doesn't use cmake find_package() function because we want
 # local libraries not the ones installed in $ESPROOT.
 
-project(list_ex C)
+project(timers_ex C)
+
 add_executable(${PROJECT_NAME} main.c ${ESP_USER_CONFIG})
 target_include_directories(${PROJECT_NAME} PUBLIC ${ESP_USER_CONFIG_DIR})
-target_link_libraries(${PROJECT_NAME} utils esp_sdo)
+target_link_libraries(${PROJECT_NAME} esp_sdo timers)
 esp_gen_exec_targets(${PROJECT_NAME})

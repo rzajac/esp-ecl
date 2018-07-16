@@ -15,7 +15,6 @@
  */
 
 
-#include <nm.h>
 #include "nm_wifi.h"
 
 static nm_wifi *g_wifi; // TODO: release it at some point.
@@ -87,9 +86,9 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
     }
 
     // Receive WiFi events.
-    esp_eb_err err_eb;
-    esp_eb_handle_wifi_events();
-    err_eb = esp_eb_attach_wifi_events(nm_wifi_event_cb, EV_GROUP);
+    sint8 err_eb;
+    eb_handle_wifi_events();
+    err_eb = eb_attach_wifi_events(nm_wifi_event_cb, EV_GROUP);
     if (err_eb != ESP_OK) {
         NM_ERROR("attach wifi events %d", err_eb);
         return ESP_E_MEM;
@@ -111,7 +110,7 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
     g_wifi->gw = wifi->gw;
 
     if (wifi_station_connect() != true) {
-        esp_eb_remove_cb(nm_wifi_event_cb);
+        eb_remove_cb(nm_wifi_event_cb);
         NM_ERROR("wifi connect");
         return ESP_E_SYS;
     }
@@ -122,7 +121,7 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
 static void ICACHE_FLASH_ATTR
 wifi_fatal(sint8 err, sint16 err_sdk)
 {
-    esp_eb_remove_group(EV_GROUP);
+    eb_remove_group(EV_GROUP);
 
     bool suc = wifi_set_opmode(NULL_MODE);
     if (!suc)

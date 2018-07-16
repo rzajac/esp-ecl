@@ -14,29 +14,20 @@
  * under the License.
  */
 
+#ifndef UTIL_INTERNAL_H
+#define UTIL_INTERNAL_H
 
-#ifndef NM_WIFI_H
-#define NM_WIFI_H
+#include <osapi.h>
 
-#include <user_interface.h>
+#if defined(UTILS_DEBUG_ON) || defined(DEBUG_ON)
+    #define UTILS_DEBUG(format, ...) os_printf("UTL DBG: " format "\n", ## __VA_ARGS__ )
+#else
+    #define UTILS_DEBUG(format, ...) do {} while(0)
+#endif
 
-#include "nm_internal.h"
-#include "nm_tcp.h"
+// The register to read in a loop.
+#define DELAY_REG_READ 0x60000318
+// How many loops take 1us.
+#define DELAY_MULTIPLIER 3
 
-#define WIFI_WAS_CONECTED 0b00000001
-
-// Macro evaluating to true if static IP was configured.
-#define use_static_ip(w) ((w)->ip == 0 || (w)->netmask == 0 || (w)->gw == 0)
-
-extern nm_err_cb nm_g_fatal_err;
-
-/**
- * Handles all WiFi events.
- *
- * @param ev_code The event code (same as wifi event codes).
- * @param arg     The System_Event_t instance.
- */
-void ICACHE_FLASH_ATTR
-nm_wifi_event_cb(uint16_t ev_code, void *arg);
-
-#endif //NM_WIFI_H
+#endif // UTIL_INTERNAL_H

@@ -15,28 +15,23 @@
  */
 
 
-#ifndef NM_WIFI_H
-#define NM_WIFI_H
+#ifndef EB_INTERNAL_H
+#define EB_INTERNAL_H
 
-#include <user_interface.h>
+#include "event_bus.h"
 
-#include "nm_internal.h"
-#include "nm_tcp.h"
+#if defined(EB_DEBUG_ON) || defined(DEBUG_ON)
+    #define EB_DEBUG(format, ...) os_printf("EB  DBG: " format, ## __VA_ARGS__ )
+#else
+    #define EB_DEBUG(format, ...) do {} while(0)
+#endif
 
-#define WIFI_WAS_CONECTED 0b00000001
+#define EB_ERROR(format, ...) os_printf("EB  ERR: " format, ## __VA_ARGS__ )
 
-// Macro evaluating to true if static IP was configured.
-#define use_static_ip(w) ((w)->ip == 0 || (w)->netmask == 0 || (w)->gw == 0)
+// The number of milliseconds to use when arming the event callback timer.
+#define EB_TIMER_MS 10
 
-extern nm_err_cb nm_g_fatal_err;
+// Macro returning eb_event pointer given node payload. 
+#define get_event(node) ((eb_event *) (node)->payload)
 
-/**
- * Handles all WiFi events.
- *
- * @param ev_code The event code (same as wifi event codes).
- * @param arg     The System_Event_t instance.
- */
-void ICACHE_FLASH_ATTR
-nm_wifi_event_cb(uint16_t ev_code, void *arg);
-
-#endif //NM_WIFI_H
+#endif // EB_INTERNAL_H

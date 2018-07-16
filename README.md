@@ -8,12 +8,12 @@ Library name                         | Description
 -------------------------------------|-------------
 [esp_aes](src/esp_aes)               | AES CBC encryption / decryption.
 [esp_cfg](src/esp_cfg)               | Read / write custom configuration structures from / to flash.
-[esp_eb](src/esp_eb)                 | Simple event bus.
+[event_bus](src/event_bus)           | Simple event bus.
 [esp_gpio](src/esp_gpio)             | Fast GPIO manipulation library.
 [esp_gpio_debug](src/esp_gpio_debug) | GPIO debugging library.
 [esp_json](src/esp_jsonh)            | Easier JSON manipulation.
 [esp_sdo](src/esp_sdo)               | Use RX pin as the GPIO3.
-[esp_tim](src/esp_tim)               | Collection of helpers to deal with timers and delays.
+[timers](src/timers)                 | Collection of helpers to deal with timers and delays.
 [esp_util](src/esp_utilh)            | Utility functions.
 
 ## Build environment.
@@ -30,7 +30,7 @@ environment setup as described at https://github.com/rzajac/esp-dev-env.
 - [Custom config](examples/cfg)
 - [Evens](examples/events)
 - [JSON](examples/json)
-- [Timer](examples/timer)
+- [Timer](examples/timers)
 
 ## Integration.
 

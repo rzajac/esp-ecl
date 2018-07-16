@@ -14,29 +14,10 @@
  * under the License.
  */
 
+#ifndef TIMERS_INTERNAL_H
+#define TIMERS_INTERNAL_H
 
-#ifndef NM_WIFI_H
-#define NM_WIFI_H
+// The default timer delay in milliseconds.
+#define DEFAULT_DELAY 10
 
-#include <user_interface.h>
-
-#include "nm_internal.h"
-#include "nm_tcp.h"
-
-#define WIFI_WAS_CONECTED 0b00000001
-
-// Macro evaluating to true if static IP was configured.
-#define use_static_ip(w) ((w)->ip == 0 || (w)->netmask == 0 || (w)->gw == 0)
-
-extern nm_err_cb nm_g_fatal_err;
-
-/**
- * Handles all WiFi events.
- *
- * @param ev_code The event code (same as wifi event codes).
- * @param arg     The System_Event_t instance.
- */
-void ICACHE_FLASH_ATTR
-nm_wifi_event_cb(uint16_t ev_code, void *arg);
-
-#endif //NM_WIFI_H
+#endif // TIMERS_INTERNAL_H

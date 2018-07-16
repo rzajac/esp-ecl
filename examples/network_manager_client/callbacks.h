@@ -14,29 +14,30 @@
  * under the License.
  */
 
-
-#ifndef NM_WIFI_H
-#define NM_WIFI_H
+#ifndef ESP_EX_CALLBACKS_H
+#define ESP_EX_CALLBACKS_H
 
 #include <user_interface.h>
 
-#include "nm_internal.h"
-#include "nm_tcp.h"
+#include <esp.h>
+#include "../../src/nework_manager/include/network_manager.h"
 
-#define WIFI_WAS_CONECTED 0b00000001
-
-// Macro evaluating to true if static IP was configured.
-#define use_static_ip(w) ((w)->ip == 0 || (w)->netmask == 0 || (w)->gw == 0)
-
-extern nm_err_cb nm_g_fatal_err;
-
-/**
- * Handles all WiFi events.
- *
- * @param ev_code The event code (same as wifi event codes).
- * @param arg     The System_Event_t instance.
- */
 void ICACHE_FLASH_ATTR
-nm_wifi_event_cb(uint16_t ev_code, void *arg);
+ready_cb(nm_tcp *conn);
 
-#endif //NM_WIFI_H
+void ICACHE_FLASH_ATTR
+disc_cb(nm_tcp *conn);
+
+void ICACHE_FLASH_ATTR
+sent_cb(nm_tcp *conn);
+
+void ICACHE_FLASH_ATTR
+recv_cb(nm_tcp *conn, uint8_t *data, size_t len);
+
+void ICACHE_FLASH_ATTR
+err_cb(nm_tcp *conn, sint8 err, sint16 aux);
+
+void ICACHE_FLASH_ATTR
+fatal_cb(nm_tcp *conn, sint8 err, sint16 aux);
+
+#endif //ESP_EX_CALLBACKS_H

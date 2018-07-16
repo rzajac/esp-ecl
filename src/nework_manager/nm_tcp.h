@@ -19,17 +19,17 @@
 
 #include <user_interface.h>
 
-#include "nm.h"
+#include "list.h"
+#include "include/network_manager.h"
 #include "nm_internal.h"
 
-extern nm_err_cb nm_g_fatal_err;
-
+// Macro evaluating to true if keep alive values were customized.
 #define use_ka(c) ((c)->ka_idle != 0 && (c)->ka_itvl == 0 && (c)->ka_cnt == 0)
 
 /**
  * Release espconn memory.
  *
- * Sets conn->esp to NULL after release memory.
+ * Sets conn->esp to NULL after releasing memory.
  *
  * @param conn The managed connection.
  */

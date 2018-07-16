@@ -13,22 +13,22 @@
 # under the License.
 
 
-project(nm C)
+project(network_manager C)
 
-set(SOURCE_FILES nm.c nm_tcp.c nm_wifi.c)
-set(HEADER_FILES include/nm.h ${ESP_HEADER})
+set(SOURCE_FILES network_manager.c nm_tcp.c nm_wifi.c)
+set(HEADER_FILES include/network_manager.h ${ESP_HEADER})
 set(PRIVATE_HEADER_FILES nm_internal.h nm_tcp.h nm_wifi.h)
 
-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES})
+add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES} ${PRIVATE_HEADER_FILES})
 
 target_include_directories(${PROJECT_NAME} BEFORE PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     ${esp_sdo_SOURCE_DIR}/include
-    ${esp_eb_SOURCE_DIR}/include
-    ${esp_util_SOURCE_DIR}/include
+    ${event_bus_SOURCE_DIR}/include
+    ${utils_SOURCE_DIR}/include
     ${ESP_USER_CONFIG_DIR})
 
-target_link_libraries(${PROJECT_NAME} esp_sdo esp_eb esp_util)
+target_link_libraries(${PROJECT_NAME} esp_sdo event_bus utils)
 
 set_target_properties(
     ${PROJECT_NAME}

@@ -43,7 +43,7 @@ tcp_connect_cb(void *arg);
 /////////////////////////////////////////////////////////////////////////////
 
 // Linked list head.
-static esp_dll_node *head;
+static lst_node *head;
 
 void ICACHE_FLASH_ATTR
 nm_tcp_release_espconn(nm_tcp *conn)
@@ -86,16 +86,16 @@ nm_tcp_add_conn(nm_tcp *conn)
         return ESP_E_ARG;
     }
 
-    esp_dll_node *node = esp_dll_new(conn);
+    lst_node *node = lst_new(conn);
     if (node == NULL)
         return ESP_E_MEM;
 
     if (head == NULL) {
         head = node;
-        return ESP_EB_OK;
+        return ESP_OK;
     }
 
-    esp_dll_append(head, node);
+    lst_append(head, node);
     NM_DEBUG("managing [%p]", conn);
 
     return ESP_OK;
@@ -105,7 +105,7 @@ sint8 ICACHE_FLASH_ATTR
 nm_tcp_remove_conn(nm_tcp *conn)
 {
     NM_DEBUG("stop managing [%p]", conn);
-    esp_dll_node *node = esp_dll_find(head, conn);
+    lst_node *node = lst_find(head, conn);
     if (node == NULL) {
         NM_ERROR("nm_tcp_remove_conn not found [%p]", conn);
         return ESP_E_ARG;
@@ -115,7 +115,7 @@ nm_tcp_remove_conn(nm_tcp *conn)
         head = NULL;
     }
 
-    esp_dll_remove(node);
+    lst_remove(node);
     NM_DEBUG("stop managing - done [%p]", conn);
     return ESP_OK;
 }
@@ -147,7 +147,7 @@ nm_tcp_conn_all()
     sint8 err;
     nm_tcp *conn;
 
-    esp_dll_node *curr = head;
+    lst_node *curr = head;
     while (curr != NULL) {
         conn = get_conn(curr);
         err = nm_tcp_connect(conn);
@@ -163,8 +163,8 @@ void ICACHE_FLASH_ATTR
 nm_tcp_abort_all()
 {
     NM_DEBUG("nm_tcp_abort_all");
-    esp_dll_node *curr = head;
-    esp_dll_node *next = NULL;
+    lst_node *curr = head;
+    lst_node *next = NULL;
     while (curr != NULL) {
         next = curr->next;
         nm_abort(get_conn(curr));
@@ -180,7 +180,7 @@ static nm_tcp *ICACHE_FLASH_ATTR
 tcp_find_by_esp(struct espconn *esp)
 {
     nm_tcp *conn;
-    esp_dll_node *curr = head;
+    lst_node *curr = head;
     while (curr != NULL) {
         conn = get_conn(curr);
         if (conn->esp == esp)

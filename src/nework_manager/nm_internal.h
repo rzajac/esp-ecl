@@ -22,7 +22,7 @@
 
 #include "nm_wifi.h"
 #include "nm_tcp.h"
-#include "esp_eb.h"
+#include "event_bus.h"
 
 #if defined(NM_DEBUG_ON) || defined(DEBUG_ON)
     #define NM_DEBUG(format, ...) os_printf("NM  DBG: " format "\n", ## __VA_ARGS__ )
@@ -38,9 +38,10 @@
 
 #define NM_ERROR(format, ...) os_printf("NM  ERR: " format "\n", ## __VA_ARGS__ )
 
+// The event buss group used by the network manager library.
 #define EV_GROUP 1
 
-// Takes esp_dll_node* and returns its payload as nm_tcp*.
+// Takes lst_node* and returns its payload as nm_tcp*.
 #define get_conn(node) ((node) == NULL ? NULL : ((nm_tcp *) (node)->payload))
 
 // Some helper macros for getting espconn statuses.
@@ -49,4 +50,4 @@
 #define is_conn_closed(conn) (((conn) == NULL || (conn)->esp == NULL) ? true : (conn)->esp->state == ESPCONN_CLOSE)
 #define is_conn_connected(conn) (((conn) == NULL || (conn)->esp == NULL) ? true : (conn)->esp->state == ESPCONN_CONNECT)
 
-#endif //NM_INTERNAL_H
+#endif // NM_INTERNAL_H

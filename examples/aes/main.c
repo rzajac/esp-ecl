@@ -18,8 +18,9 @@
 #include <user_interface.h>
 #include <osapi.h>
 #include <mem.h>
+
 #include "esp_sdo.h"
-#include "esp_util.h"
+#include "utils.h"
 #include "esp_aes.h"
 
 
@@ -43,23 +44,23 @@ use_dhcp(void)
     char *decrypted_text = os_zalloc(50); // Storage for decrypted text.
 
     os_printf("Clear text: %s\n", clear_text);
-    esp_util_dump_bytes("Clear text bytes:", (const uint8_t *) clear_text,
-                        (uint16) strlen(clear_text));
+    utl_dump_bytes("Clear text bytes:", (const uint8_t *) clear_text,
+                   (uint16) strlen(clear_text));
 
     os_printf("Encrypting %d characters.\n", strlen(clear_text));
     enc_len = esp_aes_encrypt((uint8_t *) encrypted_text,
                               (uint8_t *) clear_text, strlen(clear_text),
                               AES_KEY, AES_VI);
-    esp_util_dump_bytes("Encrypted text bytes:",
-                        (const uint8_t *) encrypted_text, (uint16) enc_len);
+    utl_dump_bytes("Encrypted text bytes:",
+                   (const uint8_t *) encrypted_text, (uint16) enc_len);
 
     os_printf("Decrypting.\n");
     esp_aes_decrypt((uint8_t *) decrypted_text, (uint8_t *) encrypted_text,
                     enc_len, AES_KEY, AES_VI);
     os_printf("Decrypted text: %s\n", decrypted_text);
-    esp_util_dump_bytes("Decrypted text bytes:",
-                        (const uint8_t *) decrypted_text,
-                        (uint16) strlen(decrypted_text));
+    utl_dump_bytes("Decrypted text bytes:",
+                   (const uint8_t *) decrypted_text,
+                   (uint16) strlen(decrypted_text));
 
     os_free(encrypted_text);
     os_free(decrypted_text);

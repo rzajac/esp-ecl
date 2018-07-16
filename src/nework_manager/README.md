@@ -1,4 +1,6 @@
+## Network manager.
 
+Library makes easier to create TCP/IP clients. 
 
 ## WiFi behaviour.
 
