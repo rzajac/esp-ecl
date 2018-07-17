@@ -50,7 +50,7 @@ my_cb(void *arg)
 }
 
 void ICACHE_FLASH_ATTR
-use_dhcp(void)
+start(void)
 {
     my_data *data = os_zalloc(sizeof(my_data));
     if (data == NULL) {
@@ -69,5 +69,5 @@ user_init()
     wifi_set_opmode_current(NULL_MODE);
 
     stdout_init(BIT_RATE_74880);
-    system_init_done_cb(use_dhcp);
+    system_init_done_cb(start);
 }

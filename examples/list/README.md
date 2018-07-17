@@ -1,17 +1,17 @@
-## Timers example.
+## Double linked list example.
 
-Example program which is calling a callback using timer but each time the 
-call period is doubled.
+Program is an example of `list` library usage.
 
 Demonstrates how to:
-- use timer helpers, 
-- pass data to callbacks called by timers.
+- create double linked list, 
+- removing elements from the list,
+- remove all elements from the list.
 
 ## Flashing.
 
 ```
 $ cd build
 $ cmake ..
-$ make timer_ex_flash
+$ make ex_list
 $ miniterm.py /dev/ttyUSB0 74880
 ```

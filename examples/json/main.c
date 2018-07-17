@@ -54,7 +54,7 @@ parse_example_json()
 }
 
 void ICACHE_FLASH_ATTR
-use_dhcp(void)
+start(void)
 {
     os_printf("System initialized.\n");
 
@@ -69,5 +69,5 @@ void ICACHE_FLASH_ATTR user_init()
     wifi_set_opmode_current(NULL_MODE);
 
     stdout_init(BIT_RATE_74880);
-    system_init_done_cb(use_dhcp);
+    system_init_done_cb(start);
 }

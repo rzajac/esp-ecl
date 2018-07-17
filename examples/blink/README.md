@@ -1,4 +1,4 @@
-## ESP8266 blink example.
+## Blink example.
 
 Blink LED connected to GPIO2.
 
@@ -12,6 +12,6 @@ Demonstrates how to:
 ```
 $ cd build
 $ cmake ..
-$ make blink_ex_flash
+$ make ex_blink
 $ miniterm.py /dev/ttyUSB0 74880
 ```

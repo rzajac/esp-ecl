@@ -25,7 +25,7 @@
 lst_node *head;
 
 void ICACHE_FLASH_ATTR
-use_dhcp(void)
+start(void)
 {
     lst_node *tmp;
     lst_node *next;
@@ -71,13 +71,8 @@ use_dhcp(void)
     }
 
     // Release memory for nodes.
-    next = head;
-    while (next != NULL) {
-        tmp = next->next;
-        lst_remove(next);
-        next = tmp;
-    }
-
+    while ((head = lst_remove(head))) {}
+    
     os_printf("heap size %d\n", system_get_free_heap_size());
 }
 
@@ -89,5 +84,5 @@ user_init()
     wifi_set_opmode_current(NULL_MODE);
 
     stdout_init(BIT_RATE_74880);
-    system_init_done_cb(use_dhcp);
+    system_init_done_cb(start);
 }

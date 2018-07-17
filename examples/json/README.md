@@ -9,6 +9,6 @@ Demonstrates how to:
 ```
 $ cd build
 $ cmake ..
-$ make json_ex_flash
+$ make ex_json
 $ miniterm.py /dev/ttyUSB0 74880
 ```

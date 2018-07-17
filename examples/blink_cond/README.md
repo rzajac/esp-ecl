@@ -1,4 +1,4 @@
-## Conditional blink example.
+## Blink LED when GPIO3 is high.
 
 Blink LED connected to GPIO2 only if GPIO3 is HIGH.
 
@@ -13,6 +13,6 @@ Demonstrates how to:
 ```
 $ cd build
 $ cmake ..
-$ make blink_cond_ex_flash
+$ make ex_blink_cond
 $ miniterm.py /dev/ttyUSB0 74880
 ```

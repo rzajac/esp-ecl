@@ -38,6 +38,8 @@ sent_cb(nm_tcp *conn)
 void ICACHE_FLASH_ATTR
 recv_cb(nm_tcp *conn, uint8_t *data, size_t len)
 {
+    UNUSED(data);
+
     os_printf("USR: rcv_cb len:%d [%p]\n", len, conn);
     nm_send(conn, (uint8 *) "HELLO", 5);
 }

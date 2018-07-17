@@ -8,6 +8,6 @@ Use [gen_aes.sh](../../bin/gen_aes.sh) script to generate your own keys.
 ```
 $ cd build
 $ cmake ..
-$ make aes_ex_flash
+$ make ex_aes
 $ miniterm.py /dev/ttyUSB0 74880
 ```

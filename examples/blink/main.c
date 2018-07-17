@@ -22,7 +22,7 @@
 #include "stdout.h"
 #include "gpio_helper.h"
 
-
+// Global timer.
 static os_timer_t timer;
 
 
@@ -38,7 +38,7 @@ blink(void *arg)
 }
 
 void ICACHE_FLASH_ATTR
-use_dhcp()
+start()
 {
     gpioh_setup(GPIO2, GPIO_MODE_OUTPUT);
     gpioh_setup(GPIO3, GPIO_MODE_INPUT);
@@ -57,5 +57,5 @@ user_init()
     wifi_set_opmode(NULL_MODE);
 
     stdout_init(BIT_RATE_74880);
-    system_init_done_cb(use_dhcp);
+    system_init_done_cb(start);
 }

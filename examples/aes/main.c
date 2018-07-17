@@ -34,29 +34,38 @@ static const uint8_t AES_KEY[] = AES_KEY_INIT;
 static const uint8_t AES_VI[] = AES_VI_INIT;
 
 void ICACHE_FLASH_ATTR
-use_dhcp(void)
+start(void)
 {
-    uint32_t enc_len; // Number of bytes in ciphertext.
+    // Number of bytes in cipher text.
+    uint32_t enc_len;
 
-    char clear_text[] = "Super secret text."; // The text to encrypt.
-    char *encrypted_text = os_zalloc(
-        50); // Storage for encrypted and decrypted text.
-    char *decrypted_text = os_zalloc(50); // Storage for decrypted text.
+    // The text to encrypt.
+    char clear_text[] = "Super secret text.";
+    // Storage for encrypted and decrypted text.
+    char *encrypted_text = os_zalloc(50);
+    // Storage for decrypted text.
+    char *decrypted_text = os_zalloc(50);
 
     os_printf("Clear text: %s\n", clear_text);
-    utl_dump_bytes("Clear text bytes:", (const uint8_t *) clear_text,
+    utl_dump_bytes("Clear text bytes:",
+                   (const uint8_t *) clear_text,
                    (uint16) strlen(clear_text));
 
     os_printf("Encrypting %d characters.\n", strlen(clear_text));
     enc_len = esp_aes_encrypt((uint8_t *) encrypted_text,
-                              (uint8_t *) clear_text, strlen(clear_text),
+                              (uint8_t *) clear_text,
+                              strlen(clear_text),
                               AES_KEY, AES_VI);
+
     utl_dump_bytes("Encrypted text bytes:",
-                   (const uint8_t *) encrypted_text, (uint16) enc_len);
+                   (const uint8_t *) encrypted_text,
+                   (uint16) enc_len);
 
     os_printf("Decrypting.\n");
-    esp_aes_decrypt((uint8_t *) decrypted_text, (uint8_t *) encrypted_text,
+    esp_aes_decrypt((uint8_t *) decrypted_text,
+                    (uint8_t *) encrypted_text,
                     enc_len, AES_KEY, AES_VI);
+
     os_printf("Decrypted text: %s\n", decrypted_text);
     utl_dump_bytes("Decrypted text bytes:",
                    (const uint8_t *) decrypted_text,
@@ -69,10 +78,10 @@ use_dhcp(void)
 void ICACHE_FLASH_ATTR
 user_init()
 {
-    // No need for wifi for this example.
+    // No need for wifi in this example.
     wifi_station_disconnect();
     wifi_set_opmode_current(NULL_MODE);
 
-    system_init_done_cb(use_dhcp);
+    system_init_done_cb(start);
     stdout_init(BIT_RATE_74880);
 }

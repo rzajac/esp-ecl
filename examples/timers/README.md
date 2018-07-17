@@ -1,7 +1,6 @@
 ## Timers example.
 
-Example program which is calling a callback using timer but each time the 
-call period is doubled.
+Example program which uses timer to call a callback each doubling the interval.
 
 Demonstrates how to:
 - use timer helpers, 
@@ -12,6 +11,6 @@ Demonstrates how to:
 ```
 $ cd build
 $ cmake ..
-$ make timer_ex_flash
+$ make ex_timers
 $ miniterm.py /dev/ttyUSB0 74880
 ```

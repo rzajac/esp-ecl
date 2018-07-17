@@ -55,7 +55,7 @@ write_config(uint8_t cfg_num)
 }
 
 void ICACHE_FLASH_ATTR
-use_dhcp(void)
+start(void)
 {
     bool restart = false;
     sint8 init_err;
@@ -79,7 +79,8 @@ use_dhcp(void)
 
     if (result0 != ESP_OK || result1 != ESP_OK) {
         os_printf("Config read error. my_config0: %d, my_config1: %d\n",
-                  result0, result1);
+                  result0,
+                  result1);
         return;
     }
 
@@ -139,5 +140,5 @@ user_init()
     wifi_set_opmode_current(NULL_MODE);
 
     stdout_init(BIT_RATE_74880);
-    system_init_done_cb(use_dhcp);
+    system_init_done_cb(start);
 }

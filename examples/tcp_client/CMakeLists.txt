@@ -16,7 +16,7 @@
 # The example doesn't use cmake find_package() function because we want
 # local libraries not the ones installed in $ESPROOT.
 
-project(network_manager_client_ex C)
+project(ex_tcp_client C)
 
 set(SOURCE_FILES main.c callbacks.c)
 set(HEADER_FILES callbacks.h)
@@ -26,7 +26,11 @@ add_executable(${PROJECT_NAME}
     ${HEADER_FILES}
     ${ESP_USER_CONFIG})
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${ESP_USER_CONFIG_DIR})
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${stdout_SOURCE_DIR}/include
+    ${event_bus_SOURCE_DIR}/include
+    ${network_manager_SOURCE_DIR}/include
+    ${ESP_USER_CONFIG_DIR})
 
 target_link_libraries(${PROJECT_NAME} stdout event_bus network_manager)
 

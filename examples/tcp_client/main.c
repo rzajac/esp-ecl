@@ -23,7 +23,7 @@
 #include "callbacks.h"
 
 void ICACHE_FLASH_ATTR
-use_dhcp(void)
+start(void)
 {
     os_printf("USR: system initialized\n");
 
@@ -70,5 +70,5 @@ use_dhcp(void)
 void ICACHE_FLASH_ATTR user_init()
 {
     stdout_init(BIT_RATE_74880);
-    system_init_done_cb(use_dhcp);
+    system_init_done_cb(start);
 }
