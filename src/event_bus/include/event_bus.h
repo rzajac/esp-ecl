@@ -20,6 +20,8 @@
 
 #include <c_types.h>
 #include <osapi.h>
+#include <mem.h>
+#include <user_interface.h>
 
 #include <esp.h>
 #include "timers.h"

@@ -15,9 +15,6 @@
  */
 
 
-#include <mem.h>
-#include <user_interface.h>
-
 #include "event_bus.h"
 #include "event_bus_internal.h"
 

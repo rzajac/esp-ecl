@@ -1,4 +1,4 @@
-# Event Bus
+# Event Bus.
 
 In event driven environment like ESP8266 event bus helps make your code less
 "linear".
