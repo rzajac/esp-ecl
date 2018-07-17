@@ -33,7 +33,6 @@ NOTE:   String length must be evenly divisible by 16byte (str_len % 16 == 0)
 /*****************************************************************************/
 /* Includes:                                                                 */
 /*****************************************************************************/
-#include <osapi.h>
 #include "include/esp_aes.h"
 
 

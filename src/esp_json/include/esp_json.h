@@ -24,6 +24,8 @@
 #define cJSON__h
 
 #include <c_types.h>
+#include <osapi.h>
+#include <mem.h>
 
 #ifdef __cplusplus
 extern "C"

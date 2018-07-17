@@ -1,4 +1,4 @@
-## esp_json 
+## JSON manipulation library. 
 
 This library is an adoption of https://github.com/DaveGamble/cJSON for ESP8266 
 which makes JSON manipulation easier.
