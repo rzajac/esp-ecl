@@ -25,7 +25,7 @@ lst_new(void *payload)
     if (n == NULL)
         return NULL;
     n->payload = payload;
-    UTILS_DEBUG("created node [%p]", n);
+    LISTS_DEBUG("created node [%p]", n);
     return n;
 }
 
@@ -38,7 +38,7 @@ lst_append(lst_node *n1, lst_node *n2)
     if (n1->next != NULL)
         n1->next->prev = n2;
     n1->next = n2;
-    UTILS_DEBUG("added [%p] after [%p]", n1, n2);
+    LISTS_DEBUG("added [%p] after [%p]", n1, n2);
 
     return n2;
 }
@@ -52,7 +52,7 @@ lst_prepend(lst_node *n1, lst_node *n2)
     if (n1->prev != NULL)
         n1->prev->next = n2;
     n1->prev = n2;
-    UTILS_DEBUG("added [%p] before [%p]", n2, n1);
+    LISTS_DEBUG("added [%p] before [%p]", n2, n1);
 
     return n2;
 }
@@ -60,7 +60,7 @@ lst_prepend(lst_node *n1, lst_node *n2)
 lst_node *ICACHE_FLASH_ATTR
 lst_remove(lst_node *n)
 {
-    UTILS_DEBUG("removing [%p]", n);
+    LISTS_DEBUG("removing [%p]", n);
 
     if (n->prev != NULL) {
         n->prev->next = n->next;

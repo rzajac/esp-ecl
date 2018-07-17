@@ -39,4 +39,8 @@ set_target_properties(
     PUBLIC_HEADER "${HEADER_FILES}"
     PRIVATE_HEADER "${PRIVATE_HEADER_FILES}")
 
+if (DEFINED ENV{LISTS_DEBUG_ON})
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DLISTS_DEBUG_ON")
+endif ()
+
 esp_gen_lib(${PROJECT_NAME})

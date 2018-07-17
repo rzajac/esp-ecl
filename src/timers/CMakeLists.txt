@@ -24,7 +24,6 @@ add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES} ${PRIVATE_HEA
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
-    ${utils_INCLUDE_DIRS}
     ${ESP_USER_CONFIG_DIR})
 
 set_target_properties(

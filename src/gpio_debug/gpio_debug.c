@@ -21,7 +21,8 @@
 void ICACHE_FLASH_ATTR
 gpiod_dump_mux_addr(uint8_t gpio_num)
 {
-    os_printf("GPIO%d MUX 0x%X: ", gpio_num,
+    os_printf("GPIO%d MUX 0x%X: ",
+              gpio_num,
               (0x60000000 + GPIO_MUX_ADR(gpio_num)));
 }
 
@@ -35,8 +36,10 @@ gpiod_dump_mux_reg(uint8_t gpio_num)
 void ICACHE_FLASH_ATTR
 gpiod_dump_reg(uint32_t gpio_num)
 {
-    os_printf("GPIO%d REG 0x%X: ", gpio_num,
+    os_printf("GPIO%d REG 0x%X: ",
+              gpio_num,
               (0x60000000 + GPIO_CFG_ADR(gpio_num)));
+
     utl_dump_binary32(GPIO_CFG(gpio_num));
 }
 

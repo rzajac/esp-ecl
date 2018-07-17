@@ -19,10 +19,10 @@
 
 #include <osapi.h>
 
-#if defined(UTILS_DEBUG_ON) || defined(DEBUG_ON)
-    #define UTILS_DEBUG(format, ...) os_printf("UTL DBG: " format "\n", ## __VA_ARGS__ )
+#if defined(LISTS_DEBUG_ON) || defined(DEBUG_ON)
+    #define LISTS_DEBUG(format, ...) os_printf("LST DBG: " format "\n", ## __VA_ARGS__ )
 #else
-    #define UTILS_DEBUG(format, ...) do {} while(0)
+    #define LISTS_DEBUG(format, ...) do {} while(0)
 #endif
 
 // The register to read in a loop.

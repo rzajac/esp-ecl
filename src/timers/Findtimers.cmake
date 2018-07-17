@@ -29,20 +29,14 @@
 find_path(timers_INCLUDE_DIR timers.h)
 find_library(timers_LIBRARY NAMES timers)
 
-find_package(utils REQUIRED)
-
 include(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(timers
     DEFAULT_MSG
     timers_LIBRARY
-    timers_INCLUDE_DIR
-    utils_LIBRARIES
-    utils_INCLUDE_DIRS)
+    timers_INCLUDE_DIR)
 
 set(timers_INCLUDE_DIRS
-    ${timers_INCLUDE_DIR}
-    ${utils_INCLUDE_DIRS})
+    ${timers_INCLUDE_DIR})
 
 set(timers_LIBRARIES
-    ${timers_LIBRARY}
-    ${utils_LIBRARIES})
+    ${timers_LIBRARY})
