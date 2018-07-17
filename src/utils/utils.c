@@ -15,9 +15,6 @@
  */
 
 
-#include <osapi.h>
-#include <mem.h>
-#include <esp.h>
 #include "utils.h"
 #include "utils_internal.h"
 

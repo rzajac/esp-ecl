@@ -20,8 +20,10 @@
 
 #include <user_interface.h>
 #include <c_types.h>
+#include <osapi.h>
 #include <mem.h>
 
+#include <esp.h>
 
 /**
  * Duplicate string.

@@ -19,7 +19,10 @@ set(SOURCE_FILES network_manager.c nm_tcp.c nm_wifi.c)
 set(HEADER_FILES include/network_manager.h ${ESP_HEADER})
 set(PRIVATE_HEADER_FILES nm_internal.h nm_tcp.h nm_wifi.h)
 
-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES} ${PRIVATE_HEADER_FILES})
+add_library(${PROJECT_NAME} STATIC
+    ${SOURCE_FILES}
+    ${HEADER_FILES}
+    ${PRIVATE_HEADER_FILES})
 
 target_include_directories(${PROJECT_NAME} BEFORE PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

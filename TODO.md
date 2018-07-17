@@ -1,5 +1,2 @@
-- Cleanup examples CMake files base on nm.
-- Use `#if defined(NM_DEBUG_ON) || defined(DEBUG_ON)` for all debugs.
-- ERROR and DEBUG use "\n" in define.
 - espresso 
 

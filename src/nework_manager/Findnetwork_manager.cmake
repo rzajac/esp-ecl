@@ -40,14 +40,18 @@ find_package_handle_standard_args(network_manager
     event_bus_LIBRARIES
     event_bus_INCLUDE_DIRS
     utils_LIBRARIES
-    utils_INCLUDE_DIRS)
+    utils_INCLUDE_DIRS
+    lists_LIBRARIES
+    lists_INCLUDE_DIRS)
 
 set(network_manager_INCLUDE_DIRS
     ${network_manager_INCLUDE_DIR}
     ${event_bus_INCLUDE_DIRS}
+    ${lists_INCLUDE_DIRS}
     ${utils_INCLUDE_DIRS})
 
 set(network_manager_LIBRARIES
     ${network_manager_LIBRARY}
     ${event_bus_LIBRARIES}
+    ${lists_LIBRARIES}
     ${utils_LIBRARIES})

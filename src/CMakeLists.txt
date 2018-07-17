@@ -13,15 +13,15 @@
 # under the License.
 
 
-add_subdirectory(esp_aes)
-add_subdirectory(esp_json)
-add_subdirectory(stdout)
 
 add_subdirectory(config)
-add_subdirectory(event_bus)
+add_subdirectory(esp_aes)
+add_subdirectory(esp_json)
 add_subdirectory(gpio_helper)
-add_subdirectory(lists)
 add_subdirectory(gpio_debug)
+add_subdirectory(event_bus)
+add_subdirectory(lists)
 add_subdirectory(nework_manager)
+add_subdirectory(stdout)
 add_subdirectory(timers)
 add_subdirectory(utils)

@@ -19,7 +19,10 @@ set(SOURCE_FILES utils.c)
 set(HEADER_FILES include/utils.h)
 set(PRIVATE_HEADER_FILES utils_internal.h)
 
-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES} ${PRIVATE_HEADER_FILES})
+add_library(${PROJECT_NAME} STATIC
+    ${SOURCE_FILES}
+    ${HEADER_FILES}
+    ${PRIVATE_HEADER_FILES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -32,5 +35,9 @@ set_target_properties(
     FRAMEWORK ON
     PUBLIC_HEADER "${HEADER_FILES}"
     PRIVATE_HEADER "${PRIVATE_HEADER_FILES}")
+
+if (DEFINED ENV{UTILS_DEBUG_ON})
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DUTILS_DEBUG_ON")
+endif ()
 
 esp_gen_lib(${PROJECT_NAME})
