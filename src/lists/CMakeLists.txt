@@ -19,13 +19,18 @@ set(SOURCE_FILES lists.c)
 set(HEADER_FILES include/lists.h)
 set(PRIVATE_HEADER_FILES lists_internal.h)
 
-add_library(${PROJECT_NAME} STATIC ${SOURCE_FILES} ${HEADER_FILES} ${PRIVATE_HEADER_FILES})
+add_library(${PROJECT_NAME} STATIC
+    ${SOURCE_FILES}
+    ${HEADER_FILES}
+    ${PRIVATE_HEADER_FILES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     ${utils_SOURCE_DIR}/include
     ${ESP_USER_CONFIG_DIR})
+
+target_link_libraries(${PROJECT_NAME} utils)
 
 set_target_properties(
     ${PROJECT_NAME}

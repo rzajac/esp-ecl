@@ -1,15 +1,15 @@
-## Config
+## Use flash to store configuration.
 
-Library gives simple interface to store/retrieve data on flash to for example
-keep your application state between resets.  
+Library gives simple interface to write/read data to/from the flash.
+Can be used to store application data between resets.  
 
 ## How it works.
 
 By default user application is stored starting at flash address `0x10000` which
-is 10 sectors from the beginning of the flash (one sector is `0x1000` bytes).
+is **10 sectors** from the beginning of the flash (one sector is `0x1000` bytes).
 
-At flash address `0x0` starts bootloader but it does not take much space so 
-we can use it to store our custom data. 
+At flash address `0x0` is a start of boot loader but it does not take much 
+space so we can use it to store our custom data. 
 
 The library by default gives you 4 slots each 4096 bytes:
 

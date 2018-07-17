@@ -26,6 +26,7 @@ target_include_directories(${PROJECT_NAME} BEFORE PUBLIC
     ${stdout_SOURCE_DIR}/include
     ${event_bus_SOURCE_DIR}/include
     ${utils_SOURCE_DIR}/include
+    ${lists_SOURCE_DIR}/include
     ${ESP_USER_CONFIG_DIR})
 
 target_link_libraries(${PROJECT_NAME} stdout event_bus utils lists)

@@ -20,13 +20,16 @@ set(HEADER_FILES include/event_bus.h)
 set(PRIVATE_HEADER_FILES event_bus_internal.h)
 
 add_library(${PROJECT_NAME} STATIC
-    ${SOURCE_FILES} ${HEADER_FILES} ${PRIVATE_HEADER_FILES})
+    ${SOURCE_FILES}
+    ${HEADER_FILES}
+    ${PRIVATE_HEADER_FILES})
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:include>
     ${timers_INCLUDE_DIRS}
     ${utils_INCLUDE_DIRS}
+    ${lists_INCLUDE_DIRS}
     ${ESP_USER_CONFIG_DIR})
 
 target_link_libraries(${PROJECT_NAME} timers utils lists)

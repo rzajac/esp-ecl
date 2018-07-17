@@ -37,6 +37,7 @@ config_check(uint8_t cfg_num)
 {
     if (cfg_num > CONFIG_MAX_INDEX)
         return ESP_E_ARG;
+
     if (user_configs[cfg_num] == NULL)
         return ESP_E_LOG;
 
@@ -71,9 +72,11 @@ config_read(uint8_t cfg_num)
 
     uint32 sec_adr = (uint32) ((CONFIG_START_SECTOR + cfg_num) *
                                SPI_FLASH_SEC_SIZE);
-    SpiFlashOpResult result = spi_flash_read(sec_adr,
-                                             (uint32 *) user_configs[cfg_num]->cfg,
-                                             user_configs[cfg_num]->cfg_size);
+
+    SpiFlashOpResult result;
+    result = spi_flash_read(sec_adr,
+                            (uint32 *) user_configs[cfg_num]->cfg,
+                            user_configs[cfg_num]->cfg_size);
 
     return result;
 }
@@ -92,7 +95,8 @@ config_write(uint8_t cfg_num)
     SpiFlashOpResult result = spi_flash_erase_sector(
         (uint16) (CONFIG_START_SECTOR + cfg_num));
     if (result == SPI_FLASH_RESULT_OK) {
-        result = spi_flash_write(sec_adr, (uint32 *) user_configs[cfg_num]->cfg,
+        result = spi_flash_write(sec_adr,
+                                 (uint32 *) user_configs[cfg_num]->cfg,
                                  user_configs[cfg_num]->cfg_size);
     }
     ETS_UART_INTR_ENABLE();

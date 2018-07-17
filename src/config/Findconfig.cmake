@@ -30,7 +30,7 @@ find_path(config_INCLUDE_DIR config.h)
 find_library(config_LIBRARY NAMES config)
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(config
+find_package_handle_standard_args(config
     DEFAULT_MSG
     config_LIBRARY
     config_INCLUDE_DIR)
