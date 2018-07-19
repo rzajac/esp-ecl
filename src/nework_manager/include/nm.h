@@ -53,111 +53,11 @@ typedef void (*nm_rcv_cb)(nm_tcp*, uint8_t *data, size_t len);
 // The send callback prototype.
 typedef void (*nm_cb)(nm_tcp *);
 
-// Represents WiFi connection configuration.
-typedef struct {
-    // Maximum WiFi connection retries (0 - no limit).
-    uint8_t recon_max;
 
-    // Current WiFi connection retries.
-    uint8_t recon_cnt;
 
-    // Static IP, network mask and gateway.
-    uint32_t ip, netmask, gw;
 
-    // Set to true if wifi was connected at some point.
-    uint8_t status;
-} nm_wifi;
 
-// Represents managed TCP connection.
-struct nm_tcp_ {
-    // The underlying connection.
-    struct espconn *esp;
 
-    // Use SSL for the connection.
-    bool ssl;
-
-    // Keep alive idle.
-    int ka_idle;
-
-    // Keep alive interval.
-    int ka_itvl;
-
-    // Keep alive count.
-    int ka_cnt;
-
-    // Ready callback.
-    // Called when WiFi is connected and IP is available.
-    nm_cb ready_cb;
-
-    // Disconnect callback.
-    nm_cb disc_cb;
-
-    // Sent callback.
-    nm_cb sent_cb;
-
-    // Receive callback.
-    nm_rcv_cb rcv_cb;
-
-    // Non fatal error callback.
-    nm_err_cb err_cb;
-};
-
-/**
- * Start network manager.
- *
- * Configures and schedules WiFi connection.
- * You may call nm_client as many times as you need
- * right after it and wait for ready_cb for the created
- * clients.
- *
- * @param wifi
- * @param name
- * @param pass
- * @param err_cb
- *
- * @return Error code.
- */
-sint8 ICACHE_FLASH_ATTR
-nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb);
-
-/**
- * Stop network manager.
- *
- * Stopping network manager:
- *
- * - releases all the allocated memory,
- * - aborts all connected managed network connections,
- * - disconnects from WiFi
- * - turns off WiFi and sets opmode to NULL_MODE.
- *
- * @return Error code.
- */
-sint8 ICACHE_FLASH_ATTR
-nm_stop();
-
-/**
- * Create and configure new network client.
- *
- * This call does only preliminary configuration and
- * does not not connect to server it just
- * configures the client.
- *
- * Most likely you want to call nm_set_callbacks
- * right after this call.
- *
- * More configuration can be done by calling:
- * - nm_set_keepalive
- * - nm_set_callbacks
- * - nm_set_reconnect
- *
- * @param conn
- * @param host
- * @param port
- * @param ssl
- * @return
- */
-sint8 ICACHE_FLASH_ATTR
-nm_client(nm_tcp *conn, char *host, int port, bool ssl);
 
 /**
  * Set keep alive configuration for the client.

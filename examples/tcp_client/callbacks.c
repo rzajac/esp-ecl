@@ -61,13 +61,13 @@ fatal_cb(nm_tcp *conn, sint8 err, sint16 err_sdk)
     //     conn = os_zalloc(sizeof(nm_tcp));
     //     if (conn == NULL) {
     //         os_printf("USR: OOM!\n");
-    //         nm_stop();
+    //         nm_wifi_stop();
     //     }
     //
     //     err = nm_client(conn, "192.168.1.149", 3333, false);
     //     if (err != ESP_OK) {
     //         os_printf("USR: esp_nm_client error %d\n", err);
-    //         nm_stop();
+    //         nm_wifi_stop();
     //     }
     //
     //     nm_set_callbacks(conn, ready_cb, disc_cb, sent_cb, rcv_cb, err_cb);
@@ -75,7 +75,7 @@ fatal_cb(nm_tcp *conn, sint8 err, sint16 err_sdk)
     //     err = nm_client_connect(conn);
     //     if (err != ESP_OK) {
     //         os_printf("USR: nm_client_connect error %d\n", err);
-    //         nm_stop();
+    //         nm_wifi_stop();
     //     }
     // }
 }

@@ -45,60 +45,9 @@ nm_cb_noop(nm_tcp *conn)
 // Global fatal error callback. Must return as soon as possible.
 nm_err_cb nm_g_fatal_err = nm_err_noop;
 
-sint8 ICACHE_FLASH_ATTR
-nm_stop()
-{
-    // Remove WiFi callbacks.
-    NM_DEBUG("nm_stop: removing NM group callbacks");
-    eb_remove_group(EV_GROUP);
-    nm_tcp_abort_all();
-    NM_DEBUG("nm_stop: station disconnect");
-    wifi_station_disconnect();
-    NM_DEBUG("nm_stop: set NULL opmode");
-    wifi_set_opmode(NULL_MODE);
 
-    return ESP_OK;
-}
 
-sint8 ICACHE_FLASH_ATTR
-nm_client(nm_tcp *conn, char *host, int port, bool ssl)
-{
-    conn->esp = os_zalloc(sizeof(struct espconn));
-    if (conn->esp == NULL) {
-        nm_tcp_release_espconn(conn);
-        return ESP_E_MEM;
-    }
 
-    conn->esp->proto.tcp = os_zalloc(sizeof(esp_tcp));
-    if (conn->esp->proto.tcp == NULL) {
-        nm_tcp_release_espconn(conn);
-        return ESP_E_MEM;
-    }
-
-    // Configure TCP/IP connection.
-    conn->esp->type = ESPCONN_TCP;
-    uint32_t ip = ipaddr_addr(host);
-    os_memcpy(conn->esp->proto.tcp->remote_ip, &ip, 4);
-    conn->esp->proto.tcp->local_port = espconn_port();
-    conn->esp->proto.tcp->remote_port = port;
-    conn->ssl = ssl;
-
-    // Register callbacks for successful connection or error.
-    sint8 err = nm_tcp_set_conn_cb(conn);
-    if (err != ESP_OK) {
-        nm_tcp_release_espconn(conn);
-        return err;
-    }
-
-    conn->ready_cb = nm_cb_noop;
-    conn->disc_cb = nm_cb_noop;
-    conn->sent_cb = nm_cb_noop;
-    conn->rcv_cb = nm_rcv_noop;
-    conn->err_cb = nm_err_noop;
-
-    NM_DEBUG("configured [%p]", conn);
-    return ESP_OK;
-}
 
 sint8 ICACHE_FLASH_ATTR
 nm_disconnect(nm_tcp *conn)

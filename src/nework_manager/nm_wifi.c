@@ -18,7 +18,7 @@
 #include <user_interface.h>
 
 #include "nm_internal.h"
-#include "nm_tcp.h"
+#include "include/nm_tcp.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Defines.
@@ -141,6 +141,21 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
         NM_ERROR("wifi connect");
         return ESP_E_SYS;
     }
+
+    return ESP_OK;
+}
+
+sint8 ICACHE_FLASH_ATTR
+nm_wifi_stop()
+{
+    // Remove WiFi callbacks.
+    NM_DEBUG("nm_wifi_stop: removing NM group callbacks");
+    eb_remove_group(EV_GROUP);
+    nm_tcp_abort_all();
+    NM_DEBUG("nm_wifi_stop: station disconnect");
+    wifi_station_disconnect();
+    NM_DEBUG("nm_wifi_stop: set NULL opmode");
+    wifi_set_opmode(NULL_MODE);
 
     return ESP_OK;
 }

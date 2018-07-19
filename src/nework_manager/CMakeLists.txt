@@ -17,7 +17,7 @@ project(network_manager C)
 
 set(SOURCE_FILES nm.c nm_tcp.c nm_wifi.c)
 set(HEADER_FILES include/nm.h include/nm_wifi.h include/nm_tcp.h ${ESP_HEADER})
-set(PRIVATE_HEADER_FILES nm_internal.h nm_tcp.h)
+set(PRIVATE_HEADER_FILES nm_internal.h)
 
 add_library(${PROJECT_NAME} STATIC
     ${SOURCE_FILES}

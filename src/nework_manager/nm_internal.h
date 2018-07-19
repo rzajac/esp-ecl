@@ -50,4 +50,7 @@
 #define is_conn_closed(conn) (((conn) == NULL || (conn)->esp == NULL) ? true : (conn)->esp->state == ESPCONN_CLOSE)
 #define is_conn_connected(conn) (((conn) == NULL || (conn)->esp == NULL) ? true : (conn)->esp->state == ESPCONN_CONNECT)
 
+// Macro evaluating to true if keep alive values were customized.
+#define use_ka(c) ((c)->ka_idle != 0 && (c)->ka_itvl == 0 && (c)->ka_cnt == 0)
+
 #endif // NM_INTERNAL_H
