@@ -19,7 +19,7 @@
 #include <osapi.h>
 
 #include "stdout.h"
-#include "network_manager.h"
+#include "nm.h"
 #include "callbacks.h"
 
 void ICACHE_FLASH_ATTR

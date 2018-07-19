@@ -20,7 +20,7 @@
 #include <user_interface.h>
 
 #include <esp.h>
-#include "../../src/nework_manager/include/network_manager.h"
+#include "../../src/nework_manager/include/nm.h"
 
 void ICACHE_FLASH_ATTR
 ready_cb(nm_tcp *conn);

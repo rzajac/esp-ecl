@@ -20,7 +20,7 @@
 #include <user_interface.h>
 
 #include "lists.h"
-#include "include/network_manager.h"
+#include "include/nm.h"
 #include "nm_internal.h"
 
 // Macro evaluating to true if keep alive values were customized.

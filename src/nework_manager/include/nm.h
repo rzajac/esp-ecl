@@ -30,7 +30,11 @@
 #define NM_DEFAULT_KA_ITVL 5
 #define NM_DEFAULT_KA_CNT  4
 
+// Declaration.
 struct nm_tcp_;
+
+// Type alias.
+typedef struct nm_tcp_ nm_tcp;
 
 /**
  * The fatal error callback prototype.
@@ -41,13 +45,13 @@ struct nm_tcp_;
  *
  * If there is no err_sdk available the 0 will be passed.
  */
-typedef void (*nm_err_cb)(struct nm_tcp_ *, sint8 err, sint16 err_sdk);
+typedef void (*nm_err_cb)(nm_tcp*, sint8 err, sint16 err_sdk);
 
 // The receive callback prototype.
-typedef void (*nm_rcv_cb)(struct nm_tcp_ *, uint8_t *data, size_t len);
+typedef void (*nm_rcv_cb)(nm_tcp*, uint8_t *data, size_t len);
 
 // The send callback prototype.
-typedef void (*nm_cb)(struct nm_tcp_ *);
+typedef void (*nm_cb)(nm_tcp *);
 
 // Represents WiFi connection configuration.
 typedef struct {
@@ -65,7 +69,7 @@ typedef struct {
 } nm_wifi;
 
 // Represents managed TCP connection.
-typedef struct nm_tcp_ {
+struct nm_tcp_ {
     // The underlying connection.
     struct espconn *esp;
 
@@ -96,8 +100,7 @@ typedef struct nm_tcp_ {
 
     // Non fatal error callback.
     nm_err_cb err_cb;
-} nm_tcp;
-
+};
 
 /**
  * Start network manager.
