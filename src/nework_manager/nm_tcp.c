@@ -42,6 +42,9 @@ tcp_connect_cb(void *arg);
 // Code.
 /////////////////////////////////////////////////////////////////////////////
 
+// Global fatal callback.
+extern nm_err_cb nm_g_fatal_err;
+
 // Linked list head.
 static lst_node *head;
 

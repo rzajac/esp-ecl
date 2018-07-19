@@ -15,8 +15,35 @@
  */
 
 
-#include "nm_wifi.h"
+#include <user_interface.h>
 
+#include "nm_internal.h"
+#include "nm_tcp.h"
+
+/////////////////////////////////////////////////////////////////////////////
+// Defines.
+/////////////////////////////////////////////////////////////////////////////
+
+#define WIFI_WAS_CONECTED 0b00000001
+
+// Macro evaluating to true if static IP was configured.
+#define use_static_ip(w) ((w)->ip == 0 || (w)->netmask == 0 || (w)->gw == 0)
+
+/////////////////////////////////////////////////////////////////////////////
+// Declarations.
+/////////////////////////////////////////////////////////////////////////////
+
+static void ICACHE_FLASH_ATTR
+nm_wifi_event_cb(uint16_t ev_code, void *arg);
+
+/////////////////////////////////////////////////////////////////////////////
+// Code.
+/////////////////////////////////////////////////////////////////////////////
+
+// Global fatal callback.
+extern nm_err_cb nm_g_fatal_err;
+
+// Global WiFi structure.
 static nm_wifi *g_wifi; // TODO: release it at some point.
 
 sint8 ICACHE_FLASH_ATTR
@@ -130,7 +157,13 @@ wifi_fatal(sint8 err, sint16 err_sdk)
     nm_g_fatal_err(NULL, err, err_sdk);
 }
 
-void ICACHE_FLASH_ATTR
+/**
+ * Handles all WiFi events.
+ *
+ * @param ev_code The event code (same as wifi event codes).
+ * @param arg     The System_Event_t instance.
+ */
+static void ICACHE_FLASH_ATTR
 nm_wifi_event_cb(uint16_t ev_code, void *arg)
 {
     System_Event_t *ev = arg;

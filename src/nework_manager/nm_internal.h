@@ -20,9 +20,9 @@
 
 #include <esp.h>
 
-#include "nm_wifi.h"
-#include "nm_tcp.h"
 #include "event_bus.h"
+#include "include/nm_wifi.h"
+#include "include/nm_tcp.h"
 
 #if defined(NM_DEBUG_ON) || defined(DEBUG_ON)
     #define NM_DEBUG(format, ...) os_printf("NM  DBG: " format "\n", ## __VA_ARGS__ )
