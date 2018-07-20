@@ -20,24 +20,25 @@
 #include <user_interface.h>
 
 #include <esp.h>
-#include "../../src/nework_manager/include/nm.h"
+#include "nm.h"
+#include "tcp.h"
 
 void ICACHE_FLASH_ATTR
-ready_cb(nm_tcp *conn);
+ready_cb(tcp *conn);
 
 void ICACHE_FLASH_ATTR
-disc_cb(nm_tcp *conn);
+disc_cb(tcp *conn);
 
 void ICACHE_FLASH_ATTR
-sent_cb(nm_tcp *conn);
+sent_cb(tcp *conn);
 
 void ICACHE_FLASH_ATTR
-recv_cb(nm_tcp *conn, uint8_t *data, size_t len);
+recv_cb(tcp *conn, uint8_t *data, size_t len);
 
 void ICACHE_FLASH_ATTR
-err_cb(nm_tcp *conn, sint8 err, sint16 aux);
+err_cb(tcp *conn, sint8 err, sint16 aux);
 
 void ICACHE_FLASH_ATTR
-fatal_cb(nm_tcp *conn, sint8 err, sint16 aux);
+fatal_cb(tcp *conn, sint8 err, sint16 aux);
 
 #endif //ESP_EX_CALLBACKS_H

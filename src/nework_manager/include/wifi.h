@@ -34,7 +34,7 @@ typedef struct {
 
     // Set to true if wifi was connected at some point.
     uint8_t status;
-} nm_wifi;
+} wifi;
 
 /**
  * Start network manager.
@@ -52,7 +52,7 @@ typedef struct {
  * @return Error code.
  */
 sint8 ICACHE_FLASH_ATTR
-nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb);
+wifi_start(wifi *wifi, char *name, char *pass, nm_err_cb err_cb);
 
 /**
  * Stop network manager.
@@ -67,6 +67,6 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb);
  * @return Error code.
  */
 sint8 ICACHE_FLASH_ATTR
-nm_wifi_stop();
+wifi_stop();
 
 #endif // NM_WIFI_H

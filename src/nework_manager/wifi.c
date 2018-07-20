@@ -17,8 +17,8 @@
 
 #include <user_interface.h>
 
+#include "include/wifi.h"
 #include "nm_internal.h"
-#include "include/nm_tcp.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Defines.
@@ -30,24 +30,102 @@
 #define use_static_ip(w) ((w)->ip == 0 || (w)->netmask == 0 || (w)->gw == 0)
 
 /////////////////////////////////////////////////////////////////////////////
-// Declarations.
-/////////////////////////////////////////////////////////////////////////////
-
-static void ICACHE_FLASH_ATTR
-nm_wifi_event_cb(uint16_t ev_code, void *arg);
-
-/////////////////////////////////////////////////////////////////////////////
-// Code.
+// Globals.
 /////////////////////////////////////////////////////////////////////////////
 
 // Global fatal callback.
 extern nm_err_cb nm_g_fatal_err;
 
 // Global WiFi structure.
-static nm_wifi *g_wifi; // TODO: release it at some point.
+static wifi *g_wifi; // TODO: release it at some point.
+
+/////////////////////////////////////////////////////////////////////////////
+// Static methods.
+/////////////////////////////////////////////////////////////////////////////
+
+static void ICACHE_FLASH_ATTR
+wifi_fatal(sint8 err, sint16 err_sdk)
+{
+    eb_remove_group(EV_GROUP);
+
+    bool suc = wifi_set_opmode(NULL_MODE);
+    if (!suc)
+        NM_ERROR("wifi_set_opmode error");
+
+    nm_g_fatal_err(NULL, err, err_sdk);
+}
+
+/**
+ * Handles all WiFi events.
+ *
+ * @param ev_code The event code (same as wifi event codes).
+ * @param arg     The System_Event_t instance.
+ */
+static void ICACHE_FLASH_ATTR
+nm_wifi_event_cb(uint16_t ev_code, void *arg)
+{
+    System_Event_t *ev = arg;
+
+    switch (ev_code) {
+        case EVENT_STAMODE_CONNECTED:
+            NM_DEBUG("EVENT_STAMODE_CONNECTED");
+            if (use_static_ip(g_wifi) && wifi_station_dhcpc_set_maxtry(3) != true) {
+                NM_ERROR("DHCP set max try failed");
+                wifi_fatal(ESP_E_NET, 0);
+            }
+            break;
+
+        case EVENT_STAMODE_DISCONNECTED:
+            g_wifi->recon_cnt++;
+            NM_DEBUG("EVENT_STAMODE_DISCONNECTED %d", g_wifi->recon_cnt);
+
+            // Check if we reached reconnect max.
+            if (g_wifi->recon_cnt == g_wifi->recon_max) {
+                wifi_fatal(ESP_E_WIF, ev->event_info.disconnected.reason);
+                return;
+            }
+
+            tcp_abort_all(); // TODO: is this a good place for this?
+
+
+            // If we were connected notify user code.
+            if (g_wifi->status & WIFI_WAS_CONECTED) {
+                nm_g_fatal_err(NULL, ESP_E_WIF, EVENT_STAMODE_DISCONNECTED);
+                g_wifi->status &= ~WIFI_WAS_CONECTED;
+            }
+            break;
+
+        case EVENT_STAMODE_AUTHMODE_CHANGE:
+            NM_DEBUG("EVENT_STAMODE_AUTHMODE_CHANGE");
+            break;
+
+        case EVENT_STAMODE_GOT_IP:
+            NM_DEBUG("EVENT_STAMODE_GOT_IP");
+            g_wifi->recon_cnt = 0;
+            g_wifi->status |= WIFI_WAS_CONECTED;
+            tcp_conn_all();
+            nm_g_fatal_err(NULL, ESP_OK, 0);
+            break;
+
+        case EVENT_STAMODE_DHCP_TIMEOUT:
+            NM_DEBUG("EVENT_STAMODE_DHCP_TIMEOUT");
+            break;
+
+        case EVENT_OPMODE_CHANGED:
+            NM_DEBUG("EVENT_OPMODE_CHANGED");
+            break;
+
+        default:
+            break;
+    }
+}
+
+/////////////////////////////////////////////////////////////////////////////
+// User interface.
+/////////////////////////////////////////////////////////////////////////////
 
 sint8 ICACHE_FLASH_ATTR
-nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
+wifi_start(wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
 {
     if (g_wifi != NULL) {
         NM_ERROR("g_wifi already set");
@@ -122,7 +200,7 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
     }
 
     // Create global WiFi struct.
-    g_wifi = os_zalloc(sizeof(nm_wifi));
+    g_wifi = os_zalloc(sizeof(wifi));
     if (g_wifi == NULL)
         return ESP_E_MEM;
 
@@ -146,90 +224,16 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
 }
 
 sint8 ICACHE_FLASH_ATTR
-nm_wifi_stop()
+wifi_stop()
 {
     // Remove WiFi callbacks.
     NM_DEBUG("nm_wifi_stop: removing NM group callbacks");
     eb_remove_group(EV_GROUP);
-    nm_tcp_abort_all();
+    tcp_abort_all();
     NM_DEBUG("nm_wifi_stop: station disconnect");
     wifi_station_disconnect();
     NM_DEBUG("nm_wifi_stop: set NULL opmode");
     wifi_set_opmode(NULL_MODE);
 
     return ESP_OK;
-}
-
-static void ICACHE_FLASH_ATTR
-wifi_fatal(sint8 err, sint16 err_sdk)
-{
-    eb_remove_group(EV_GROUP);
-
-    bool suc = wifi_set_opmode(NULL_MODE);
-    if (!suc)
-        NM_ERROR("wifi_set_opmode error");
-
-    nm_g_fatal_err(NULL, err, err_sdk);
-}
-
-/**
- * Handles all WiFi events.
- *
- * @param ev_code The event code (same as wifi event codes).
- * @param arg     The System_Event_t instance.
- */
-static void ICACHE_FLASH_ATTR
-nm_wifi_event_cb(uint16_t ev_code, void *arg)
-{
-    System_Event_t *ev = arg;
-
-    switch (ev_code) {
-        case EVENT_STAMODE_CONNECTED:
-            NM_DEBUG("EVENT_STAMODE_CONNECTED");
-            if (use_static_ip(g_wifi) && wifi_station_dhcpc_set_maxtry(3) != true) {
-                NM_ERROR("DHCP set max try failed");
-                wifi_fatal(ESP_E_NET, 0);
-            }
-            break;
-
-        case EVENT_STAMODE_DISCONNECTED:
-            g_wifi->recon_cnt++;
-            NM_DEBUG("EVENT_STAMODE_DISCONNECTED %d", g_wifi->recon_cnt);
-
-            // Check if we reached reconnect max.
-            if (g_wifi->recon_cnt == g_wifi->recon_max) {
-                wifi_fatal(ESP_E_WIF, ev->event_info.disconnected.reason);
-                return;
-            }
-
-            // If we were connected notify user code.
-            if (g_wifi->status & WIFI_WAS_CONECTED) {
-                nm_g_fatal_err(NULL, ESP_E_WIF, EVENT_STAMODE_DISCONNECTED);
-                g_wifi->status &= ~WIFI_WAS_CONECTED;
-            }
-            break;
-
-        case EVENT_STAMODE_AUTHMODE_CHANGE:
-            NM_DEBUG("EVENT_STAMODE_AUTHMODE_CHANGE");
-            break;
-
-        case EVENT_STAMODE_GOT_IP:
-            NM_DEBUG("EVENT_STAMODE_GOT_IP");
-            g_wifi->recon_cnt = 0;
-            g_wifi->status |= WIFI_WAS_CONECTED;
-            nm_tcp_conn_all();
-            nm_g_fatal_err(NULL, ESP_OK, 0);
-            break;
-
-        case EVENT_STAMODE_DHCP_TIMEOUT:
-            NM_DEBUG("EVENT_STAMODE_DHCP_TIMEOUT");
-            break;
-
-        case EVENT_OPMODE_CHANGED:
-            NM_DEBUG("EVENT_OPMODE_CHANGED");
-            break;
-
-        default:
-            break;
-    }
 }

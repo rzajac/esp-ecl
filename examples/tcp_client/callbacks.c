@@ -17,42 +17,42 @@
 #include "callbacks.h"
 
 void ICACHE_FLASH_ATTR
-ready_cb(nm_tcp *conn)
+ready_cb(tcp *conn)
 {
     os_printf("USR: ready_cb [%p]\n", conn);
-    nm_send(conn, (uint8 *) "HELLO", 5);
+    tcp_send(conn, (uint8 *) "HELLO", 5);
 }
 
 void ICACHE_FLASH_ATTR
-disc_cb(nm_tcp *conn)
+disc_cb(tcp *conn)
 {
     os_printf("USR: disc_cb [%p]\n", conn);
 }
 
 void ICACHE_FLASH_ATTR
-sent_cb(nm_tcp *conn)
+sent_cb(tcp *conn)
 {
     os_printf("USR: sent_cb [%p]\n", conn);
 }
 
 void ICACHE_FLASH_ATTR
-recv_cb(nm_tcp *conn, uint8_t *data, size_t len)
+recv_cb(tcp *conn, uint8_t *data, size_t len)
 {
     UNUSED(data);
 
     os_printf("USR: rcv_cb len:%d [%p]\n", len, conn);
-    nm_send(conn, (uint8 *) "HELLO", 5);
+    tcp_send(conn, (uint8 *) "HELLO", 5);
 }
 
 void ICACHE_FLASH_ATTR
-err_cb(nm_tcp *conn, sint8 err, sint16 err_sdk)
+err_cb(tcp *conn, sint8 err, sint16 err_sdk)
 {
     os_printf("USER: err_cb err:%d err_sdk:%d [%p]\n", err, err_sdk, conn);
-    nm_client_release(conn);
+    tcp_release(conn);
 }
 
 void ICACHE_FLASH_ATTR
-fatal_cb(nm_tcp *conn, sint8 err, sint16 err_sdk)
+fatal_cb(tcp *conn, sint8 err, sint16 err_sdk)
 {
     os_printf("USR: fatal_cb err:%d err_sdk:%d [%p]\n", err, err_sdk, conn);
 

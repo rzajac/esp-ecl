@@ -21,16 +21,15 @@
 #include <esp.h>
 
 #include "event_bus.h"
-#include "include/nm_wifi.h"
-#include "include/nm_tcp.h"
+#include "wifi.h"
+#include "tcp.h"
 
 #if defined(NM_DEBUG_ON) || defined(DEBUG_ON)
     #define NM_DEBUG(format, ...) os_printf("NM  DBG: " format "\n", ## __VA_ARGS__ )
-    #define NM_DEBUG_CONN(header, conn) ({ os_printf("NM  TCP: %s [%p]\n", (header), (conn)); \
-                                           os_printf("         state     %d\n", (conn)->esp->state); \
+    #define NM_DEBUG_CONN(header, conn) ({ os_printf("NM  TCP: %s [%p]\n", (header), (conn));           \
+                                           os_printf("         state     %d\n", (conn)->esp->state);    \
                                            os_printf("         link_cnt  %d\n", (conn)->esp->link_cnt); \
-                                           os_printf("         reverse   %p\n", (conn)->esp->reverse); \
-                                        })
+                                           os_printf("         reverse   %p\n", (conn)->esp->reverse);  })
 #else
     #define NM_DEBUG(format, ...) do {} while(0)
     #define NM_DEBUG_CONN(format, conn) do {} while(0)
@@ -42,7 +41,7 @@
 #define EV_GROUP 1
 
 // Takes lst_node* and returns its payload as nm_tcp*.
-#define get_conn(node) ((node) == NULL ? NULL : ((nm_tcp *) (node)->payload))
+#define get_conn(node) ((node) == NULL ? NULL : ((tcp *) (node)->payload))
 
 // Some helper macros for getting espconn statuses.
 #define is_conn_ready(conn) (((conn) == NULL || (conn)->esp == NULL) ? false : (conn)->esp->state == ESPCONN_NONE)
@@ -52,5 +51,11 @@
 
 // Macro evaluating to true if keep alive values were customized.
 #define use_ka(c) ((c)->ka_idle != 0 && (c)->ka_itvl == 0 && (c)->ka_cnt == 0)
+
+/** Connect all managed connections */
+void ICACHE_FLASH_ATTR tcp_conn_all();
+
+/** Abort all TCP connections */
+void ICACHE_FLASH_ATTR tcp_abort_all();
 
 #endif // NM_INTERNAL_H
