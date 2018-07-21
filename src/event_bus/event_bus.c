@@ -166,7 +166,11 @@ eb_attach_throttled(uint16_t ev_code,
         return ESP_E_MEM;
 
     lst_append(head, node);
-    EB_DEBUG("added (n) ev#%d cb:%p th:%d gr:%d", ev_code, cb, throttle_us, group);
+    EB_DEBUG("added (n) ev#%d cb:%p th:%d gr:%d",
+             ev_code,
+             cb,
+             throttle_us,
+             group);
 
     return ESP_OK;
 }
@@ -320,18 +324,20 @@ wifi_event_cb(System_Event_t *e)
     switch (e->event) {
         case EVENT_STAMODE_CONNECTED:
             EB_DEBUG("WIFI: EVENT_STAMODE_CONNECTED");
-            EB_DEBUG("      ssid    %s", info->connected.ssid);
-            EB_DEBUG("      bssid   " MACSTR, MAC2STR(info->connected.bssid));
-            EB_DEBUG("      channel %d", info->connected.channel);
+            EB_DEBUG("    ssid    %s", info->connected.ssid);
+            EB_DEBUG("    bssid   " MACSTR, MAC2STR(info->connected.bssid));
+            EB_DEBUG("    channel %d", info->connected.channel);
+            EB_DEBUG("    status  %d", wifi_station_get_connect_status());
 
             eb_trigger(EVENT_STAMODE_CONNECTED, (void *) e);
             break;
 
         case EVENT_STAMODE_DISCONNECTED:
             EB_DEBUG("WIFI: EVENT_STAMODE_DISCONNECTED");
-            EB_DEBUG("      ssid   %s", info->disconnected.ssid);
-            EB_DEBUG("      bssid  " MACSTR, MAC2STR(info->disconnected.bssid));
-            EB_DEBUG("      reason %d", info->disconnected.reason);
+            EB_DEBUG("    ssid   %s", info->disconnected.ssid);
+            EB_DEBUG("    bssid  " MACSTR, MAC2STR(info->disconnected.bssid));
+            EB_DEBUG("    reason %d", info->disconnected.reason);
+            EB_DEBUG("    status %d", wifi_station_get_connect_status());
 
             eb_trigger(EVENT_STAMODE_DISCONNECTED, (void *) e);
             break;
@@ -342,36 +348,42 @@ wifi_event_cb(System_Event_t *e)
             os_printf("WIFI: EVENT_STAMODE_AUTHMODE_CHANGE %d -> %d",
                       info->auth_change.old_mode,
                       info->auth_change.new_mode);
+            EB_DEBUG("      status %d", wifi_station_get_connect_status());
+
             eb_trigger(EVENT_STAMODE_AUTHMODE_CHANGE, (void *) e);
             break;
 
         case EVENT_STAMODE_GOT_IP:
             EB_DEBUG("WIFI: EVENT_STAMODE_GOT_IP");
-            EB_DEBUG("      ip   " IPSTR, IP2STR(&(info->got_ip.ip)));
-            EB_DEBUG("      mask " IPSTR, IP2STR(&(info->got_ip.mask)));
-            EB_DEBUG("      gw   " IPSTR, IP2STR(&(info->got_ip.gw)));
+            EB_DEBUG("    ip     " IPSTR, IP2STR(&(info->got_ip.ip)));
+            EB_DEBUG("    mask   " IPSTR, IP2STR(&(info->got_ip.mask)));
+            EB_DEBUG("    gw     " IPSTR, IP2STR(&(info->got_ip.gw)));
+            EB_DEBUG("    status %d", wifi_station_get_connect_status());
 
             eb_trigger(EVENT_STAMODE_GOT_IP, (void *) e);
             break;
 
         case EVENT_STAMODE_DHCP_TIMEOUT:
             EB_DEBUG("WIFI: EVENT_STAMODE_DHCP_TIMEOUT");
+            EB_DEBUG("    status  %d", wifi_station_get_connect_status());
 
             eb_trigger(EVENT_STAMODE_DHCP_TIMEOUT, (void *) e);
             break;
 
         case EVENT_SOFTAPMODE_STACONNECTED:
             EB_DEBUG("WIFI: EVENT_SOFTAPMODE_STACONNECTED");
-            EB_DEBUG("      aid %d", info->sta_connected.aid);
-            EB_DEBUG("      mac " MACSTR, MAC2STR(info->sta_connected.mac));
+            EB_DEBUG("    aid    %d", info->sta_connected.aid);
+            EB_DEBUG("    mac    " MACSTR, MAC2STR(info->sta_connected.mac));
+            EB_DEBUG("    status %d", wifi_station_get_connect_status());
 
             eb_trigger(EVENT_SOFTAPMODE_STACONNECTED, (void *) e);
             break;
 
         case EVENT_SOFTAPMODE_STADISCONNECTED:
             EB_DEBUG("WIFI: EVENT_SOFTAPMODE_STADISCONNECTED");
-            EB_DEBUG("      aid %d", info->sta_connected.aid);
-            EB_DEBUG("      mac " MACSTR, MAC2STR(info->sta_disconnected.mac));
+            EB_DEBUG("    aid    %d", info->sta_connected.aid);
+            EB_DEBUG("    mac    " MACSTR, MAC2STR(info->sta_disconnected.mac));
+            EB_DEBUG("    status %d", wifi_station_get_connect_status());
 
             eb_trigger(EVENT_SOFTAPMODE_STADISCONNECTED, (void *) e);
             break;
@@ -380,20 +392,23 @@ wifi_event_cb(System_Event_t *e)
             EB_DEBUG("WIFI: EVENT_OPMODE_CHANGED %d -> %d",
                      info->opmode_changed.old_opmode,
                      info->opmode_changed.new_opmode);
+            EB_DEBUG("    status %d", wifi_station_get_connect_status());
 
             eb_trigger(EVENT_OPMODE_CHANGED, (void *) e);
             break;
 
         case EVENT_SOFTAPMODE_PROBEREQRECVED:
             EB_DEBUG("WIFI: EVENT_SOFTAPMODE_PROBEREQRECVED");
-            EB_DEBUG("      rssi %d", info->ap_probereqrecved.rssi);
-            EB_DEBUG("      mac  " MACSTR, MAC2STR(info->ap_probereqrecved.mac));
+            EB_DEBUG("    rssi   %d", info->ap_probereqrecved.rssi);
+            EB_DEBUG("    mac    " MACSTR, MAC2STR(info->ap_probereqrecved.mac));
+            EB_DEBUG("    status %d", wifi_station_get_connect_status());
 
             eb_trigger(EVENT_SOFTAPMODE_PROBEREQRECVED, (void *) e);
             break;
 
         default:
             EB_ERROR("unexpected wifi event: %d", e->event);
+            EB_DEBUG("    status %d", wifi_station_get_connect_status());
             break;
     }
 }

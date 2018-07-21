@@ -6,9 +6,10 @@ Library makes easier to create TCP/IP clients.
 
 ### Connecting to WiFi which does not exist.
 
-The NM nm will try to connect to WiFi `nm_wifi->recon_max` times. If max 
-retries will be reached NM will call `nm_err_cb` function, given to 
-`nm_wifi_start` with `NULL`, `ESP_E_WIF` and `REASON_NO_AP_FOUND`.
+The NM will try to connect to WiFi `nm_wifi->recon_max` times. 
+If maximum connection retries is reached NM will call 
+`nm_err_cb` function, given to `nm_wifi_start` 
+with `NULL`, `ESP_E_WIF` and `REASON_NO_AP_FOUND`.
 
 Before calling `nm_err_cb` NM will:
 

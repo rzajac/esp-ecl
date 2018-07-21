@@ -40,18 +40,6 @@ static nm_wifi *g_wifi; // TODO: release it at some point.
 // Static methods.
 /////////////////////////////////////////////////////////////////////////////
 
-static void ICACHE_FLASH_ATTR
-wifi_fatal(sint8 err, sint16 err_sdk)
-{
-    eb_remove_group(EV_GROUP);
-
-    bool suc = wifi_set_opmode(NULL_MODE);
-    if (!suc)
-        NM_ERROR("wifi_set_opmode error");
-
-    nm_g_fatal_err(NULL, err, err_sdk);
-}
-
 /**
  * Handles all WiFi events.
  *
@@ -68,7 +56,8 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
             NM_DEBUG("EVENT_STAMODE_CONNECTED");
             if (use_static_ip(g_wifi) && wifi_station_dhcpc_set_maxtry(3) != true) {
                 NM_ERROR("DHCP set max try failed");
-                wifi_fatal(ESP_E_NET, 0);
+                nm_wifi_stop();
+                nm_g_fatal_err(NULL, ESP_E_NET, 0);
             }
             break;
 
@@ -77,17 +66,17 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
             NM_DEBUG("recon_cnt %d", g_wifi->recon_cnt);
             g_wifi->recon_cnt++;
 
+            // If the status changed from connected to disconnected.
+            if (g_wifi->status & WIFI_WAS_CONECTED) {
+                g_wifi->status &= ~WIFI_WAS_CONECTED;
+                tcp_abort_all();
+                nm_g_fatal_err(NULL, ESP_E_WIF, EVENT_STAMODE_DISCONNECTED);
+            }
+
             // Check if we reached reconnect max.
             if (g_wifi->recon_cnt == g_wifi->recon_max) {
-                wifi_fatal(ESP_E_WIF, ev->event_info.disconnected.reason);
-                return;
-            }
-            tcp_abort_all();
-
-            // If we were connected notify user code.
-            if (g_wifi->status & WIFI_WAS_CONECTED) {
-                nm_g_fatal_err(NULL, ESP_E_WIF, EVENT_STAMODE_DISCONNECTED);
-                g_wifi->status &= ~WIFI_WAS_CONECTED;
+                nm_wifi_stop();
+                nm_g_fatal_err(NULL, ESP_E_WIF, ev->event_info.disconnected.reason);
             }
             break;
 
@@ -97,8 +86,8 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
 
         case EVENT_STAMODE_GOT_IP:
             NM_DEBUG("EVENT_STAMODE_GOT_IP");
-            g_wifi->recon_cnt = 0;
             g_wifi->status |= WIFI_WAS_CONECTED;
+            g_wifi->recon_cnt = 0;
             tcp_conn_all();
             nm_g_fatal_err(NULL, ESP_OK, 0);
             break;
@@ -231,7 +220,7 @@ nm_wifi_stop()
     NM_DEBUG("nm_wifi_stop: removing NM group callbacks");
     eb_remove_group(EV_GROUP);
     tcp_abort_all();
-    NM_DEBUG("nm_wifi_stop: station disconnect");
+    NM_DEBUG("nm_wifi_stop: station disconnect %d", wifi_station_get_connect_status());
     wifi_station_disconnect();
     NM_DEBUG("nm_wifi_stop: set NULL opmode");
     wifi_set_opmode(NULL_MODE);
