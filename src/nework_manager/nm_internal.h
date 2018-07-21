@@ -52,6 +52,9 @@
 // Macro evaluating to true if keep alive values were customized.
 #define use_ka(c) ((c)->ka_idle != 0 && (c)->ka_itvl == 0 && (c)->ka_cnt == 0)
 
+// Macro evaluating to true if we get IP from DHCP.
+#define using_dhcp(w) ((w)->ip == 0 || (w)->netmask == 0 || (w)->gw == 0)
+
 // Global fatal callback.
 extern nm_err_cb nm_g_fatal_err;
 

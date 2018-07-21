@@ -32,9 +32,6 @@ typedef struct {
 
     // Static IP, network mask and gateway.
     uint32_t ip, netmask, gw;
-
-    // Set to true if wifi was connected at some point.
-    uint8_t status;
 } nm_wifi;
 
 

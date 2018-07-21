@@ -21,20 +21,11 @@
 #include "nm_internal.h"
 
 /////////////////////////////////////////////////////////////////////////////
-// Defines.
-/////////////////////////////////////////////////////////////////////////////
-
-#define WIFI_WAS_CONECTED 0b00000001
-
-// Macro evaluating to true if static IP was configured.
-#define use_static_ip(w) ((w)->ip == 0 || (w)->netmask == 0 || (w)->gw == 0)
-
-/////////////////////////////////////////////////////////////////////////////
 // Globals.
 /////////////////////////////////////////////////////////////////////////////
 
 // Global WiFi structure.
-static nm_wifi *g_wifi; // TODO: release it at some point.
+static nm_wifi *g_wifi;
 
 /////////////////////////////////////////////////////////////////////////////
 // Static methods.
@@ -54,29 +45,33 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
     switch (ev_code) {
         case EVENT_STAMODE_CONNECTED:
             NM_DEBUG("EVENT_STAMODE_CONNECTED");
-            if (use_static_ip(g_wifi) && wifi_station_dhcpc_set_maxtry(3) != true) {
-                NM_ERROR("DHCP set max try failed");
-                nm_wifi_stop();
-                nm_g_fatal_err(NULL, ESP_E_NET, 0);
+            // TODO: This does not make sense/
+            if (using_dhcp(g_wifi)) {
+                if (wifi_station_dhcpc_set_maxtry(3) != true) {
+                    NM_ERROR("DHCP set max try failed");
+                    nm_wifi_stop();
+                    nm_g_fatal_err(NULL, ESP_E_NET, 0);
+                }
             }
             break;
 
         case EVENT_STAMODE_DISCONNECTED:
             NM_DEBUG("EVENT_STAMODE_DISCONNECTED");
             NM_DEBUG("recon_cnt %d", g_wifi->recon_cnt);
-            g_wifi->recon_cnt++;
 
             // If the status changed from connected to disconnected.
-            if (g_wifi->status & WIFI_WAS_CONECTED) {
-                g_wifi->status &= ~WIFI_WAS_CONECTED;
+            if (g_wifi->recon_cnt == 0) {
                 tcp_abort_all();
                 nm_g_fatal_err(NULL, ESP_E_WIF, EVENT_STAMODE_DISCONNECTED);
             }
+            g_wifi->recon_cnt++;
 
             // Check if we reached reconnect max.
             if (g_wifi->recon_cnt == g_wifi->recon_max) {
                 nm_wifi_stop();
-                nm_g_fatal_err(NULL, ESP_E_WIF, ev->event_info.disconnected.reason);
+                nm_g_fatal_err(NULL,
+                               ESP_E_WIF,
+                               ev->event_info.disconnected.reason);
             }
             break;
 
@@ -86,7 +81,6 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
 
         case EVENT_STAMODE_GOT_IP:
             NM_DEBUG("EVENT_STAMODE_GOT_IP");
-            g_wifi->status |= WIFI_WAS_CONECTED;
             g_wifi->recon_cnt = 0;
             tcp_conn_all();
             nm_g_fatal_err(NULL, ESP_OK, 0);
@@ -136,7 +130,7 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb)
     }
 
     // Use DHCP or static IP after connection to WiFi.
-    if (use_static_ip(wifi)) {
+    if (using_dhcp(wifi)) {
         if (wifi_station_dhcpc_start() != true) {
             NM_ERROR("DHCP start");
             return ESP_E_SYS;
@@ -153,10 +147,9 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb)
         info.netmask.addr = wifi->netmask;
         info.gw.addr = wifi->gw;
         NM_DEBUG("using static IP");
-        NM_DEBUG("      IP " IPSTR, IP2STR(&info.ip.addr));
-        NM_DEBUG("      NM " IPSTR, IP2STR(&info.netmask.addr));
-        NM_DEBUG("      GW " IPSTR, IP2STR(&info.gw.addr));
-
+        NM_DEBUG("      IP %d.%d.%d.%d", IP2STR(&info.ip.addr));
+        NM_DEBUG("      NM %d.%d.%d.%d", IP2STR(&info.netmask.addr));
+        NM_DEBUG("      GW %d.%d.%d.%d", IP2STR(&info.gw.addr));
         if (wifi_set_ip_info(STATION_IF, &info) != true) {
             NM_ERROR("set static IP");
             return ESP_E_SYS;
@@ -198,7 +191,7 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb)
     nm_g_fatal_err = fatal_cb;
 
     // Configure wifi structure.
-    g_wifi->recon_max = wifi->recon_max ? wifi->recon_max : (uint8_t) 1;
+    g_wifi->recon_max = wifi->recon_max > 0 ? wifi->recon_max : (uint8_t) 1;
     g_wifi->recon_cnt = 1;
     g_wifi->ip = wifi->ip;
     g_wifi->netmask = wifi->netmask;
@@ -216,14 +209,14 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb)
 sint8 ICACHE_FLASH_ATTR
 nm_wifi_stop()
 {
-    // Remove WiFi callbacks.
-    NM_DEBUG("nm_wifi_stop: removing NM group callbacks");
-    eb_remove_group(EV_GROUP);
+    eb_remove_group(EV_GROUP); // Remove WiFi callbacks.
     tcp_abort_all();
-    NM_DEBUG("nm_wifi_stop: station disconnect %d", wifi_station_get_connect_status());
+
+    NM_DEBUG("nm_wifi_stop: wifi status %d", wifi_station_get_connect_status());
     wifi_station_disconnect();
     NM_DEBUG("nm_wifi_stop: set NULL opmode");
     wifi_set_opmode(NULL_MODE);
+    os_free(g_wifi);
 
     return ESP_OK;
 }

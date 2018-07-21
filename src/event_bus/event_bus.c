@@ -216,6 +216,7 @@ eb_remove_group(uint8_t group)
 {
     lst_node *curr = head;
 
+    EB_DEBUG("removing group %d callbacks", group);
     while (curr != NULL) {
         if (get_event(curr)->group == group) {
             curr = remove_node(curr);
@@ -345,7 +346,7 @@ wifi_event_cb(System_Event_t *e)
         case EVENT_STAMODE_AUTHMODE_CHANGE:
             // The mode is one of the AUTH_* values of
             // AUTH_MODE defined in user_interface.h
-            os_printf("WIFI: EVENT_STAMODE_AUTHMODE_CHANGE %d -> %d",
+            EB_DEBUG("WIFI: EVENT_STAMODE_AUTHMODE_CHANGE %d -> %d",
                       info->auth_change.old_mode,
                       info->auth_change.new_mode);
             EB_DEBUG("      status %d", wifi_station_get_connect_status());
@@ -355,9 +356,9 @@ wifi_event_cb(System_Event_t *e)
 
         case EVENT_STAMODE_GOT_IP:
             EB_DEBUG("WIFI: EVENT_STAMODE_GOT_IP");
-            EB_DEBUG("    ip     " IPSTR, IP2STR(&(info->got_ip.ip)));
-            EB_DEBUG("    mask   " IPSTR, IP2STR(&(info->got_ip.mask)));
-            EB_DEBUG("    gw     " IPSTR, IP2STR(&(info->got_ip.gw)));
+            EB_DEBUG("    ip     %d.%d.%d.%d", IP2STR(&(info->got_ip.ip)));
+            EB_DEBUG("    mask   %d.%d.%d.%d", IP2STR(&(info->got_ip.mask)));
+            EB_DEBUG("    gw     %d.%d.%d.%d", IP2STR(&(info->got_ip.gw)));
             EB_DEBUG("    status %d", wifi_station_get_connect_status());
 
             eb_trigger(EVENT_STAMODE_GOT_IP, (void *) e);
