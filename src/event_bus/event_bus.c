@@ -143,8 +143,11 @@ eb_attach_throttled(uint16_t ev_code,
         if (head == NULL)
             return ESP_E_MEM;
 
-        EB_DEBUG("added head %d %p %d %d\n", ev_code, cb, throttle_us,
-                     group);
+        EB_DEBUG("added (h) ev#%d cb:%p th:%d gr:%d",
+                 ev_code,
+                 cb,
+                 throttle_us,
+                 group);
 
         return ESP_OK;
     }
@@ -163,7 +166,7 @@ eb_attach_throttled(uint16_t ev_code,
         return ESP_E_MEM;
 
     lst_append(head, node);
-    EB_DEBUG("added %d %p %d %d\n", ev_code, cb, throttle_us, group);
+    EB_DEBUG("added (n) ev#%d cb:%p th:%d gr:%d", ev_code, cb, throttle_us, group);
 
     return ESP_OK;
 }
@@ -185,7 +188,7 @@ eb_detach(uint16_t ev_code, eb_cb cb)
 
     remove_node(node);
 
-    EB_DEBUG("detached node %d %p\n", ev_code, cb);
+    EB_DEBUG("detached node %d %p", ev_code, cb);
     return true;
 }
 
@@ -266,7 +269,7 @@ timer_start(const lst_node *node, void *payload, uint32_t delay)
 
     event->payload = payload;
 
-    EB_DEBUG("scheduling ev#%d in %d ms\n", get_event(node)->ev_code, delay);
+    EB_DEBUG("scheduling ev#%d in %d ms", get_event(node)->ev_code, delay);
 
     return tim_start_delay(timer_cb, event, delay);
 }
@@ -312,99 +315,85 @@ eb_print_list()
 static void ICACHE_FLASH_ATTR
 wifi_event_cb(System_Event_t *e)
 {
+    Event_Info_u *info = &e->event_info;
+
     switch (e->event) {
         case EVENT_STAMODE_CONNECTED:
-            EB_DEBUG("WIFI: EVENT_STAMODE_CONNECTED\n");
-            EB_DEBUG("      ssid    %s\n",
-                         e->event_info.connected.ssid);
-            EB_DEBUG("      bssid   "
-                             MACSTR
-                             "\n", MAC2STR(e->event_info.connected.bssid));
-            EB_DEBUG("      channel %d\n",
-                         e->event_info.connected.channel);
+            EB_DEBUG("WIFI: EVENT_STAMODE_CONNECTED");
+            EB_DEBUG("      ssid    %s", info->connected.ssid);
+            EB_DEBUG("      bssid   " MACSTR, MAC2STR(info->connected.bssid));
+            EB_DEBUG("      channel %d", info->connected.channel);
+
             eb_trigger(EVENT_STAMODE_CONNECTED, (void *) e);
             break;
 
         case EVENT_STAMODE_DISCONNECTED:
-            EB_DEBUG("WIFI: EVENT_STAMODE_DISCONNECTED\n");
-            EB_DEBUG("      ssid   %s\n",
-                         e->event_info.disconnected.ssid);
-            EB_DEBUG("      bssid  "
-                             MACSTR
-                             "\n",
-                         MAC2STR(e->event_info.disconnected.bssid));
-            EB_DEBUG("      reason %d\n",
-                         e->event_info.disconnected.reason);
+            EB_DEBUG("WIFI: EVENT_STAMODE_DISCONNECTED");
+            EB_DEBUG("      ssid   %s", info->disconnected.ssid);
+            EB_DEBUG("      bssid  " MACSTR, MAC2STR(info->disconnected.bssid));
+            EB_DEBUG("      reason %d", info->disconnected.reason);
+
             eb_trigger(EVENT_STAMODE_DISCONNECTED, (void *) e);
             break;
 
         case EVENT_STAMODE_AUTHMODE_CHANGE:
-            // The mode is one of the AUTH_* values of AUTH_MODE defined in user_interface.h
-            os_printf("WIFI: EVENT_STAMODE_AUTHMODE_CHANGE %d -> %d\n",
-                      e->event_info.auth_change.old_mode,
-                      e->event_info.auth_change.new_mode);
+            // The mode is one of the AUTH_* values of
+            // AUTH_MODE defined in user_interface.h
+            os_printf("WIFI: EVENT_STAMODE_AUTHMODE_CHANGE %d -> %d",
+                      info->auth_change.old_mode,
+                      info->auth_change.new_mode);
             eb_trigger(EVENT_STAMODE_AUTHMODE_CHANGE, (void *) e);
             break;
 
         case EVENT_STAMODE_GOT_IP:
-            EB_DEBUG("WIFI: EVENT_STAMODE_GOT_IP\n");
-            EB_DEBUG("      ip   "
-                             IPSTR
-                             "\n", IP2STR(&(e->event_info.got_ip.ip)));
-            EB_DEBUG("      mask "
-                             IPSTR
-                             "\n", IP2STR(&(e->event_info.got_ip.mask)));
-            EB_DEBUG("      gw   "
-                             IPSTR
-                             "\n", IP2STR(&(e->event_info.got_ip.gw)));
+            EB_DEBUG("WIFI: EVENT_STAMODE_GOT_IP");
+            EB_DEBUG("      ip   " IPSTR, IP2STR(&(info->got_ip.ip)));
+            EB_DEBUG("      mask " IPSTR, IP2STR(&(info->got_ip.mask)));
+            EB_DEBUG("      gw   " IPSTR, IP2STR(&(info->got_ip.gw)));
+
             eb_trigger(EVENT_STAMODE_GOT_IP, (void *) e);
             break;
 
         case EVENT_STAMODE_DHCP_TIMEOUT:
-            EB_DEBUG("WIFI: EVENT_STAMODE_DHCP_TIMEOUT\n");
+            EB_DEBUG("WIFI: EVENT_STAMODE_DHCP_TIMEOUT");
+
             eb_trigger(EVENT_STAMODE_DHCP_TIMEOUT, (void *) e);
             break;
 
         case EVENT_SOFTAPMODE_STACONNECTED:
-            EB_DEBUG("WIFI: EVENT_SOFTAPMODE_STACONNECTED\n");
-            EB_DEBUG("      aid %d\n", e->event_info.sta_connected.aid);
-            EB_DEBUG("      mac "
-                             MACSTR
-                             "\n",
-                         MAC2STR(e->event_info.sta_connected.mac));
+            EB_DEBUG("WIFI: EVENT_SOFTAPMODE_STACONNECTED");
+            EB_DEBUG("      aid %d", info->sta_connected.aid);
+            EB_DEBUG("      mac " MACSTR, MAC2STR(info->sta_connected.mac));
+
             eb_trigger(EVENT_SOFTAPMODE_STACONNECTED, (void *) e);
             break;
 
         case EVENT_SOFTAPMODE_STADISCONNECTED:
-            EB_DEBUG("WIFI: EVENT_SOFTAPMODE_STADISCONNECTED\n");
-            EB_DEBUG("      aid %d\n", e->event_info.sta_connected.aid);
-            EB_DEBUG("      mac "
-                             MACSTR
-                             "\n",
-                         MAC2STR(e->event_info.sta_disconnected.mac));
+            EB_DEBUG("WIFI: EVENT_SOFTAPMODE_STADISCONNECTED");
+            EB_DEBUG("      aid %d", info->sta_connected.aid);
+            EB_DEBUG("      mac " MACSTR, MAC2STR(info->sta_disconnected.mac));
+
             eb_trigger(EVENT_SOFTAPMODE_STADISCONNECTED, (void *) e);
             break;
 
         case EVENT_OPMODE_CHANGED:
-            EB_DEBUG("WIFI: EVENT_OPMODE_CHANGED %d -> %d\n",
-                         e->event_info.opmode_changed.old_opmode,
-                         e->event_info.opmode_changed.new_opmode);
+            EB_DEBUG("WIFI: EVENT_OPMODE_CHANGED %d -> %d",
+                     info->opmode_changed.old_opmode,
+                     info->opmode_changed.new_opmode);
+
             eb_trigger(EVENT_OPMODE_CHANGED, (void *) e);
             break;
 
         case EVENT_SOFTAPMODE_PROBEREQRECVED:
-            EB_DEBUG("WIFI: EVENT_SOFTAPMODE_PROBEREQRECVED\n");
-            EB_DEBUG("      rssi %d\n",
-                         e->event_info.ap_probereqrecved.rssi);
-            EB_DEBUG("      mac  "
-                             MACSTR
-                             "\n",
-                         MAC2STR(e->event_info.ap_probereqrecved.mac));
+            EB_DEBUG("WIFI: EVENT_SOFTAPMODE_PROBEREQRECVED");
+            EB_DEBUG("      rssi %d", info->ap_probereqrecved.rssi);
+            EB_DEBUG("      mac  " MACSTR, MAC2STR(info->ap_probereqrecved.mac));
+
             eb_trigger(EVENT_SOFTAPMODE_PROBEREQRECVED, (void *) e);
             break;
 
         default:
-            EB_ERROR("unexpected wifi event: %d\n", e->event);
+            EB_ERROR("unexpected wifi event: %d", e->event);
             break;
     }
 }

@@ -21,7 +21,7 @@
 #include "event_bus.h"
 
 #if defined(EB_DEBUG_ON) || defined(DEBUG_ON)
-    #define EB_DEBUG(format, ...) os_printf("EB  DBG: " format, ## __VA_ARGS__ )
+    #define EB_DEBUG(format, ...) os_printf("EB  DBG: " format "\n", ## __VA_ARGS__ )
 #else
     #define EB_DEBUG(format, ...) do {} while(0)
 #endif

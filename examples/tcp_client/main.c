@@ -44,30 +44,30 @@ start(void)
         return;
     }
 
-    // The client connection can be scheduled right away.
-    nm_tcp *conn = os_zalloc(sizeof(nm_tcp));
-    if (conn == NULL) {
-        os_printf("USR: OOM!\n");
-        return;
-    }
-
-    err = nm_tcp_client(conn, "192.168.1.149", 3333, false);
-    if (err != ESP_OK) {
-        os_printf("USR: nm_client error %d\n", err);
-        // TODO: release memory.
-        nm_wifi_stop(); // TODO: releasing already freed memory!
-        return;
-    }
-
-    nm_tcp_set_callbacks(conn, ready_cb, disc_cb, sent_cb, recv_cb, err_cb);
-
-    err = nm_tcp_connect(conn);
-    if (err != ESP_OK) {
-        os_printf("USR: nm_client_connect error %d\n", err);
-        // TODO: release memory.
-        nm_wifi_stop(); // TODO: releasing already freed memory!
-        return;
-    }
+    // // The client connection can be scheduled right away.
+    // nm_tcp *conn = os_zalloc(sizeof(nm_tcp));
+    // if (conn == NULL) {
+    //     os_printf("USR: OOM!\n");
+    //     return;
+    // }
+    //
+    // err = nm_tcp_client(conn, "192.168.1.149", 3333, false);
+    // if (err != ESP_OK) {
+    //     os_printf("USR: nm_client error %d\n", err);
+    //     // TODO: release memory.
+    //     nm_wifi_stop(); // TODO: releasing already freed memory!
+    //     return;
+    // }
+    //
+    // nm_tcp_set_callbacks(conn, ready_cb, disc_cb, sent_cb, recv_cb, err_cb);
+    //
+    // err = nm_tcp_connect(conn);
+    // if (err != ESP_OK) {
+    //     os_printf("USR: nm_client_connect error %d\n", err);
+    //     // TODO: release memory.
+    //     nm_wifi_stop(); // TODO: releasing already freed memory!
+    //     return;
+    // }
 }
 
 void ICACHE_FLASH_ATTR user_init()

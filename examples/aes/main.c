@@ -46,18 +46,18 @@ start(void)
     // Storage for decrypted text.
     char *decrypted_text = os_zalloc(50);
 
-    os_printf("Clear text: %s\n", clear_text);
-    utl_dump_bytes("Clear text bytes:",
+    os_printf("\nClear text: %s\n", clear_text);
+    utl_dump_bytes("Clear text bytes",
                    (const uint8_t *) clear_text,
                    (uint16) strlen(clear_text));
 
-    os_printf("Encrypting %d characters.\n", strlen(clear_text));
+    os_printf("\nEncrypting %d characters.\n", strlen(clear_text));
     enc_len = esp_aes_encrypt((uint8_t *) encrypted_text,
                               (uint8_t *) clear_text,
                               strlen(clear_text),
                               AES_KEY, AES_VI);
 
-    utl_dump_bytes("Encrypted text bytes:",
+    utl_dump_bytes("Encrypted text bytes",
                    (const uint8_t *) encrypted_text,
                    (uint16) enc_len);
 
@@ -67,7 +67,7 @@ start(void)
                     enc_len, AES_KEY, AES_VI);
 
     os_printf("Decrypted text: %s\n", decrypted_text);
-    utl_dump_bytes("Decrypted text bytes:",
+    utl_dump_bytes("Decrypted text bytes",
                    (const uint8_t *) decrypted_text,
                    (uint16) strlen(decrypted_text));
 

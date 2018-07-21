@@ -128,7 +128,7 @@ utl_dump_bytes(const char *label, const uint8_t *buf, uint16 len)
 {
     uint8_t i;
 
-    os_printf("%s (%d)\n", label, len);
+    os_printf("%s (%d):\n", label, len);
     for (i = 0; i < len; i++) {
         os_printf("%02x ", buf[i]);
         if ((i + 1) % 8 == 0)
@@ -136,6 +136,5 @@ utl_dump_bytes(const char *label, const uint8_t *buf, uint16 len)
         if ((i + 1) % 16 == 0)
             os_printf("\n");
     }
-    os_printf("\n");
     os_printf("\n");
 }
