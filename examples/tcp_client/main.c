@@ -19,8 +19,8 @@
 #include <osapi.h>
 
 #include "nm.h"
-#include "wifi.h"
-#include "tcp.h"
+#include "nm_wifi.h"
+#include "nm_tcp.h"
 
 #include "stdout.h"
 #include "callbacks.h"
@@ -30,7 +30,7 @@ start(void)
 {
     os_printf("USR: system initialized\n");
 
-    wifi wifi;
+    nm_wifi wifi;
     memset(&wifi, 0, sizeof(wifi));
     wifi.recon_max = 10;
 
@@ -38,34 +38,34 @@ start(void)
     wifi.netmask = ipaddr_addr("255.255.255.0");
     wifi.gw = ipaddr_addr("192.168.2.100");
 
-    sint8 err = wifi_start(&wifi, "TestHive", "xqfiricw2g", fatal_cb);
+    sint8 err = nm_wifi_start(&wifi, "TestHive", "xqfiricw2g", fatal_cb);
     if (err != ESP_OK) {
         os_printf("USR: nm_wifi_start error %d!\n", err);
         return;
     }
 
     // The client connection can be scheduled right away.
-    tcp *conn = os_zalloc(sizeof(tcp));
+    nm_tcp *conn = os_zalloc(sizeof(nm_tcp));
     if (conn == NULL) {
         os_printf("USR: OOM!\n");
         return;
     }
 
-    err = tcp_client(conn, "192.168.1.149", 3333, false);
+    err = nm_tcp_client(conn, "192.168.1.149", 3333, false);
     if (err != ESP_OK) {
         os_printf("USR: nm_client error %d\n", err);
         // TODO: release memory.
-        wifi_stop(); // TODO: releasing already freed memory!
+        nm_wifi_stop(); // TODO: releasing already freed memory!
         return;
     }
 
-    tcp_set_callbacks(conn, ready_cb, disc_cb, sent_cb, recv_cb, err_cb);
+    nm_tcp_set_callbacks(conn, ready_cb, disc_cb, sent_cb, recv_cb, err_cb);
 
-    err = tcp_connect(conn);
+    err = nm_tcp_connect(conn);
     if (err != ESP_OK) {
         os_printf("USR: nm_client_connect error %d\n", err);
         // TODO: release memory.
-        wifi_stop(); // TODO: releasing already freed memory!
+        nm_wifi_stop(); // TODO: releasing already freed memory!
         return;
     }
 }

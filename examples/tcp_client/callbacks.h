@@ -21,24 +21,24 @@
 
 #include <esp.h>
 #include "nm.h"
-#include "tcp.h"
+#include "nm_tcp.h"
 
 void ICACHE_FLASH_ATTR
-ready_cb(tcp *conn);
+ready_cb(nm_tcp *conn);
 
 void ICACHE_FLASH_ATTR
-disc_cb(tcp *conn);
+disc_cb(nm_tcp *conn);
 
 void ICACHE_FLASH_ATTR
-sent_cb(tcp *conn);
+sent_cb(nm_tcp *conn);
 
 void ICACHE_FLASH_ATTR
-recv_cb(tcp *conn, uint8_t *data, size_t len);
+recv_cb(nm_tcp *conn, uint8_t *data, size_t len);
 
 void ICACHE_FLASH_ATTR
-err_cb(tcp *conn, sint8 err, sint16 aux);
+err_cb(nm_tcp *conn, sint8 err, sint16 aux);
 
 void ICACHE_FLASH_ATTR
-fatal_cb(tcp *conn, sint8 err, sint16 aux);
+fatal_cb(nm_tcp *conn, sint8 err, sint16 aux);
 
 #endif //ESP_EX_CALLBACKS_H

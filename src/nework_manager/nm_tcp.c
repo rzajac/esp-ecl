@@ -14,25 +14,22 @@
  * under the License.
  */
 
-#include "include/tcp.h"
+#include "nm_tcp.h"
 #include "nm_internal.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // Globals.
 /////////////////////////////////////////////////////////////////////////////
 
-// Global fatal callback.
-extern nm_err_cb nm_g_fatal_err;
-
-// Linked list head.
+// Linked list of managed connections.
 static lst_node *head;
 
 /////////////////////////////////////////////////////////////////////////////
 // Static methods.
 /////////////////////////////////////////////////////////////////////////////
 
-void ICACHE_FLASH_ATTR
-tcp_release_espconn(tcp *conn)
+static void ICACHE_FLASH_ATTR
+tcp_release_espconn(nm_tcp *conn)
 {
     if (conn->esp == NULL)
         return;
@@ -46,10 +43,10 @@ tcp_release_espconn(tcp *conn)
     NM_DEBUG("espconn released [%p]", conn);
 }
 
-static tcp *ICACHE_FLASH_ATTR
+static nm_tcp *ICACHE_FLASH_ATTR
 tcp_find_by_esp(struct espconn *esp)
 {
-    tcp *conn;
+    nm_tcp *conn;
     lst_node *curr = head;
     while (curr != NULL) {
         conn = get_conn(curr);
@@ -64,7 +61,7 @@ static void ICACHE_FLASH_ATTR
 tcp_disc_cb(void *arg)
 {
     struct espconn *esp = (struct espconn *) arg;
-    tcp *conn = tcp_find_by_esp(esp);
+    nm_tcp *conn = tcp_find_by_esp(esp);
 
     if (conn == NULL) {
         NM_ERROR("tcp_disc_cb unknown connection [%p]", conn);
@@ -81,7 +78,7 @@ static void ICACHE_FLASH_ATTR
 tcp_receive_cb(void *arg, char *data, unsigned short len)
 {
     struct espconn *esp = (struct espconn *) arg;
-    tcp *conn = tcp_find_by_esp(esp);
+    nm_tcp *conn = tcp_find_by_esp(esp);
     if (conn == NULL) {
         NM_ERROR("tcp_receive_cb unknown connection [%p]", conn);
         return;
@@ -95,7 +92,7 @@ static void ICACHE_FLASH_ATTR
 tcp_error_cb(void *arg, sint8 errCode)
 {
     struct espconn *esp = (struct espconn *) arg;
-    tcp *conn = tcp_find_by_esp(esp);
+    nm_tcp *conn = tcp_find_by_esp(esp);
     if (conn == NULL) {
         NM_ERROR("tcp_error_cb unknown connection [%p]", conn);
         return;
@@ -109,7 +106,7 @@ static void ICACHE_FLASH_ATTR
 tcp_sent_cb(void *arg)
 {
     struct espconn *esp = (struct espconn *) arg;
-    tcp *conn = tcp_find_by_esp(esp);
+    nm_tcp *conn = tcp_find_by_esp(esp);
     if (conn == NULL) {
         NM_ERROR("tcp_sent_cb unknown connection [%p]", conn);
         return;
@@ -123,7 +120,7 @@ static void ICACHE_FLASH_ATTR
 tcp_connect_cb(void *arg)
 {
     struct espconn *esp = (struct espconn *) arg;
-    tcp *conn = tcp_find_by_esp(esp);
+    nm_tcp *conn = tcp_find_by_esp(esp);
 
     if (conn == NULL) {
         NM_ERROR("tcp_connect_cb unknown connection [%p]", conn);
@@ -163,7 +160,7 @@ tcp_connect_cb(void *arg)
 }
 
 static sint8 ICACHE_FLASH_ATTR
-tcp_set_conn_cb(tcp *conn)
+tcp_set_conn_cb(nm_tcp *conn)
 {
     sint8 err = espconn_regist_connectcb(conn->esp, tcp_connect_cb);
     if (err != 0) {
@@ -181,7 +178,7 @@ tcp_set_conn_cb(tcp *conn)
 }
 
 static sint8 ICACHE_FLASH_ATTR
-tcp_add_conn(tcp *conn)
+tcp_add_conn(nm_tcp *conn)
 {
     // Prevent adding the same connection twice.
     if (tcp_find_by_esp(conn->esp) != NULL) {
@@ -204,7 +201,7 @@ tcp_add_conn(tcp *conn)
 }
 
 static sint8 ICACHE_FLASH_ATTR
-tcp_remove_conn(tcp *conn)
+tcp_remove_conn(nm_tcp *conn)
 {
     NM_DEBUG("stop managing [%p]", conn);
     lst_node *node = lst_find(head, conn);
@@ -226,12 +223,12 @@ void ICACHE_FLASH_ATTR
 tcp_conn_all()
 {
     sint8 err;
-    tcp *conn;
+    nm_tcp *conn;
 
     lst_node *curr = head;
     while (curr != NULL) {
         conn = get_conn(curr);
-        err = tcp_connect(conn);
+        err = nm_tcp_connect(conn);
         if (err != 0) {
             NM_ERROR("tcp_conn_all error %d [%p]", err, curr);
             conn->err_cb(conn, ESP_E_NET, err);
@@ -248,7 +245,7 @@ tcp_abort_all()
     lst_node *next = NULL;
     while (curr != NULL) {
         next = curr->next;
-        tcp_abort(get_conn(curr));
+        nm_tcp_abort(get_conn(curr));
         curr = next;
     }
 }
@@ -257,8 +254,48 @@ tcp_abort_all()
 // User interface.
 /////////////////////////////////////////////////////////////////////////////
 
+sint8 ICACHE_FLASH_ATTR
+nm_tcp_client(nm_tcp *conn, char *host, int port, bool ssl)
+{
+    conn->esp = os_zalloc(sizeof(struct espconn));
+    if (conn->esp == NULL) {
+        tcp_release_espconn(conn);
+        return ESP_E_MEM;
+    }
+
+    conn->esp->proto.tcp = os_zalloc(sizeof(esp_tcp));
+    if (conn->esp->proto.tcp == NULL) {
+        tcp_release_espconn(conn);
+        return ESP_E_MEM;
+    }
+
+    // Configure TCP/IP connection.
+    conn->esp->type = ESPCONN_TCP;
+    uint32_t ip = ipaddr_addr(host);
+    os_memcpy(conn->esp->proto.tcp->remote_ip, &ip, 4);
+    conn->esp->proto.tcp->local_port = espconn_port();
+    conn->esp->proto.tcp->remote_port = port;
+    conn->ssl = ssl;
+
+    // Register callbacks for successful connection or error.
+    sint8 err = tcp_set_conn_cb(conn);
+    if (err != ESP_OK) {
+        tcp_release_espconn(conn);
+        return err;
+    }
+
+    conn->ready_cb = nm_cb_noop;
+    conn->disc_cb = nm_cb_noop;
+    conn->sent_cb = nm_cb_noop;
+    conn->rcv_cb = nm_rcv_noop;
+    conn->err_cb = nm_err_noop;
+
+    NM_DEBUG("configured [%p]", conn);
+    return ESP_OK;
+}
+
 void ICACHE_FLASH_ATTR
-tcp_abort(tcp *conn)
+nm_tcp_abort(nm_tcp *conn)
 {
     NM_DEBUG("aborting [%p]", conn);
 
@@ -273,20 +310,20 @@ tcp_abort(tcp *conn)
 }
 
 void ICACHE_FLASH_ATTR
-tcp_set_kalive(tcp *conn, int idle, int intvl, int cnt)
+nm_tcp_set_kalive(nm_tcp *conn, int idle, int itvl, int cnt)
 {
     conn->ka_idle = idle;
-    conn->ka_itvl = intvl;
+    conn->ka_itvl = itvl;
     conn->ka_cnt = cnt;
 }
 
 void ICACHE_FLASH_ATTR
-tcp_set_callbacks(tcp *conn,
-                  nm_cb ready,
-                  nm_cb disc,
-                  nm_cb sent,
-                  nm_rcv_cb rcv,
-                  nm_err_cb err)
+nm_tcp_set_callbacks(nm_tcp *conn,
+                     nm_cb ready,
+                     nm_cb disc,
+                     nm_cb sent,
+                     nm_rcv_cb rcv,
+                     nm_err_cb err)
 {
     conn->ready_cb = ready;
     conn->disc_cb = disc;
@@ -298,19 +335,19 @@ tcp_set_callbacks(tcp *conn,
 }
 
 sint8 ICACHE_FLASH_ATTR
-tcp_connect(tcp *conn)
+nm_tcp_connect(nm_tcp *conn)
 {
     sint8 err;
 
     NM_DEBUG("connecting [%p]", conn);
     if (!(is_conn_ready(conn) || is_conn_closed(conn))) {
-        NM_ERROR("tcp_connect wrong state %d [%p]", conn->esp->state, conn);
+        NM_ERROR("nm_tcp_connect wrong state %d [%p]", conn->esp->state, conn);
         return ESPCONN_ARG;
     }
 
     err = espconn_connect(conn->esp);
     if (err != 0) {
-        NM_ERROR("tcp_connect error %d [%p]", err, conn);
+        NM_ERROR("nm_tcp_connect error %d [%p]", err, conn);
         tcp_remove_conn(conn);
         conn->err_cb(conn, ESP_E_NET, err);
         return err;
@@ -322,7 +359,7 @@ tcp_connect(tcp *conn)
     }
 
     if (wifi_station_get_connect_status() == STATION_GOT_IP) {
-        return tcp_connect(conn);
+        return nm_tcp_connect(conn);
     }
 
     NM_DEBUG("connection scheduled [%p] ", conn);
@@ -330,12 +367,12 @@ tcp_connect(tcp *conn)
 }
 
 sint8 ICACHE_FLASH_ATTR
-tcp_release(tcp *conn)
+nm_tcp_release(nm_tcp *conn)
 {
-    NM_DEBUG("tcp_release [%p] ", conn);
+    NM_DEBUG("nm_tcp_release [%p] ", conn);
 
     if (conn->esp->state != ESPCONN_CLOSE) {
-        tcp_abort(conn);
+        nm_tcp_abort(conn);
         return ESP_OK;
     }
 
@@ -351,7 +388,7 @@ tcp_release(tcp *conn)
 }
 
 sint8 ICACHE_FLASH_ATTR
-tcp_send(tcp *conn, uint8_t *data, size_t len)
+nm_tcp_send(nm_tcp *conn, uint8_t *data, size_t len)
 {
     sint8 err = espconn_send(conn->esp, data, (uint16) len);
     if (err != ESPCONN_OK) {
@@ -362,7 +399,7 @@ tcp_send(tcp *conn, uint8_t *data, size_t len)
 }
 
 sint8 ICACHE_FLASH_ATTR
-tcp_disconnect(tcp *conn)
+nm_tcp_disconnect(nm_tcp *conn)
 {
     sint8 err = espconn_disconnect(conn->esp);
     if (err != ESPCONN_OK) {

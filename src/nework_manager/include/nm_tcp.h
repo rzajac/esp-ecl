@@ -22,7 +22,7 @@
 #include "nm.h"
 
 // Represents managed TCP connection.
-struct _tcp {
+struct _nm_tcp {
     // The underlying connection.
     struct espconn *esp;
 
@@ -78,19 +78,19 @@ struct _tcp {
  * @return Error code.
  */
 sint8 ICACHE_FLASH_ATTR
-tcp_client(tcp *conn, char *host, int port, bool ssl);
+nm_tcp_client(nm_tcp *conn, char *host, int port, bool ssl);
 
 
 /**
  * Set keep alive configuration for the client.
  *
- * @param conn  The connection to configure.
- * @param idle  The idle time in seconds.
- * @param intvl The interval in seconds.
- * @param cnt   The count.
+ * @param conn The connection to configure.
+ * @param idle The idle time in seconds.
+ * @param itvl The interval in seconds.
+ * @param cnt  The count.
  */
 void ICACHE_FLASH_ATTR
-tcp_set_kalive(tcp *conn, int idle, int intvl, int cnt);
+nm_tcp_set_kalive(nm_tcp *conn, int idle, int itvl, int cnt);
 
 /**
  * Set client callbacks.
@@ -117,12 +117,12 @@ tcp_set_kalive(tcp *conn, int idle, int intvl, int cnt);
  * @param err   The error callback.
  */
 void ICACHE_FLASH_ATTR
-tcp_set_callbacks(tcp *conn,
-                  nm_cb ready,
-                  nm_cb disc,
-                  nm_cb sent,
-                  nm_rcv_cb rcv,
-                  nm_err_cb err);
+nm_tcp_set_callbacks(nm_tcp *conn,
+                     nm_cb ready,
+                     nm_cb disc,
+                     nm_cb sent,
+                     nm_rcv_cb rcv,
+                     nm_err_cb err);
 
 /**
  * Connect client.
@@ -132,7 +132,7 @@ tcp_set_callbacks(tcp *conn,
  * @return Error code.
  */
 sint8 ICACHE_FLASH_ATTR
-tcp_connect(tcp *conn);
+nm_tcp_connect(nm_tcp *conn);
 
 /**
  * Disconnect TCP connection.
@@ -142,7 +142,7 @@ tcp_connect(tcp *conn);
  * @return The error code.
  */
 sint8 ICACHE_FLASH_ATTR
-tcp_disconnect(tcp *conn);
+nm_tcp_disconnect(nm_tcp *conn);
 
 /**
  * Release memory.
@@ -152,12 +152,26 @@ tcp_disconnect(tcp *conn);
  * @return Error code.
  */
 sint8 ICACHE_FLASH_ATTR
-tcp_release(tcp *conn);
+nm_tcp_release(nm_tcp *conn);
 
+/**
+ * Abort connection.
+ *
+ * @param conn The managed connection.
+ */
 void ICACHE_FLASH_ATTR
-tcp_abort(tcp *conn);
+nm_tcp_abort(nm_tcp *conn);
 
+/**
+ * Send data through connection.
+ *
+ * @param conn The managed connection.
+ * @param data The data to send.
+ * @param len  The length of the data.
+ *
+ * @return Error code.
+ */
 sint8 ICACHE_FLASH_ATTR
-tcp_send(tcp *conn, uint8_t *data, size_t len);
+nm_tcp_send(nm_tcp *conn, uint8_t *data, size_t len);
 
 #endif // NM_TCP_H

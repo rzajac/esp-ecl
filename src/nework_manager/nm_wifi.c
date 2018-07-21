@@ -17,7 +17,7 @@
 
 #include <user_interface.h>
 
-#include "include/wifi.h"
+#include "nm_wifi.h"
 #include "nm_internal.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -33,11 +33,8 @@
 // Globals.
 /////////////////////////////////////////////////////////////////////////////
 
-// Global fatal callback.
-extern nm_err_cb nm_g_fatal_err;
-
 // Global WiFi structure.
-static wifi *g_wifi; // TODO: release it at some point.
+static nm_wifi *g_wifi; // TODO: release it at some point.
 
 /////////////////////////////////////////////////////////////////////////////
 // Static methods.
@@ -125,7 +122,7 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
 /////////////////////////////////////////////////////////////////////////////
 
 sint8 ICACHE_FLASH_ATTR
-wifi_start(wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
+nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb)
 {
     if (g_wifi != NULL) {
         NM_ERROR("g_wifi already set");
@@ -138,8 +135,8 @@ wifi_start(wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
         return ESP_E_LOG;
     }
 
-    if (err_cb == NULL) {
-        NM_ERROR("err_cb must be set");
+    if (fatal_cb == NULL) {
+        NM_ERROR("fatal_cb must be set");
         return ESP_E_ARG;
     }
 
@@ -205,7 +202,7 @@ wifi_start(wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
         return ESP_E_MEM;
 
     // Set global error callback.
-    nm_g_fatal_err = err_cb;
+    nm_g_fatal_err = fatal_cb;
 
     // Configure wifi structure.
     g_wifi->recon_max = wifi->recon_max ? wifi->recon_max : (uint8_t) 1;
@@ -224,7 +221,7 @@ wifi_start(wifi *wifi, char *name, char *pass, nm_err_cb err_cb)
 }
 
 sint8 ICACHE_FLASH_ATTR
-wifi_stop()
+nm_wifi_stop()
 {
     // Remove WiFi callbacks.
     NM_DEBUG("nm_wifi_stop: removing NM group callbacks");

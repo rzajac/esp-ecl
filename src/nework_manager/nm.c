@@ -19,17 +19,17 @@
 
 /** NOOP error function */
 void ICACHE_FLASH_ATTR
-nm_err_noop(tcp *conn, sint8 err, sint16 err_sdk)
+nm_err_noop(nm_tcp *conn, sint8 err, sint16 err_sdk)
 {}
 
 /** NOOP receive function */
 void ICACHE_FLASH_ATTR
-nm_rcv_noop(tcp *conn, uint8_t *data, size_t len)
+nm_rcv_noop(nm_tcp *conn, uint8_t *data, size_t len)
 {}
 
 /** NOOP callback function */
 void ICACHE_FLASH_ATTR
-nm_cb_noop(tcp *conn)
+nm_cb_noop(nm_tcp *conn)
 {}
 
 // Global fatal error callback. Must return as soon as possible.

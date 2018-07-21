@@ -21,6 +21,7 @@
 
 #include "nm.h"
 
+
 // Represents WiFi connection configuration.
 typedef struct {
     // Maximum WiFi connection retries (0 - no limit).
@@ -34,39 +35,37 @@ typedef struct {
 
     // Set to true if wifi was connected at some point.
     uint8_t status;
-} wifi;
+} nm_wifi;
+
 
 /**
- * Start network manager.
+ * Connect to WiFi.
  *
  * Configures and schedules WiFi connection.
- * You may call nm_client as many times as you need
- * right after it and wait for ready_cb for the created
- * clients.
  *
- * @param wifi
- * @param name
- * @param pass
- * @param err_cb
+ * @param wifi     The WiFi configuration.
+ * @param name     The access point name.
+ * @param pass     The access point password.
+ * @param fatal_cb The fatal error callback.
  *
  * @return Error code.
  */
 sint8 ICACHE_FLASH_ATTR
-wifi_start(wifi *wifi, char *name, char *pass, nm_err_cb err_cb);
+nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb);
 
 /**
  * Stop network manager.
  *
  * Stopping network manager:
  *
- * - aborts all connected managed network connections,
- * - disconnects from WiFi
- * - turns off WiFi and sets opmode to NULL_MODE.
- * - releases all the allocated memory,
+ * - aborts all managed connections which are connected,
+ * - disconnects from WiFi,
+ * - turns off WiFi and sets opmode to NULL_MODE,
+ * - releases all the allocated memory.
  *
  * @return Error code.
  */
 sint8 ICACHE_FLASH_ATTR
-wifi_stop();
+nm_wifi_stop();
 
 #endif // NM_WIFI_H

@@ -21,8 +21,8 @@
 #include <esp.h>
 
 #include "event_bus.h"
-#include "wifi.h"
-#include "tcp.h"
+#include "nm_wifi.h"
+#include "nm_tcp.h"
 
 #if defined(NM_DEBUG_ON) || defined(DEBUG_ON)
     #define NM_DEBUG(format, ...) os_printf("NM  DBG: " format "\n", ## __VA_ARGS__ )
@@ -41,7 +41,7 @@
 #define EV_GROUP 1
 
 // Takes lst_node* and returns its payload as nm_tcp*.
-#define get_conn(node) ((node) == NULL ? NULL : ((tcp *) (node)->payload))
+#define get_conn(node) ((node) == NULL ? NULL : ((nm_tcp *) (node)->payload))
 
 // Some helper macros for getting espconn statuses.
 #define is_conn_ready(conn) (((conn) == NULL || (conn)->esp == NULL) ? false : (conn)->esp->state == ESPCONN_NONE)
@@ -51,6 +51,9 @@
 
 // Macro evaluating to true if keep alive values were customized.
 #define use_ka(c) ((c)->ka_idle != 0 && (c)->ka_itvl == 0 && (c)->ka_cnt == 0)
+
+// Global fatal callback.
+extern nm_err_cb nm_g_fatal_err;
 
 /** Connect all managed connections */
 void ICACHE_FLASH_ATTR tcp_conn_all();
