@@ -73,17 +73,16 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
             break;
 
         case EVENT_STAMODE_DISCONNECTED:
+            NM_DEBUG("EVENT_STAMODE_DISCONNECTED");
+            NM_DEBUG("recon_cnt %d", g_wifi->recon_cnt);
             g_wifi->recon_cnt++;
-            NM_DEBUG("EVENT_STAMODE_DISCONNECTED %d", g_wifi->recon_cnt);
 
             // Check if we reached reconnect max.
             if (g_wifi->recon_cnt == g_wifi->recon_max) {
                 wifi_fatal(ESP_E_WIF, ev->event_info.disconnected.reason);
                 return;
             }
-
-            tcp_abort_all(); // TODO: is this a good place for this?
-
+            tcp_abort_all();
 
             // If we were connected notify user code.
             if (g_wifi->status & WIFI_WAS_CONECTED) {
@@ -113,6 +112,7 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
             break;
 
         default:
+            NM_DEBUG("ignored event %d", ev_code);
             break;
     }
 }
@@ -159,11 +159,15 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb)
             return ESP_E_SYS;
         }
 
-        NM_DEBUG("using static IP");
         struct ip_info info;
         info.ip.addr = wifi->ip;
         info.netmask.addr = wifi->netmask;
         info.gw.addr = wifi->gw;
+        NM_DEBUG("using static IP");
+        NM_DEBUG("      IP " IPSTR, IP2STR(&info.ip.addr));
+        NM_DEBUG("      NM " IPSTR, IP2STR(&info.netmask.addr));
+        NM_DEBUG("      GW " IPSTR, IP2STR(&info.gw.addr));
+
         if (wifi_set_ip_info(STATION_IF, &info) != true) {
             NM_ERROR("set static IP");
             return ESP_E_SYS;
@@ -197,7 +201,7 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb)
     }
 
     // Create global WiFi struct.
-    g_wifi = os_zalloc(sizeof(wifi));
+    g_wifi = os_zalloc(sizeof(nm_wifi));
     if (g_wifi == NULL)
         return ESP_E_MEM;
 
