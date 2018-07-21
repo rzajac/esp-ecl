@@ -54,3 +54,19 @@ The NM will call `nm_err_cb` with `ESP_E_NET` and `ESPCONN_CONN`.
 ### Connecting to TCP/IP server which does not exist.
 
 The NM will call `nm_err_cb` with `ESP_E_NET` and `ESPCONN_RST`. 
+
+
+
+## All network cases.
+
+1. AP connection cases:
+    1. Connecting to not existing AP.
+    1. Connecting to AP with wrong password.
+    
+1. After successful connection to AP.
+    1. Trying to get IP with DHCP but no DHCP server running.
+    1. Setting IP manually while someone already has the same IP.
+    1. The AP suddenly does away.
+    1. The AP disassociates the client.
+
+1. 

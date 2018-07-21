@@ -49,6 +49,10 @@ typedef struct {
  */
 sint8 ICACHE_FLASH_ATTR
 nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb);
+//TODO: change name to connect.
+
+//TODO: change name to AP
+//TODO: we will use wifi when creating access points.
 
 /**
  * Stop network manager.
@@ -64,5 +68,6 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb);
  */
 sint8 ICACHE_FLASH_ATTR
 nm_wifi_stop();
+// TODO: change name to disconnect.
 
 #endif // NM_WIFI_H
