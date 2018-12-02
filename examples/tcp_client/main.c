@@ -34,14 +34,14 @@ start(void)
     memset(&wifi, 0, sizeof(wifi));
     wifi.recon_max = 10;
 
-    wifi.ip = ipaddr_addr("192.168.2.101");
-    wifi.ip = ipaddr_addr("192.168.2.178");
-    wifi.netmask = ipaddr_addr("255.255.255.0");
-    wifi.gw = ipaddr_addr("192.168.2.100");
+    // wifi.ip = ipaddr_addr("192.168.2.101");
+    // wifi.ip = ipaddr_addr("192.168.2.178");
+    // wifi.netmask = ipaddr_addr("255.255.255.0");
+    // wifi.gw = ipaddr_addr("192.168.2.100");
 
-    sint8 err = nm_wifi_start(&wifi, "TestHive", "xqfiricw2g", fatal_cb);
+    sint8 err = nm_wifi_connect(&wifi, "TestHive", "xqfiricw2g1", fatal_cb);
     if (err != ESP_OK) {
-        os_printf("USR: nm_wifi_start error %d!\n", err);
+        os_printf("USR: nm_wifi_connect error %d!\n", err);
         return;
     }
 
@@ -56,7 +56,7 @@ start(void)
     // if (err != ESP_OK) {
     //     os_printf("USR: nm_client error %d\n", err);
     //     // TODO: release memory.
-    //     nm_wifi_stop(); // TODO: releasing already freed memory!
+    //     nm_wifi_disconnect(); // TODO: releasing already freed memory!
     //     return;
     // }
     //
@@ -66,7 +66,7 @@ start(void)
     // if (err != ESP_OK) {
     //     os_printf("USR: nm_client_connect error %d\n", err);
     //     // TODO: release memory.
-    //     nm_wifi_stop(); // TODO: releasing already freed memory!
+    //     nm_wifi_disconnect(); // TODO: releasing already freed memory!
     //     return;
     // }
 }

@@ -48,18 +48,13 @@ typedef struct {
  * @return Error code.
  */
 sint8 ICACHE_FLASH_ATTR
-nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb);
-//TODO: change name to connect.
-
-//TODO: change name to AP
-//TODO: we will use wifi when creating access points.
+nm_wifi_connect(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb);
 
 /**
- * Stop network manager.
+ * Disconnect form WiFi.
  *
- * Stopping network manager:
- *
- * - aborts all managed connections which are connected,
+ * Disconnecting:
+ * - aborts all managed connections,
  * - disconnects from WiFi,
  * - turns off WiFi and sets opmode to NULL_MODE,
  * - releases all the allocated memory.
@@ -67,7 +62,6 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb);
  * @return Error code.
  */
 sint8 ICACHE_FLASH_ATTR
-nm_wifi_stop();
-// TODO: change name to disconnect.
+nm_wifi_disconnect();
 
 #endif // NM_WIFI_H

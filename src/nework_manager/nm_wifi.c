@@ -49,7 +49,7 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
             if (using_dhcp(g_wifi)) {
                 if (wifi_station_dhcpc_set_maxtry(3) != true) {
                     NM_ERROR("DHCP set max try failed");
-                    nm_wifi_stop();
+                    nm_wifi_disconnect();
                     nm_g_fatal_err(NULL, ESP_E_NET, 0);
                 }
             }
@@ -68,7 +68,7 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
 
             // Check if we reached reconnect max.
             if (g_wifi->recon_cnt == g_wifi->recon_max) {
-                nm_wifi_stop();
+                nm_wifi_disconnect();
                 nm_g_fatal_err(NULL,
                                ESP_E_WIF,
                                ev->event_info.disconnected.reason);
@@ -105,7 +105,7 @@ nm_wifi_event_cb(uint16_t ev_code, void *arg)
 /////////////////////////////////////////////////////////////////////////////
 
 sint8 ICACHE_FLASH_ATTR
-nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb)
+nm_wifi_connect(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb)
 {
     if (g_wifi != NULL) {
         NM_ERROR("g_wifi already set");
@@ -207,14 +207,14 @@ nm_wifi_start(nm_wifi *wifi, char *name, char *pass, nm_err_cb fatal_cb)
 }
 
 sint8 ICACHE_FLASH_ATTR
-nm_wifi_stop()
+nm_wifi_disconnect()
 {
     eb_remove_group(EV_GROUP); // Remove WiFi callbacks.
     tcp_abort_all();
 
-    NM_DEBUG("nm_wifi_stop: wifi status %d", wifi_station_get_connect_status());
+    NM_DEBUG("nm_wifi_disconnect: wifi status %d", wifi_station_get_connect_status());
     wifi_station_disconnect();
-    NM_DEBUG("nm_wifi_stop: set NULL opmode");
+    NM_DEBUG("nm_wifi_disconnect: set NULL opmode");
     wifi_set_opmode(NULL_MODE);
     os_free(g_wifi);
 
